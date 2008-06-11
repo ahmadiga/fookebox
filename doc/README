@@ -5,13 +5,13 @@ fookebox is a jukebox-style web-frontend to mpd.
 
 It offers the following jukebox features:
 
-* Browse your music library by artist or genre
-* Add songs to the playlist (obviously)
-* Limit the queue size (see note below)
-* Add whole albums to the playlist (optional)
-* Remove songs from the playlist (optional)
-* Search for artists/albums/titles/files (optional)
-* Control mpd (optional)
+ * Browse your music library by artist or genre
+ * Add songs to the playlist (obviously)
+ * Limit the queue size (see note below)
+ * Add whole albums to the playlist (optional)
+ * Remove songs from the playlist (optional)
+ * Search for artists/albums/titles/files (optional)
+ * Control mpd (optional)
 
 In addition to that, fookebox has a second frontend intended for a projector
 showing the currently playing song as well as the first queue entry. Also, in
@@ -24,9 +24,9 @@ information on the secondary frontend (details: see below).
 
 In order to run fookebox you will need:
 
-* mpd
-* some web server (eg. apache)
-* php (should work with version 4 and 5)
+ * mpd
+ * some web server (eg. apache)
+ * php (should work with version 4 and 5)
 
 
 == How to set it up ==
@@ -50,26 +50,26 @@ Also, make sure that your webserver can write to the skins/compiled directory.
 All your fookebox configuration is done site.conf.php. You can tweak the
 following settings:
 
-* mpd_host: The hostname of the machine running mpd (eg. localhost)
-* mpd_port: The port mpd is running on (6600 by default)
-* mpd_pass: The password required to access mpd (or NULL if none)
-* base_url: The URL to your fookebox installation
-* skin: Your fookebox skin (currently only 'default' exists)
-* max_queue_length: The maximum queue length. It's important to note that
-  while fookebox does check that value, people who click fast enough might be
-  able to bypass that check. Make sure to set your mpd's max_playlist_length
-  accordingly (note that mpd's count includes the song which is being played
-  so if you want 3 queue positions, set max_playlist_length to 4).
-* show_search_tab: Whether you want the 'search' tab to be displayed
-  (you might want to disable this on jukebox machines without a keyboard)
-* enable_controls: Enables/disables mpd control elements (disable this on
-  public jukebox installations)
-* enable_song_removal: Whether users are allowed to remove songs from the
-  queue (again, bad idea on public jukeboxes)
-* enable_queue_album: Enables/disables the ability to queue full albums by
-  clicking on the album name (might be a bad idea on public jukeboxes)
-* find_over_search: Whether you want to use mpd's 'find' or 'search' function
-  when an artist/genre/album has been clicked. The difference is that 'find'
-  only returns exact matches while 'search' also matches substrings
-  (eg. if you click on 'Air', 'find' will only return songs by 'Air' while
-  'search' will also include 'Air feat. Joe Random' and 'Fair play')
+ * mpd_host: The hostname of the machine running mpd (eg. localhost)
+ * mpd_port: The port mpd is running on (6600 by default)
+ * mpd_pass: The password required to access mpd (or NULL if none)
+ * base_url: The URL to your fookebox installation
+ * skin: Your fookebox skin (currently only 'default' exists)
+ * max_queue_length: The maximum queue length. It's important to note that
+   while fookebox does check that value, people who click fast enough might be
+   able to bypass that check. Make sure to set your mpd's max_playlist_length
+   accordingly (note that mpd's count includes the song which is being played
+   so if you want 3 queue positions, set max_playlist_length to 4).
+ * show_search_tab: Whether you want the 'search' tab to be displayed
+   (you might want to disable this on jukebox machines without a keyboard)
+ * enable_controls: Enables/disables mpd control elements (disable this on
+   public jukebox installations)
+ * enable_song_removal: Whether users are allowed to remove songs from the
+   queue (again, bad idea on public jukeboxes)
+ * enable_queue_album: Enables/disables the ability to queue full albums by
+   clicking on the album name (might be a bad idea on public jukeboxes)
+ * find_over_search: Whether you want to use mpd's 'find' or 'search' function
+   when an artist/genre/album has been clicked. The difference is that 'find'
+   only returns exact matches while 'search' also matches substrings
+   (eg. if you click on 'Air', 'find' will only return songs by 'Air' while
+   'search' will also include 'Air feat. Joe Random' and 'Fair play')
