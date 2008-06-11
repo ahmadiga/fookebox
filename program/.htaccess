@@ -1,0 +1,3 @@
+RewriteEngine on
+
+RewriteRule status$ status.php [L]
