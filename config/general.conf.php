@@ -27,7 +27,7 @@
 	define ('smarty_src_path', $base . '/src/smarty');
 	define ('smarty_compile_dir', $base . '/skins/compiled');
 
-	define ('VERSION', '0.1.0-rc1');
+	define ('VERSION', '0.1.0+svn');
 
 	// we don't use a database, thus ignore the db-related fields
 	define ('libdesire_ignore', 'dbDriver:dbUser:dbPass:dbHost:dbName');
