@@ -3,4 +3,5 @@
 
 == 0.1.1 ==
 
+ * Fixed a bug where not all clients would be informed on playlist updates
  * Minor documentation updates
