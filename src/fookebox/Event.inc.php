@@ -55,7 +55,7 @@ class Event
 
 	function getState ()
 	{
-		return '@foobar';
+		return '@' . site_name;
 	}
 
 	function isJukebox ()

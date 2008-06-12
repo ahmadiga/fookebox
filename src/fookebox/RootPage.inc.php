@@ -27,7 +27,7 @@ require_once (libdesire_path . 'util/browser.inc.php');
 
 class RootPage extends Page
 {
-	function RootPage ($title = 'fookebox&trade;')
+	function RootPage ($title = site_name)
 	{
 		parent::Page ();
 		$this->assign ('title', $title);

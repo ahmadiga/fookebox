@@ -25,13 +25,11 @@
 	define ('mpd_pass', NULL);
 
 	define ('base_url', 'http://localhost/~stefan/mpd/');
+	define ('site_name', 'my home');
 
 	define ('skin', 'default');
 
-	// fookebox does not check the queue size, you'll also have to set
-	// your mpd's max_playlist_length accordingly. Also, notice that the
-	// currently playing track is counted as well, so if you want n slots
-	// in the queue, set this to n+1
+	// NOTE: See the README for details on this
 	define ('max_queue_length', 3);
 
 	// show full-text search tab

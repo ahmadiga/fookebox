@@ -2,7 +2,7 @@
 
 <html xml:lang="en">
 	<head>
-		<title>fookebox</title>
+		<title>{$smarty.const.site_name}</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" href="{$smarty.const.base_url}skins/{$smarty.const.skin}/style.css" type="text/css" media="screen" />
 {if $ie}
@@ -20,10 +20,6 @@
 		<script type="text/javascript" src="{$smarty.const.base_url}js/scriptaculous/scriptaculous.js"></script>
 	</head>
 	<body id="body">
-		<div id="meta">
-			<a href="http://fookebox.googlecode.com/">fookebox</a> v{$smarty.const.VERSION}<br />
-			&copy; 2007-2008 <a href="http://www.ott.net/">Stefan Ott</a>
-		</div>
 		<div id="message" style="display: none">
 			<div class="corner tl"></div>
 			<div class="corner tr"></div>

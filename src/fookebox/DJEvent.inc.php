@@ -37,7 +37,7 @@ class DJEvent extends Event
 
 	function getState ()
 	{
-		return 'live @ foobar';
+		return 'live @ ' . site_name;
 	}
 }
 ?>

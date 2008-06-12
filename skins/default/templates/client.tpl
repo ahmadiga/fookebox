@@ -1,3 +1,7 @@
+<div id="meta">
+	<a href="http://fookebox.googlecode.com/">fookebox</a> v{$smarty.const.VERSION}<br />
+	&copy; 2007-2008 <a href="http://www.ott.net/">Stefan Ott</a>
+</div>
 {include file="browse-menu.tpl"}
 <div id="status">
 {include file="status.tpl"}

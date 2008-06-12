@@ -113,6 +113,13 @@ function apply_data (result)
 			setContent ('clock', result.data.time);
 			setContent ('currentTitle', result.data.currentTitle);
 			setContent ('currentState', result.data.currentState);
+			if (result.data.nextTitle) {
+				showElement ('next');
+				setContent ('nextTitle', result.data.nextTitle);
+				setContent ('nextTime', result.data.nextTime);
+			} else {
+				hideElement ('next');
+			}
 			break;
 		default:
 			if (DEBUG) alert ('Unknown target: ' + result.target);

@@ -26,7 +26,7 @@ require_once (src_path . '/mpd.inc.php');
 
 class JukeboxEvent extends Event
 {
-	function JukeboxEvent ($time, $name = 'foobar jukebox')
+	function JukeboxEvent ($time, $name = site_name)
 	{
 		parent :: Event ($time, $name);
 	}
@@ -57,22 +57,22 @@ class JukeboxEvent extends Event
 		{
 			return $cur;
 		} else {
-			return 'foobar jukebox';
+			return $this->getName () . " jukebox";
 		}
 	}
 
 	function getAsNext ()
 	{
-		return $this->_name;
+		return $this->getName () . " jukebox";
 	}
 
 	function getState ()
 	{
 		if ($nxt = $this->getPlaylistItem (1))
 		{
-			return "next @ foobar jukebox: $nxt";
+			return "next @ " . $this->getName () . " jukebox: $nxt";
 		} else {
-			return 'foobar jukebox';
+			return $this->getName () . " jukebox";
 		}
 	}
 
