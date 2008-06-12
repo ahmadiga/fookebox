@@ -31,10 +31,14 @@ In order to run fookebox you will need:
 
 == How to set it up ==
 
-=== php.ini ===
+=== PHP ===
 
-Make sure to enable always_populate_raw_post_data in your php configuration or
+Make sure to enable always_populate_raw_post_data in your php configuration (php.ini) or
 fookebox will complain.
+
+=== web server ===
+
+Your web server needs to understand rewrite rules (for apache, enable mod_rewrite).
 
 === fookebox ===
 
@@ -54,6 +58,7 @@ following settings:
  * mpd_port: The port mpd is running on (6600 by default)
  * mpd_pass: The password required to access mpd (or NULL if none)
  * base_url: The URL to your fookebox installation
+ * site_name: A name for your site (eg. 'my home')
  * skin: Your fookebox skin (currently only 'default' exists)
  * max_queue_length: The maximum queue length (see below for details)
  * show_search_tab: Enable/disable 'search' tab (eg. for mouse-only jukeboxes)
