@@ -27,14 +27,15 @@
 	require_once (libdesire_path . 'view/Page.inc.php');
 	require_once (libdesire_path . 'util/io.inc.php');
 
+	$lastUpdate = require_key ('updated', $_GET);
+	$clientQueueLength = require_key ('qlen', $_GET);
+
 	$jukebox = new Jukebox ();
 	if (!$jukebox->isActive ())
 	{
 		json_msg ('JUKEBOX_DISABLED');
 		die ();
 	}
-
-	$refreshQueue = false;
 
 	$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
 
@@ -47,12 +48,10 @@
 		// Some songs finished playing but are still in the playlist
 		$mpd->PLRemove(0);
 		$status = $mpd->getStatus ();
-		$refreshQueue = true;
 	}
 	if (($status ['song'] !== '0') && ($mpd->playlist_count > 0)) {
 		// We ran out of songs - clear the playlist
 		$mpd->PLRemove(0);
-		$refreshQueue = true;
 	}
 
 	$playlist = $mpd->getPlaylist ();
@@ -65,27 +64,33 @@
 	if (empty ($timePassed))
 			$timePassed = 0;
 
-	$data = array (
-		'artist'	=> $current ['Artist'],
-		'track'		=> $current ['Title'],
-		'timePassed'	=> date ('i:s', $timePassed),
-		'timeTotal'	=> date ('i:s', $timeTotal),
-	);
+	$currentTime = time ();
+	$queueLength = max (count ($playlist) - 1, 0);
 
-	if ($refreshQueue) {
-		$pldata = array ();
-		// TODO: this is copied from playlist.php
-		foreach ($playlist as $item)
-		{
-			$page = new Page ();
-			$page->assign ('artist', $item ['Artist']);
-			$page->assign ('title', $item ['Title']);
-			$page->assign ('position', $item ['Pos']);
-			$pldata[] = $page->fetch ('playlist-entry.tpl');
-		}
-
-		$data ['queue'] = $pldata;
+	if (($timePassed > 0) && ($currentTime - $lastUpdate > $timePassed))
+	{
+		// the song has changed
+		json_msg ('SONG_CHANGED');
 	}
+	else if ($clientQueueLength < $queueLength)
+	{
+		// somebody queued a song
+		json_msg ('SONG_QUEUED');
+	}
+	else if ($clientQueueLength > $queueLength)
+	{
+		// somebody removed a song from the queue
+		json_msg ('SONG_REMOVED');
+	}
+	else
+	{
+		$data = array (
+			'artist'	=> $current ['Artist'],
+			'track'		=> $current ['Title'],
+			'timePassed'	=> date ('i:s', $timePassed),
+			'timeTotal'	=> date ('i:s', $timeTotal),
+		);
 
-	json_data ('status', $data);
+		json_data ('status', $data);
+	}
 ?>

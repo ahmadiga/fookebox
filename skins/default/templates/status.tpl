@@ -3,6 +3,5 @@
 <script type="text/javascript">
 <!--
 	updateStatus ();
-	updatePlaylist ();
 -->
 </script>

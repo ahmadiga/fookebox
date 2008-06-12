@@ -1,5 +1,5 @@
 /*
- * libdesire 0.1 RC-2
+ * libdesire 0.1 RC-2+fkb
  * Copyright (C) 2006/2007 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -124,10 +124,14 @@ function http_post (url, data)
 	con.http.send (data);
 }
 
-function http_get (url)
+function http_get (url, additional)
 {
+	if (!additional)
+	{
+		additional = ''
+	}
 	var con = getConnection ();
-	con.http.open ('get', url + '?ms=' + new Date ().getTime (), true);
+	con.http.open ('get', url + '?ms=' + new Date ().getTime () + additional, true);
 	con.http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
 	con.http.onreadystatechange = function ()
 	{

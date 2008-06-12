@@ -25,6 +25,12 @@ var currentTab = 'artist';
 // the message timeout
 var messageTimeout;
 
+// when the playlist was last updated
+var lastPlaylistUpdate = 0;
+
+// length of our currently known queue
+var queueLength = 0;
+
 function showProgressbar ()
 {
 	Effect.Appear ('progress', { 'duration' : '0.0' });
@@ -59,11 +65,12 @@ function setTab (name)
 function updateStatus ()
 {
 	setTimeout ("updateStatus()", 1000);
-	http_get ('status');
+	http_get ('status', '&updated=' + lastPlaylistUpdate + '&qlen=' + queueLength);
 }
 
 function setPlaylist (data)
 {
+	queueLength = data.length;
 	var div = document.getElementById ('playlist');
 	var ols = div.getElementsByTagName ('ol');
 	var ol = ols [0];
@@ -94,13 +101,11 @@ function apply_data (result)
 			if (track != getContent ('track')) setContent ('track', track);
 			if (timeTotal != getContent ('timeTotal')) setContent ('timeTotal', timeTotal);
 			setContent ('timePassed', data.timePassed);
-			if (data.queue) {
-				setPlaylist (data.queue.splice (1));
-			}
 			break;
 		case 'playlist':
 			var data = result.data;
 			setPlaylist (data.queue.splice (1));
+			lastPlaylistUpdate = data.updated;
 			break;
 		case 'queue':
 			var data = result.data;
@@ -141,6 +146,9 @@ function process_message (message)
 			window.location = '/';
 			break;
 		case 'SONG_QUEUED':
+			updatePlaylist ();
+			break;
+		case 'SONG_CHANGED':
 			updatePlaylist ();
 			break;
 		case 'SONG_REMOVED':

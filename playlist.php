@@ -52,6 +52,7 @@
 	}
 
 	json_data ('playlist', array (
-		'queue'		=> $data
+		'queue'		=> $data,
+		'updated'	=> time ()
 	));
 ?>
