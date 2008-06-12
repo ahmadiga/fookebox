@@ -298,10 +298,6 @@ li.seperator {
 	background-repeat: no-repeat;
 }
 
-#now .label {
-	display: none;
-}
-
 .state {
 	text-align: center;
 }
@@ -331,8 +327,21 @@ li.seperator {
 	background-repeat: no-repeat;
 }
 
+#now .label, #next .label {
+	font-size: small;
+	position: relative;
+	background-color: black;
+	padding: 5px 10px 5px 10px;
+}
+
+#now .label {
+	top: -33px;
+	border: 1px #555555 solid;
+}
+
 #next .label {
-	display: none;
+	top: -30px;
+	border: 1px #555555 solid;
 }
 
 #next .time {
