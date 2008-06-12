@@ -1,0 +1,11 @@
+RewriteEngine on
+
+RewriteRule ^playlist$ playlist.php [L]
+RewriteRule ^status$ status.php [L]
+RewriteRule ^remove$ remove.php [L]
+RewriteRule ^search$ search.php [L]
+RewriteRule ^find$ find.php [L]
+RewriteRule ^queue$ queue.php [L]
+RewriteRule ^control$ control.php [L]
+RewriteRule ^disabled$ disabled.php [L]
+RewriteRule ^disabled/status$ disabled.php?json=1 [L]
