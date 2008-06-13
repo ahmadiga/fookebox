@@ -194,7 +194,7 @@ function showArtist (artist, command)
 		'where' : 'artist',
 		'what'	: encodeURIComponent (artist)
 	}
-	http_post (command, data.toJSONString ());
+	http_post (command, JSON.stringify (data));
 }
 
 function genreSearch (genre)
@@ -214,7 +214,7 @@ function showGenre (genre, command)
 		'where' : 'genre',
 		'what'	: encodeURIComponent (genre)
 	}
-	http_post (command, data.toJSONString ());
+	http_post (command, JSON.stringify (data));
 }
 
 function albumSearch (album)
@@ -233,7 +233,7 @@ function showAlbum (album, command)
 		'where' : 'album',
 		'what'	: encodeURIComponent (album)
 	}
-	http_post (command, data.toJSONString ());
+	http_post (command, JSON.stringify (data));
 }
 
 function removeTrack (id)
@@ -241,7 +241,7 @@ function removeTrack (id)
 	var data = {
 		'id' : encodeURIComponent (id)
 	}
-	http_post ('remove', data.toJSONString ());
+	http_post ('remove', JSON.stringify (data));
 }
 
 function queueFile (file)
@@ -249,7 +249,7 @@ function queueFile (file)
 	var data = {
 		'file'	: encodeURIComponent (file)
 	}
-	http_post ('queue', data.toJSONString ());
+	http_post ('queue', JSON.stringify (data));
 }
 
 function refreshProgram ()
@@ -277,7 +277,7 @@ function search ()
 		'what'	: encodeURIComponent (searchTerm)
 	}
 
-	http_post ('search', data.toJSONString ());
+	http_post ('search', JSON.stringify (data));
 }
 
 function control(action)
@@ -285,7 +285,7 @@ function control(action)
 	var data = {
 		'action' : encodeURIComponent(action)
 	}
-	http_post ('control', data.toJSONString ());
+	http_post ('control', JSON.stringify (data));
 }
 
 function updatePlaylist ()

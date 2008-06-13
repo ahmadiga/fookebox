@@ -6,4 +6,5 @@
  * Made the right part scrollable without scrolling the whole window (fixes #1)
  * Made sure all clients are informed on playlist updates (fixes #2)
  * Updated smarty to version 2.6.19
+ * Updated the JavaScript JSON library
  * Minor documentation updates

@@ -1,5 +1,5 @@
 /*
- * libdesire 0.1 RC-2+fkb
+ * libdesire 0.1 RC-2+fkb+json2
  * Copyright (C) 2006/2007 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@ function handleResponse (con)
 {
 	if (con.http.readyState == 4)
 	{
-		var result = con.http.responseText.parseJSON ();
+		var result = JSON.parse (con.http.responseText);
 		process_result (result);
 		con.ready = true;
 	}
