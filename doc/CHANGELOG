@@ -3,5 +3,6 @@
 
 == 0.1.1 ==
 
- * Fixed a bug where not all clients would be informed on playlist updates
+ * Made the right part scrollable without scrolling the whole window (fixes #1)
+ * Made sure all clients are informed on playlist updates (fixes #2)
  * Minor documentation updates
