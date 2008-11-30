@@ -61,6 +61,7 @@ following settings:
  * site_name: A name for your site (eg. 'my home')
  * skin: Your fookebox skin (currently only 'default' exists)
  * max_queue_length: The maximum queue length (see below for details)
+ * auto_queue: Whether to play random songs when the queue gets empty
  * show_search_tab: Enable/disable 'search' tab (eg. for mouse-only jukeboxes)
  * enable_controls: Enable/disable mpd control (disable on public jukeboxes)
  * enable_song_removal: Whether to allow the user to remove songs in the queue

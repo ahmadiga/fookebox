@@ -53,6 +53,7 @@ define("MPD_CMD_PLSWAPTRACK", "swap");
 define("MPD_CMD_PLMOVETRACK", "move");
 define("MPD_CMD_PASSWORD",    "password");
 define("MPD_CMD_TABLE",       "list");
+define("MPD_CMD_LIST_ALL",    "listall");
 
 // Predefined MPD Response messages
 define("MPD_RESPONSE_ERR", "ACK");
@@ -363,6 +364,14 @@ class mpd {
 		$dirlist = $this->_parseFileListResponse($resp);
 		if ( $this->debugging ) echo "mpd->GetDir() / return ".print_r($dirlist)."\n";
 		return $dirlist;
+	}
+
+	function ListAll($dir = "") {
+		if ( $this->debugging ) echo "mpd->ListAll()\n";
+		$resp = $this->SendCommand(MPD_CMD_LIST_ALL, $dir);
+		$list = $this->_parseFileListResponse($resp);
+		if ( $this->debugging ) echo "mpd->ListAll() / return".print_r($list)."\n";
+		return $list;
 	}
 
 	/* PLAdd() 

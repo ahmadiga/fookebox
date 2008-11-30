@@ -1,6 +1,10 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
+== 0.2.0 ==
+
+ * Added the ability to auto-queue songs when the playlist gets empty
+
 == 0.1.1 ==
 
  * Made the right part scrollable without scrolling the whole window (fixes #1)

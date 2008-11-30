@@ -82,6 +82,16 @@
 		// somebody removed a song from the queue
 		json_msg ('SONG_REMOVED');
 	}
+	else if ($queueLength == 0 && $status['state'] == 'stop' && auto_queue)
+	{
+		// we were running out of songs, queue a random one
+		$files = $mpd->listAll();
+		$length = sizeof($files);
+		$chosen = rand(0, $length - 1);
+		$file = $files[$chosen];
+		$mpd->PLAdd ($file['file']);
+		$mpd->Play ();
+	}
 	else
 	{
 		$data = array (

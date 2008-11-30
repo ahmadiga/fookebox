@@ -17,32 +17,30 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id$
+ * $Id: site.conf.php-dist 6 2008-06-12 00:05:43Z stefan@ott.net $
  */
-	define ('base_url', 'http://localhost/~stefan/mpd/');
 
-	//define ('mpd_host', 'localhost');
-	//define ('mpd_port', '6600');
-	//define ('mpd_pass', NULL);
+$defaults = array
+(
+	'mpd_host'		=> 'localhost',
+	'mpd_port'		=> 6600,
+	'mpd_pass'		=> NULL,
+	'site_name'		=> 'fookebox',
+	'skin'			=> 'default',
+	'auto_queue'		=> false,
+	'max_queue_length'	=> 3,
+	'show_search_tab'	=> true,
+	'enable_controls'	=> false,
+	'enable_song_removal'	=> false,
+	'enable_queue_album'	=> false,
+	'find_over_search'	=> false
+);
 
-	//define ('site_name', 'my home');
-
-	//define ('skin', 'default');
-
-	// NOTE: See the README for details on this
-	//define ('max_queue_length', 3);
-
-	// automatically queue a random song when the playlist gets empty
-	//define ('auto_queue', false);
-
-	// show full-text search tab
-	//define ('show_search_tab', true);
-	// enable mpd controls
-	//define ('enable_controls', false);
-	// allow users to remove songs
-	//define ('enable_song_removal', false);
-	// allow users to queue a full album with one click
-	//define ('enable_queue_album', false);
-	// be anal about artist/album names (see README)
-	//define ('find_over_search', false);
+foreach ($defaults as $key => $value)
+{
+	if (!defined ($key))
+	{
+		define ($key, $value);
+	}
+}
 ?>
