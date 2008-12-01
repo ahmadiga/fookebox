@@ -20,17 +20,17 @@
  * $Id$
  */
 
-	require_once ('config/config.inc.php');
-	require_once (src_path . '/mpd.inc.php');
-	require_once (libdesire_path . 'view/Page.inc.php');
-	require_once (src_path . '/RootPage.inc.php');
+require_once ('config/config.inc.php');
+require_once (src_path . '/mpd.inc.php');
+require_once (libdesire_path . 'view/Page.inc.php');
+require_once (src_path . '/RootPage.inc.php');
 
-	$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
+$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
 
-	$root = new RootPage ();
-	$page = new Page ();
-	$page->assign ('mpd', $mpd);
+$root = new RootPage ();
+$page = new Page ();
+$page->assign ('mpd', $mpd);
 
-	$root->assign ('body', $page->fetch ('client.tpl'));
-	$root->display ();
+$root->assign ('body', $page->fetch ('client.tpl'));
+$root->display ();
 ?>

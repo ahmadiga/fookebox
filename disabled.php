@@ -20,27 +20,27 @@
  * $Id$
  */
 
-	require_once ('config/config.inc.php');
-	require_once (src_path . '/mpd.inc.php');
-	require_once (src_path . '/Jukebox.inc.php');
-	require_once (src_path . '/RootPage.inc.php');
-	require_once (libdesire_path . 'view/Page.inc.php');
-	require_once (libdesire_path . 'util/util.inc.php');
-	require_once (libdesire_path . 'util/io.inc.php');
+require_once ('config/config.inc.php');
+require_once (src_path . '/mpd.inc.php');
+require_once (src_path . '/Jukebox.inc.php');
+require_once (src_path . '/RootPage.inc.php');
+require_once (libdesire_path . 'view/Page.inc.php');
+require_once (libdesire_path . 'util/util.inc.php');
+require_once (libdesire_path . 'util/io.inc.php');
 
-	$jukebox = new Jukebox ();
-	if (try_key ('json', $_GET))
+$jukebox = new Jukebox ();
+if (try_key ('json', $_GET))
+{
+	if ($jukebox->isActive ())
 	{
-		if ($jukebox->isActive ())
-		{
-			json_msg ('JUKEBOX_ENABLED');
-		}
-		die ();
+		json_msg ('JUKEBOX_ENABLED');
 	}
+	die ();
+}
 
-	$root = new RootPage ();
-	$page = new Page ();
-	$root->assign ('body', $page->fetch ('disabled.tpl'));
-	$root->assign ('hideHeader', true);
-	$root->display ();
+$root = new RootPage ();
+$page = new Page ();
+$root->assign ('body', $page->fetch ('disabled.tpl'));
+$root->assign ('hideHeader', true);
+$root->display ();
 ?>

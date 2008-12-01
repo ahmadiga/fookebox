@@ -20,27 +20,27 @@
  * $Id$
  */
 
-	require_once ('config/config.inc.php');
-	require_once (src_path . '/mpd.inc.php');
-	require_once (src_path . '/Album.inc.php');
-	require_once (src_path . '/RootPage.inc.php');
-	require_once (libdesire_path . 'view/Page.inc.php');
-	require_once (libdesire_path . 'util/io.inc.php');
-	require_once (libdesire_path . 'util/util.inc.php');
+require_once ('config/config.inc.php');
+require_once (src_path . '/mpd.inc.php');
+require_once (src_path . '/Album.inc.php');
+require_once (src_path . '/RootPage.inc.php');
+require_once (libdesire_path . 'view/Page.inc.php');
+require_once (libdesire_path . 'util/io.inc.php');
+require_once (libdesire_path . 'util/util.inc.php');
 
-	$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
-	$data = json_get_post ();
+$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
+$data = json_get_post ();
 
-	$file = require_attribute ('file', $data);
-	$pl = $mpd->getPlayList ();
+$file = require_attribute ('file', $data);
+$pl = $mpd->getPlayList ();
 
-	if (count ($pl) >= max_queue_length)
-	{
-		json_msg ('PLAYLIST_FULL');
-		die ();
-	}
-	$mpd->PLAdd ($file);
-	$mpd->Play ();
+if (count ($pl) >= max_queue_length)
+{
+	json_msg ('PLAYLIST_FULL');
+	die ();
+}
+$mpd->PLAdd ($file);
+$mpd->Play ();
 
-	json_msg ('SONG_QUEUED');
+json_msg ('SONG_QUEUED');
 ?>

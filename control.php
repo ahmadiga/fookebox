@@ -20,43 +20,43 @@
  * $Id$
  */
 
-	require_once ('config/config.inc.php');
-	require_once (src_path . '/mpd.inc.php');
-	require_once (src_path . '/Album.inc.php');
-	require_once (src_path . '/RootPage.inc.php');
-	require_once (libdesire_path . 'view/Page.inc.php');
-	require_once (libdesire_path . 'util/io.inc.php');
-	require_once (libdesire_path . 'util/util.inc.php');
+require_once ('config/config.inc.php');
+require_once (src_path . '/mpd.inc.php');
+require_once (src_path . '/Album.inc.php');
+require_once (src_path . '/RootPage.inc.php');
+require_once (libdesire_path . 'view/Page.inc.php');
+require_once (libdesire_path . 'util/io.inc.php');
+require_once (libdesire_path . 'util/util.inc.php');
 
-	if (!enable_controls)
-	{
-		json_msg ('Permission denied');
-		die ();
-	}
+if (!enable_controls)
+{
+	json_msg ('Permission denied');
+	die ();
+}
 
-	$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
-	$mpd->debugging = TRUE;
-	$data = json_get_post ();
+$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
+$mpd->debugging = TRUE;
+$data = json_get_post ();
 
-	$action = require_attribute ('action', $data);
+$action = require_attribute ('action', $data);
 
-	switch ($action)
-	{
-		case 'play': 		$mpd->Play ();
-					break;
-		case 'pause': 		$mpd->Pause ();
-					break;
-		case 'prev': 		$mpd->Previous ();
-					break;
-		case 'next': 		$mpd->Next ();
-					break;
-		case 'stop': 		$mpd->Stop ();
-					break;
-		case 'voldown': 	$mpd->AdjustVolume (-5);
-					break;
-		case 'volup': 		$mpd->AdjustVolume (5);
-					break;
-		case 'rebuild': 	$mpd->DBRefresh ();
-					break;
-	}
+switch ($action)
+{
+	case 'play': 		$mpd->Play ();
+				break;
+	case 'pause': 		$mpd->Pause ();
+				break;
+	case 'prev': 		$mpd->Previous ();
+				break;
+	case 'next': 		$mpd->Next ();
+				break;
+	case 'stop': 		$mpd->Stop ();
+				break;
+	case 'voldown': 	$mpd->AdjustVolume (-5);
+				break;
+	case 'volup': 		$mpd->AdjustVolume (5);
+				break;
+	case 'rebuild': 	$mpd->DBRefresh ();
+				break;
+}
 ?>

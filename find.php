@@ -20,76 +20,77 @@
  * $Id$
  */
 
-	require_once ('config/config.inc.php');
-	require_once (src_path . '/mpd.inc.php');
-	require_once (src_path . '/Album.inc.php');
-	require_once (src_path . '/RootPage.inc.php');
-	require_once (libdesire_path . 'view/Page.inc.php');
-	require_once (libdesire_path . 'util/io.inc.php');
-	require_once (libdesire_path . 'util/util.inc.php');
+require_once ('config/config.inc.php');
+require_once (src_path . '/mpd.inc.php');
+require_once (src_path . '/Album.inc.php');
+require_once (src_path . '/RootPage.inc.php');
+require_once (libdesire_path . 'view/Page.inc.php');
+require_once (libdesire_path . 'util/io.inc.php');
+require_once (libdesire_path . 'util/util.inc.php');
 
-	function compare_artists_and_albums ($a, $b)
+function compare_artists_and_albums ($a, $b)
+{
+	if ($a->getName () == '') return 1;
+	if ($b->getName () == '') return -1;
+	$aName = $a->getArtist () . " - " . $a->getName ();
+	$bName = $b->getArtist () . " - " . $b->getName ();
+	return strcasecmp ($aName, $bName);
+}
+
+function compare_albums ($a, $b)
+{
+	if ($a->getName () == '') return 1;
+	if ($b->getName () == '') return -1;
+	return strcasecmp ($a->getName (), $b->getName ());
+}
+
+$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
+$data = json_get_post ();
+
+$where = require_attribute ('where', $data);
+$what = require_attribute ('what', $data);
+
+force_in_array ($where, array (MPD_SEARCH_GENRE, MPD_SEARCH_ARTIST,
+							MPD_SEARCH_ALBUM));
+
+$albums = array ();
+
+foreach ($mpd->Find ($where, $what) as $item)
+{
+	$album = NULL;
+	$found = false;
+
+	$albumName = $item ['Album'];
+	$artist = $item ['Artist'];
+
+	for ($i=0; $i < count ($albums); $i++)
 	{
-		if ($a->getName () == '') return 1;
-		if ($b->getName () == '') return -1;
-		$aName = $a->getArtist () . " - " . $a->getName ();
-		$bName = $b->getArtist () . " - " . $b->getName ();
-		return strcasecmp ($aName, $bName);
-	}
-
-	function compare_albums ($a, $b)
-	{
-		if ($a->getName () == '') return 1;
-		if ($b->getName () == '') return -1;
-		return strcasecmp ($a->getName (), $b->getName ());
-	}
-
-	$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
-	$data = json_get_post ();
-
-	$where = require_attribute ('where', $data);
-	$what = require_attribute ('what', $data);
-
-	force_in_array ($where, array (MPD_SEARCH_GENRE, MPD_SEARCH_ARTIST, MPD_SEARCH_ALBUM));
-
-	$albums = array ();
-
-	foreach ($mpd->Find ($where, $what) as $item)
-	{
-		$album = NULL;
-		$found = false;
-
-		$albumName = $item ['Album'];
-		$artist = $item ['Artist'];
-
-		for ($i=0; $i < count ($albums); $i++)
+		if ($albums [$i]->equals (new Album ($artist, $albumName)))
 		{
-			if ($albums [$i]->equals (new Album ($artist, $albumName)))
-			{
-				$albums [$i]->addTrack ($item);
-				$found = true;
-			}
-		}
-		if (!$found) {
-			$album = new Album ($artist, $albumName);
-			$album->addTrack ($item);
-			$albums [] = $album;
+			$albums [$i]->addTrack ($item);
+			$found = true;
 		}
 	}
-
-	if ($where == 'genre')
-	{
-		usort ($albums, 'compare_artists_and_albums');
+	if (!$found) {
+		$album = new Album ($artist, $albumName);
+		$album->addTrack ($item);
+		$albums [] = $album;
 	}
-	else
-	{
-		usort ($albums, 'compare_albums');
-	}
+}
 
-	$root = new RootPage ();
-	$page = new Page ();
-	$page->assign ('where', $where);
-	$page->assign ('what', $what);
-	$page->assign ('albums', $albums);
-	json_data ('searchResult', $page->fetch ('search.tpl'));
+if ($where == 'genre')
+{
+	usort ($albums, 'compare_artists_and_albums');
+}
+else
+{
+	usort ($albums, 'compare_albums');
+}
+
+$root = new RootPage ();
+$page = new Page ();
+$page->assign ('where', $where);
+$page->assign ('what', $what);
+$page->assign ('albums', $albums);
+json_data ('searchResult', $page->fetch ('search.tpl'));
 ?>
