@@ -4,6 +4,7 @@
 == 0.2.0 ==
 
  * Added the ability to auto-queue songs when the playlist gets empty
+ * Updated smarty to version 2.6.20
 
 == 0.1.1 ==
 
