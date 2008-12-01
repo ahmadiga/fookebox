@@ -31,11 +31,6 @@ In order to run fookebox you will need:
 
 == How to set it up ==
 
-=== PHP ===
-
-Make sure to enable always_populate_raw_post_data in your php configuration (php.ini) or
-fookebox will complain.
-
 === web server ===
 
 Your web server needs to understand rewrite rules (for apache, enable mod_rewrite).

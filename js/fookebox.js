@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: RootPage.inc.php 402 2007-03-15 02:43:03Z stefan $
+ * $Id$
  */
 
 // the currently open tab
@@ -65,7 +65,8 @@ function setTab (name)
 function updateStatus ()
 {
 	setTimeout ("updateStatus()", 1000);
-	http_get ('status', '&updated=' + lastPlaylistUpdate + '&qlen=' + queueLength);
+	http_get ('status', '&updated=' + lastPlaylistUpdate + '&qlen=' +
+								queueLength);
 }
 
 function setPlaylist (data)
@@ -97,9 +98,12 @@ function apply_data (result)
 			var artist = data.artist;
 			var track = data.track;
 			var timeTotal = data.timeTotal;
-			if (artist != getContent ('artist')) setContent ('artist', artist);
-			if (track != getContent ('track')) setContent ('track', track);
-			if (timeTotal != getContent ('timeTotal')) setContent ('timeTotal', timeTotal);
+			if (artist != getContent ('artist'))
+				setContent ('artist', artist);
+			if (track != getContent ('track'))
+				setContent ('track', track);
+			if (timeTotal != getContent ('timeTotal'))
+				setContent ('timeTotal', timeTotal);
 			setContent ('timePassed', data.timePassed);
 			break;
 		case 'playlist':
@@ -192,9 +196,9 @@ function showArtist (artist, command)
 	showProgressbar ();
 	var data = {
 		'where' : 'artist',
-		'what'	: encodeURIComponent (artist)
+		'what'	: artist
 	}
-	http_post (command, JSON.stringify (data));
+	http_post (command, data);
 }
 
 function genreSearch (genre)
@@ -212,9 +216,9 @@ function showGenre (genre, command)
 	showProgressbar ();
 	var data = {
 		'where' : 'genre',
-		'what'	: encodeURIComponent (genre)
+		'what'	: genre
 	}
-	http_post (command, JSON.stringify (data));
+	http_post (command, data);
 }
 
 function albumSearch (album)
@@ -231,30 +235,30 @@ function showAlbum (album, command)
 {
 	var data = {
 		'where' : 'album',
-		'what'	: encodeURIComponent (album)
+		'what'	: album
 	}
-	http_post (command, JSON.stringify (data));
+	http_post (command, data);
 }
 
 function removeTrack (id)
 {
 	var data = {
-		'id' : encodeURIComponent (id)
+		'id' : id
 	}
-	http_post ('remove', JSON.stringify (data));
+	http_post ('remove', data);
 }
 
 function queueFile (file)
 {
 	var data = {
-		'file'	: encodeURIComponent (file)
+		'file'	: file
 	}
-	http_post ('queue', JSON.stringify (data));
+	http_post ('queue', data);
 }
 
 function refreshProgram ()
 {
-	setTimeout('refreshProgram()', 1000);
+	setTimeout ('refreshProgram()', 1000);
 	http_get ('/program/status');
 }
 
@@ -274,18 +278,18 @@ function search ()
 
 	var data = {
 		'where'	: searchType,
-		'what'	: encodeURIComponent (searchTerm)
+		'what'	: searchTerm
 	}
 
-	http_post ('search', JSON.stringify (data));
+	http_post ('search', data);
 }
 
 function control(action)
 {
 	var data = {
-		'action' : encodeURIComponent(action)
+		'action' : action
 	}
-	http_post ('control', JSON.stringify (data));
+	http_post ('control', data);
 }
 
 function updatePlaylist ()

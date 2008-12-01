@@ -1,22 +1,22 @@
 /*
- * libdesire 0.1 RC-2+fkb+json2
- * Copyright (C) 2006/2007 Stefan Ott. All rights reserved.
+ * libdesire 0.8.99.2008.12.01
+ * Copyright (C) 2006-2008 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id: libdesire.js 394 2007-03-14 15:43:28Z stefan $
+ * $Id$
  */
 
 // The element which is supposed to get focus
@@ -25,21 +25,7 @@ var scheduledFocus = '';
 // Whether to use DEBUG mode or not
 var DEBUG = false;
 
-// Connection-pool
-var cons = new Array ();
-
 // ------------------- data transport -------------------
-
-function handleResponse (con)
-{
-	if (con.http.readyState == 4)
-	{
-		var result = JSON.parse (con.http.responseText);
-		process_result (result);
-		con.ready = true;
-	}
-}
-
 function process_result (result)
 {
 	switch (result.type)
@@ -69,75 +55,36 @@ function process_result (result)
 	}
 }
 
-function requestObject ()
-{
-	this.ready = true;
-
-	try
-	{
-		this.http = new ActiveXObject ("Msxml2.XMLHTTP");
-	}
-	catch (e)
-	{
-		try
-		{
-			this.http = new ActiveXObject ("Microsoft.XMLHTTP");
-		}
-		catch (e)
-		{
-			this.http = new XMLHttpRequest();
-		}
-	}
-}
-
-function getConnection ()
-{
-	var con = null;
-
-	for (var i=0; i < cons.length; i++)
-	{
-		var candidate = cons [i];
-		if (candidate.ready)
-		{
-			con = candidate;
-			break;
-		}
-	}
-	if (con == null)
-	{
-		con = new requestObject();
-		con.num = i;
-		cons [cons.length] = con;
-	}
-	con.ready = false;
-	return con;
-}
-
-function http_post (url, data)
-{
-	var con = getConnection ();
-	con.http.open ('post', url + '?ms=' + new Date ().getTime (), true);
-	con.http.setRequestHeader ('Content-Type', 'application/x-www-form-urlencoded;');
-	con.http.onreadystatechange = function () {
-		handleResponse (con);
-	}
-	con.http.send (data);
-}
-
-function http_get (url, additional)
+function http_get(url, additional)
 {
 	if (!additional)
-	{
 		additional = ''
-	}
-	var con = getConnection ();
-	con.http.open ('get', url + '?ms=' + new Date ().getTime () + additional, true);
-	con.http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
-	con.http.onreadystatechange = function ()
-	{
-		handleResponse (con);
-	}
-	con.http.send (null);
+
+	time = new Date().getTime();
+
+	new Ajax.Request(url + '?ms=' + time + additional, {
+		method: 'get',
+		onSuccess: function(transport)
+		{
+			var json = transport.responseText.evalJSON(true);
+			process_result(json);
+		}
+	});
+}
+
+function http_post(url, data)
+{
+	time = new Date().getTime();
+
+	new Ajax.Request(url + '?ms=' + time, {
+		method: 'post',
+		parameters: 'data=' + encodeURIComponent(Object.toJSON(data)),
+		onSuccess: function(transport)
+		{
+			var json = transport.responseText.evalJSON(true);
+			process_result(json);
+		}
+	});
 }
 
 // ------------------- content manipulation -------------------
@@ -159,7 +106,6 @@ function apply_focus ()
 	}
 }
 
-
 function showElement (elementID)
 {
 	var element = document.getElementById (elementID);
@@ -174,7 +120,7 @@ function hideElement (elementID)
 
 function clear (elementID)
 {
-	var element = document.getElementById (elementID);	
+	var element = document.getElementById (elementID);
 	element.innerHTML = '';
 }
 

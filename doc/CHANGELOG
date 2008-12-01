@@ -4,10 +4,10 @@
 == 0.2.0 ==
 
  * Added the ability to auto-queue songs when the playlist gets empty
+ * Switched to using prototype for JSON data transport
  * Updated smarty to version 2.6.20
  * Updated scriptaculous to version 1.8.2
  * Updated prototype to version 1.6.0.3
- * Updated the JavaScript JSON library
 
 == 0.1.1 ==
 

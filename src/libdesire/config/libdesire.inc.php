@@ -29,14 +29,6 @@ function testConstants ($ignore)
 	}
 }
 
-function testConfig ()
-{
-	if (!ini_get ('always_populate_raw_post_data'))
-	{
-		die ('always_populate_raw_post_data disabled');
-	}
-}
-
 define ('libdesire_path', realpath (dirname (__FILE__) . '/..') . '/');
 
 if (defined ('libdesire_ignore'))
@@ -49,5 +41,4 @@ else
 }
 
 testConstants ($ignore);
-testConfig ();
 ?>
