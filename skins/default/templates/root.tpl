@@ -14,7 +14,6 @@
 {/if}
 		<script type="text/javascript" src="{$smarty.const.base_url}js/libdesire/libdesire.js"></script>
 		<script type="text/javascript" src="{$smarty.const.base_url}js/fookebox.js"></script>
-		<script type="text/javascript" src="{$smarty.const.base_url}js/json/json.js"></script>
 		<script type="text/javascript" src="{$smarty.const.base_url}js/prototype/prototype.js"></script>
 		<script type="text/javascript" src="{$smarty.const.base_url}js/prototype/prototype_update_helper.js"></script>
 		<script type="text/javascript" src="{$smarty.const.base_url}js/scriptaculous/scriptaculous.js"></script>
