@@ -5,6 +5,8 @@
 
  * Added the ability to auto-queue songs when the playlist gets empty
  * Updated smarty to version 2.6.20
+ * Updated scriptaculous to version 1.8.2
+ * Updated prototype to version 1.6.0.3
 
 == 0.1.1 ==
 
