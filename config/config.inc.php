@@ -25,9 +25,9 @@
 	if (is_file ($dir . '/site.conf.php'))
 	{
 		require_once ($dir . '/site.conf.php');
+		require_once ($dir . '/defaults.inc.php');
 		define ('smarty_template_dir', $base . '/skins/' . skin .'/templates');
 		require_once ($dir . '/../src/libdesire/config/libdesire.inc.php');
-		require_once ($dir . '/defaults.inc.php');
 	}
 	else
 	{
