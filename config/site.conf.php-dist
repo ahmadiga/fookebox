@@ -19,7 +19,7 @@
  *
  * $Id$
  */
-	define ('base_url', 'http://localhost/~stefan/mpd/');
+	define ('base_url', 'http://localhost/mpd/');
 
 	//define ('mpd_host', 'localhost');
 	//define ('mpd_port', '6600');
