@@ -15,7 +15,7 @@ tarfile="fookebox-${VERSION}.tar"
 echo "Verison: ${VERSION}"
 
 echo "Creating archive: ${tarfile}"
-tar cf fookebox-${VERSION}.tar . \
+tar cf fookebox-${VERSION}.tar ../${PWD##*/} \
 	--exclude=.svn \
 	--exclude=skins/compiled/* \
 	--exclude=config/site.conf.php \
