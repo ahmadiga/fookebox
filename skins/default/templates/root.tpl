@@ -15,8 +15,12 @@
 		<script type="text/javascript" src="{$smarty.const.base_url}js/libdesire/libdesire.js"></script>
 		<script type="text/javascript" src="{$smarty.const.base_url}js/fookebox.js"></script>
 		<script type="text/javascript" src="{$smarty.const.base_url}js/prototype/prototype.js"></script>
-		<script type="text/javascript" src="{$smarty.const.base_url}js/prototype/prototype_update_helper.js"></script>
-		<script type="text/javascript" src="{$smarty.const.base_url}js/scriptaculous/scriptaculous.js"></script>
+		<script type="text/javascript" src="{$smarty.const.base_url}js/scriptaculous/scriptaculous.js?load=effects"></script>
+		<script type="text/javascript">
+		<!--
+			var base_url="{$base_url}"
+		-->
+		</script>
 	</head>
 	<body id="body">
 		<div id="message" style="display: none">

@@ -24,16 +24,22 @@ information on the secondary frontend (details: see below).
 
 In order to run fookebox you will need:
 
- * mpd
- * some web server (eg. apache)
- * php (should work with version 4 and 5)
+ * MPD
+ * Some web server (eg. apache)
+ * PHP (should work with version 4 and 5)
 
 
 == How to set it up ==
 
 === web server ===
 
-Your web server needs to understand rewrite rules (for apache, enable mod_rewrite).
+Your web server needs to understand rewrite rules (for apache, enable
+mod_rewrite).
+
+Also, do not install fookebox under a userdir (eg. http://yourhost/~yourname)
+since mod_rewrite will do bad things otherwise (see "Home directory expansion"
+on http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html#rewriterule) and your
+installation is going to break in subtle ways.
 
 === fookebox ===
 

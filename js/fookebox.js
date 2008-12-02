@@ -147,7 +147,7 @@ function process_message (message)
 			window.location = 'disabled';
 			break;
 		case 'JUKEBOX_ENABLED':
-			window.location = '/';
+			window.location = base_url;
 			break;
 		case 'SONG_QUEUED':
 			updatePlaylist ();
@@ -259,7 +259,7 @@ function queueFile (file)
 function refreshProgram ()
 {
 	setTimeout ('refreshProgram()', 1000);
-	http_get ('/program/status');
+	http_get (base_url + '/program/status');
 }
 
 function updateDisabledJukebox ()
