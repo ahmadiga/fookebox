@@ -16,7 +16,7 @@ echo "Verison: ${VERSION}"
 
 echo "Copying files"
 mkdir ../fookebox-${VERSION} || exit 8
-cp -r * ../fookebox-${VERSION} || exit 9
+cp -ra . ../fookebox-${VERSION} || exit 9
 
 echo "Creating archive: ${tarfile}"
 tar cf fookebox-${VERSION}.tar ../fookebox-${VERSION} \
