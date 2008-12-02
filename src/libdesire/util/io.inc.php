@@ -21,21 +21,44 @@
  */
 
 require_once (dirname (__FILE__) . '/../config/libdesire.inc.php');
-require_once (libdesire_path . 'json/JSON.php');
 require_once (libdesire_path . 'util/util.inc.php');
+
+function ld_json_encode($msg)
+{
+	if (version_compare(PHP_VERSION, "5.2.0", "ge"))
+	{
+		return json_encode ($msg);
+	}
+	else
+	{
+		require_once (libdesire_path . 'json/JSON.php');
+		$json = new Services_JSON ();
+		return $json->encode (json_msg_array ($msg));
+	}
+}
+
+function ld_json_decode($msg)
+{
+	if (version_compare(PHP_VERSION, "5.2.0", "ge"))
+	{
+		return json_decode ($msg);
+	}
+	else
+	{
+		require_once (libdesire_path . 'json/JSON.php');
+		$json = new Services_JSON ();
+		return $json->decode (json_msg_array ($msg));
+	}
+}
 
 function json_msg ($msg)
 {
-	$json = new Services_JSON ();
-
-	echo $json->encode (json_msg_array ($msg));
+	echo ld_json_encode (json_msg_array ($msg));
 }
 
 function json_window ($url)
 {
-	$json = new Services_JSON ();
-
-	echo $json->encode (array (
+	echo ld_json_encode (array (
 		'type'	=> 'window',
 		'url'	=> $url
 	));
@@ -51,9 +74,7 @@ function json_msg_array ($msg)
 
 function json_multi ($items)
 {
-	$json = new Services_JSON ();
-
-	echo $json->encode (array (
+	echo ld_json_encode (array (
 		'type'	=> 'multi',
 		'items'	=> $items
 	));
@@ -77,9 +98,7 @@ function json_data_array ($target, $data, $extra = array ())
 
 function json_data ($target, $data, $extra = array ())
 {
-	$json = new Services_JSON ();
-
-	echo $json->encode (json_data_array ($target, $data, $extra));
+	echo ld_json_encode (json_data_array ($target, $data, $extra));
 }
 
 function _json_decode_array ($array)
@@ -99,10 +118,8 @@ function _json_decode_array ($array)
 
 function json_get_post ()
 {
-	$json = new Services_JSON ();
-
 	$postData = stripslashes($_POST['data']);
-	$jsonData = $json->decode ($postData);
+	$jsonData = ld_json_decode ($postData);
 
 	foreach (get_object_vars ($jsonData) as $key => $item)
 	{
