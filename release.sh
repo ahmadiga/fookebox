@@ -14,8 +14,12 @@ tarfile="fookebox-${VERSION}.tar"
 
 echo "Verison: ${VERSION}"
 
+echo "Copying files"
+mkdir ../fookebox-${VERSION} || exit 8
+cp -r * ../fookebox-${VERSION} || exit 9
+
 echo "Creating archive: ${tarfile}"
-tar cf fookebox-${VERSION}.tar ../${PWD##*/} \
+tar cf fookebox-${VERSION}.tar ../fookebox-${VERSION} \
 	--exclude=.svn \
 	--exclude=skins/compiled/* \
 	--exclude=config/site.conf.php \
