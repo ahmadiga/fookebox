@@ -297,7 +297,6 @@ li.seperator {
 	text-align: center;
 	height: 140px;
 	background: #000a00;
-	background-image: url(img/now.png);
 	background-repeat: no-repeat;
 }
 
@@ -326,7 +325,6 @@ li.seperator {
 	text-align: center;
 	height: 130px;
 	background: #050500;
-	background-image: url(img/next.png);
 	background-repeat: no-repeat;
 }
 
