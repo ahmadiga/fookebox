@@ -4,6 +4,7 @@
 == 0.2.0 ==
 
  * Added the ability to auto-queue songs when the playlist gets empty
+ * Fixed some issues when running fookebox in a sub directory
  * Switched to using prototype for JSON data transport
  * Updated smarty, scriptaculous and prototype to their latest versions
 
