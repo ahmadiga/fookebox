@@ -1,7 +1,7 @@
 <?php
 /*
  * fookebox
- * Copyright (C) 2007-2008 Stefan Ott. All rights reserved.
+ * Copyright (C) 2007-2009 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,6 +49,7 @@ $data = json_get_post ();
 
 $where = require_attribute ('where', $data);
 $what = require_attribute ('what', $data);
+$searchArtist = try_attribute ('artist', $data);
 
 force_in_array ($where, array (MPD_SEARCH_GENRE, MPD_SEARCH_ARTIST,
 							MPD_SEARCH_ALBUM));
@@ -92,5 +93,7 @@ $page = new Page ();
 $page->assign ('where', $where);
 $page->assign ('what', $what);
 $page->assign ('albums', $albums);
+if ($where == 'album')
+	$page->assign('searchArtist', $searchArtist);
 json_data ('searchResult', $page->fetch ('search.tpl'));
 ?>

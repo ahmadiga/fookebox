@@ -4,6 +4,7 @@
 == 0.2.1 ==
 
  * Switched to using PHP's internal JSON functions on recent PHP versions
+ * Added link to get back to the artist from an album
 
 == 0.2.0 ==
 

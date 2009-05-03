@@ -194,10 +194,12 @@ function artistFind (artist)
 function showArtist (artist, command)
 {
 	showProgressbar ();
+
 	var data = {
 		'where' : 'artist',
 		'what'	: artist
 	}
+
 	http_post (command, data);
 }
 
@@ -221,21 +223,22 @@ function showGenre (genre, command)
 	http_post (command, data);
 }
 
-function albumSearch (album)
+function albumSearch (album, artist)
 {
-	showAlbum (album, 'search');
+	showAlbum (album, 'search', artist);
 }
 
-function albumFind (album)
+function albumFind (album, artist)
 {
-	showAlbum (album, 'find');
+	showAlbum (album, 'find', artist);
 }
 
-function showAlbum (album, command)
+function showAlbum (album, command, artist)
 {
 	var data = {
 		'where' : 'album',
-		'what'	: album
+		'what'	: album,
+		'artist': artist
 	}
 	http_post (command, data);
 }
