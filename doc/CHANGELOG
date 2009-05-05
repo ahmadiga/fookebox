@@ -6,6 +6,7 @@
  * Switched to using PHP's internal JSON functions on recent PHP versions
  * Albums in search results are now automatically expanded
  * Added support for forward/back buttons
+ * Updated smarty
 
 == 0.2.0 ==
 
