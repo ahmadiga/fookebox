@@ -34,6 +34,33 @@ var queueLength = 0;
 // the currently known url
 var currentURL = '';
 
+function ajax_get(url, args, onsucces) {
+	var time = new Date().getTime();
+
+	new Ajax.Request(url + '?ms=' + time + args,
+	{
+		method: 'get',
+		onSuccess: onsucces,
+		onFailure: function() {
+			showMessage ('Something bad happened');
+		}
+	});
+}
+
+function ajax_post(url, data, onsucces) {
+	var time = new Date().getTime();
+
+	new Ajax.Request(url + '?ms=' + time,
+	{
+		method: 'post',
+		parameters: { 'data': data.toJSON() },
+		onSuccess: onsucces,
+		onFailure: function() {
+			showMessage ('Something bad happened');
+		}
+	});
+}
+
 function applyURL(url)
 {
 	currentURL = url;
@@ -94,8 +121,8 @@ function setTab (name)
 {
 	if (name == currentTab) return;
 
-	showElement (name + 'List');
-	hideElement (currentTab + 'List');
+	$(name + 'List').show();
+	$(currentTab + 'List').hide();
 
 	document.getElementById (name + 'Tab').className = 'active';
 	document.getElementById (currentTab + 'Tab').className = 'inactive';
@@ -109,8 +136,31 @@ function setTab (name)
 function updateStatus ()
 {
 	setTimeout ("updateStatus()", 1000);
-	http_get ('status', '&updated=' + lastPlaylistUpdate + '&qlen=' +
-								queueLength);
+
+	ajax_get('status', '&updated=' + lastPlaylistUpdate + '&qlen=' +
+			queueLength, function(transport)
+	{
+			var response = transport.responseText;
+			var content = response.evalJSON();
+
+			if (content.type == 'message') {
+				process_message(content.message)
+				return;
+			}
+
+			var data = content.data;
+			var artist = data.artist;
+			var track = data.track;
+			var timeTotal = data.timeTotal;
+
+			if (artist != $('artist').innerHTML)
+				$('artist').innerHTML = artist;
+			if (track != $('track').innerHTML)
+				$('track').innerHTML = track;
+			if (timeTotal != $('timeTotal').innerHTML)
+				$('timeTotal').innerHTML = timeTotal;
+			$('timePassed').innerHTML = data.timePassed;
+	});
 }
 
 function setPlaylist (data)
@@ -130,54 +180,6 @@ function setPlaylist (data)
 		else
 			li.innerHTML = '<span class="freeSlot">-- empty --</span>';
 	}
-}
-
-function apply_data (result)
-{
-	switch (result.target)
-	{
-		case 'status':
-			var data = result.data;
-
-			var artist = data.artist;
-			var track = data.track;
-			var timeTotal = data.timeTotal;
-			if (artist != getContent ('artist'))
-				setContent ('artist', artist);
-			if (track != getContent ('track'))
-				setContent ('track', track);
-			if (timeTotal != getContent ('timeTotal'))
-				setContent ('timeTotal', timeTotal);
-			setContent ('timePassed', data.timePassed);
-			break;
-		case 'playlist':
-			var data = result.data;
-			setPlaylist (data.queue.splice (1));
-			lastPlaylistUpdate = data.updated;
-			break;
-		case 'queue':
-			var data = result.data;
-			setPlaylist (data.queue.splice (1));
-			break;
-		case 'searchResult':
-			setContent ('searchResult', result.data);
-			break;
-		case 'statusPage':
-			setContent ('clock', result.data.time);
-			setContent ('currentTitle', result.data.currentTitle);
-			setContent ('currentState', result.data.currentState);
-			if (result.data.nextTitle) {
-				showElement ('next');
-				setContent ('nextTitle', result.data.nextTitle);
-				setContent ('nextTime', result.data.nextTime);
-			} else {
-				hideElement ('next');
-			}
-			break;
-		default:
-			if (DEBUG) alert ('Unknown target: ' + result.target);
-	}
-	hideProgressbar ();
 }
 
 function process_message (message)
@@ -230,109 +232,161 @@ function artistSearch (artist)
 	showArtist (artist, 'search');
 }
 
-function showArtist (artist, command)
-{
-	showProgressbar ();
-
-	var data = {
-		'where' : 'artist',
-		'what'	: artist
-	}
-
-	window.location = "#artist=" + artist;
-	currentURL = window.location.href;
-
-	http_post (command, data);
-}
-
 function genreSearch (genre)
 {
 	showGenre (genre, 'search');
 }
 
+function showArtist (artist, command)
+{
+	showProgressbar ();
+
+	var data = new Hash();
+	data.set('where', 'artist');
+	data.set('what', artist);
+
+	window.location = "#artist=" + artist;
+	currentURL = window.location.href;
+
+	ajax_post('search', data, function(transport)
+	{
+		var response = transport.responseText;
+		var content = response.evalJSON();
+		$('searchResult').innerHTML = content.data;
+		hideProgressbar();
+	});
+}
+
 function showGenre (genre, command)
 {
 	showProgressbar ();
-	var data = {
-		'where' : 'genre',
-		'what'	: genre
-	}
+
+	var data = new Hash();
+	data.set('where', 'genre');
+	data.set('what', genre);
 
 	window.location = "#genre=" + genre;
-	http_post (command, data);
-}
 
-function albumSearch (album, artist)
-{
-	showAlbum (album, 'search', artist);
-}
-
-function showAlbum (album, command, artist)
-{
-	var data = {
-		'where' : 'album',
-		'what'	: album,
-		'artist': artist
-	}
-	window.location = "#album=" + album;
-	currentURL = window.location.href;
-
-	http_post (command, data);
-}
-
-function removeTrack (id)
-{
-	var data = {
-		'id' : id
-	}
-	http_post ('remove', data);
-}
-
-function queueFile (file)
-{
-	var data = {
-		'file'	: file
-	}
-	http_post ('queue', data);
-}
-
-function refreshProgram ()
-{
-	setTimeout ('refreshProgram()', 1000);
-	http_get (base_url + '/program/status');
-}
-
-function updateDisabledJukebox ()
-{
-	setTimeout ('updateDisabledJukebox()', 1000);
-	http_get ('disabled/status');
+	ajax_post('search', data, function(transport)
+	{
+		var response = transport.responseText;
+		var content = response.evalJSON();
+		$('searchResult').innerHTML = content.data;
+		hideProgressbar();
+	});
 }
 
 function search ()
 {
 	showProgressbar ();
 
-	var form = document.forms ["searchform"];
-	var searchType = form.elements ["searchType"].value;
-	var searchTerm = form.elements ["searchTerm"].value;
+	var form = document.forms["searchform"];
+	var searchType = form.elements["searchType"].value;
+	var searchTerm = form.elements["searchTerm"].value;
 
-	var data = {
-		'where'	: searchType,
-		'what'	: searchTerm
-	}
+	var data = new Hash();
+	data.set('where', searchType);
+	data.set('what', searchTerm);
 
-	http_post ('search', data);
+	ajax_post('search', data, function(transport)
+	{
+		var response = transport.responseText;
+		var content = response.evalJSON();
+		$('searchResult').innerHTML = content.data;
+		hideProgressbar();
+	});
+}
+
+function removeTrack (id)
+{
+	var data = new Hash()
+	data.set('id', id);
+
+	ajax_post('remove', data, function(transport)
+	{
+		var response = transport.responseText;
+		var content = response.evalJSON();
+		process_message(content.message);
+	});
+}
+
+function queueFile (file)
+{
+	var data = new Hash();
+	data.set('file', file);
+
+	ajax_post('queue', data, function(transport)
+	{
+		var response = transport.responseText;
+		var content = response.evalJSON();
+		process_message(content.message);
+	});
+}
+
+function refreshProgram()
+{
+	setTimeout ('refreshProgram()', 1000);
+	ajax_get(base_url + '/program/status', '', function(transport)
+	{
+		var response = transport.responseText;
+		var content = response.evalJSON();
+		var data = content.data;
+
+		$('clock').innerHTML = data.time;
+		$('currentTitle').innerHTML = data.currentTitle;
+		$('currentState').innerHTML = data.currentState;
+
+		if (data.nextTitle) {
+			$('next').show();
+			$('nextTitle').innerHTML = data.nextTitle;
+			$('nextTime').innerHTML = data.nextTime;
+		} else {
+			$('next').hide();
+		}
+	});
+}
+
+function updateDisabledJukebox ()
+{
+	setTimeout ('updateDisabledJukebox()', 1000);
+
+	ajax_get('disabled/status', '', function(transport)
+	{
+		var response = transport.responseText;
+		var content = response.evalJSON();
+		process_message(content.message);
+	});
 }
 
 function control(action)
 {
-	var data = {
-		'action' : action
-	}
-	http_post ('control', data);
+	var data = new Hash()
+	data.set('action', action);
+
+	ajax_post('control', data, function(transport)
+	{
+		var response = transport.responseText;
+		var content = response.evalJSON();
+		process_message(content.message);
+	});
 }
 
 function updatePlaylist ()
 {
-	http_get ('playlist');
+	var time = new Date().getTime();
+
+	ajax_get('playlist', '', function(transport)
+	{
+		var response = transport.responseText;
+		var content = response.evalJSON();
+
+		if (content.type == 'message') {
+			process_message(content.message)
+			return;
+		}
+
+		var data = content.data;
+		setPlaylist(data.queue.splice (1));
+		lastPlaylistUpdate = data.updated;
+	});
 }

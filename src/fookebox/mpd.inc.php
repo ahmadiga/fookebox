@@ -69,6 +69,8 @@ define("MPD_SEARCH_ARTIST", "artist");
 define("MPD_SEARCH_TITLE",  "title");
 define("MPD_SEARCH_ALBUM",  "album");
 define("MPD_SEARCH_GENRE",  "genre");
+define("MPD_SEARCH_FILENAME",  "filename");
+define("MPD_SEARCH_ANY",  "any");
 
 // MPD Cache Tables
 define("MPD_TBL_ARTIST","artist");
@@ -654,6 +656,8 @@ class mpd {
 		if (	$type != MPD_SEARCH_ARTIST and
 			$type != MPD_SEARCH_ALBUM and
 			$type != MPD_SEARCH_TITLE and
+			$type != MPD_SEARCH_FILENAME and
+			$type != MPD_SEARCH_ANY and
 			$type != MPD_SEARCH_GENRE ) {
 			$this->errStr = "mpd->Search(): invalid search type";
 			return NULL;
@@ -678,6 +682,8 @@ class mpd {
 		if (	$type != MPD_SEARCH_ARTIST and
 			$type != MPD_SEARCH_ALBUM and
 			$type != MPD_SEARCH_TITLE and
+			$type != MPD_SEARCH_FILENAME and
+			$type != MPD_SEARCH_ANY and
 			$type != MPD_SEARCH_GENRE ) {
 			$this->errStr = "mpd->Find(): invalid find type";
 			return NULL;

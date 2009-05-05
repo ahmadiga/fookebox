@@ -63,6 +63,9 @@ if (find_over_search)
 else
 	$result = $mpd->Search($where, $what);
 
+if (!$result)
+	$result = array();
+
 foreach ($result as $item)
 {
 	$album = NULL;
