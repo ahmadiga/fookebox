@@ -31,9 +31,12 @@ var lastPlaylistUpdate = 0;
 // length of our currently known queue
 var queueLength = 0;
 
-function parseLocation()
+// the currently known url
+var currentURL = '';
+
+function applyURL(url)
 {
-	var url = window.location.href;
+	currentURL = url;
 
 	if (url.indexOf("#") > -1)
 	{
@@ -43,10 +46,30 @@ function parseLocation()
 		var value = params[1];
 
 		if (key == 'artist')
-		{
-			showArtist(value, 'search');
-		}
+			artistSearch(value);
+		else if (key == 'genre')
+			genreSearch(value);
+		else if (key == 'tab')
+			setTab(value);
 	}
+}
+
+function parseLocation()
+{
+	var url = window.location.href;
+	applyURL(url);
+	setTimeout ("updateURL()", 200);
+}
+
+function updateURL()
+{
+	var url = window.location.href;
+	//alert(url);
+
+	if (url != currentURL)
+		applyURL(url);
+
+	setTimeout ("updateURL()", 200);
 }
 
 function showProgressbar ()
@@ -78,6 +101,9 @@ function setTab (name)
 	document.getElementById (currentTab + 'Tab').className = 'inactive';
 
 	currentTab = name;
+
+	window.location = "#tab=" + name;
+	currentURL = window.location.href;
 }
 
 function updateStatus ()
@@ -214,6 +240,8 @@ function showArtist (artist, command)
 	}
 
 	window.location = "#artist=" + artist;
+	currentURL = window.location.href;
+
 	http_post (command, data);
 }
 
@@ -229,6 +257,8 @@ function showGenre (genre, command)
 		'where' : 'genre',
 		'what'	: genre
 	}
+
+	window.location = "#genre=" + genre;
 	http_post (command, data);
 }
 
@@ -245,6 +275,8 @@ function showAlbum (album, command, artist)
 		'artist': artist
 	}
 	window.location = "#album=" + album;
+	currentURL = window.location.href;
+
 	http_post (command, data);
 }
 
