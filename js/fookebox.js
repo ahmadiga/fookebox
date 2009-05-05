@@ -31,6 +31,24 @@ var lastPlaylistUpdate = 0;
 // length of our currently known queue
 var queueLength = 0;
 
+function parseLocation()
+{
+	var url = window.location.href;
+
+	if (url.indexOf("#") > -1)
+	{
+		var parts = url.split('#');
+		var params = parts[1].split('=');
+		var key = params[0];
+		var value = params[1];
+
+		if (key == 'artist')
+		{
+			showArtist(value, 'search');
+		}
+	}
+}
+
 function showProgressbar ()
 {
 	Effect.Appear ('progress', { 'duration' : '0.0' });
@@ -186,11 +204,6 @@ function artistSearch (artist)
 	showArtist (artist, 'search');
 }
 
-function artistFind (artist)
-{
-	showArtist (artist, 'find');
-}
-
 function showArtist (artist, command)
 {
 	showProgressbar ();
@@ -200,17 +213,13 @@ function showArtist (artist, command)
 		'what'	: artist
 	}
 
+	window.location = "#artist=" + artist;
 	http_post (command, data);
 }
 
 function genreSearch (genre)
 {
 	showGenre (genre, 'search');
-}
-
-function genreFind (genre)
-{
-	showGenre (genre, 'find');
 }
 
 function showGenre (genre, command)
@@ -228,11 +237,6 @@ function albumSearch (album, artist)
 	showAlbum (album, 'search', artist);
 }
 
-function albumFind (album, artist)
-{
-	showAlbum (album, 'find', artist);
-}
-
 function showAlbum (album, command, artist)
 {
 	var data = {
@@ -240,6 +244,7 @@ function showAlbum (album, command, artist)
 		'what'	: album,
 		'artist': artist
 	}
+	window.location = "#album=" + album;
 	http_post (command, data);
 }
 

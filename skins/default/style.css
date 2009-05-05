@@ -253,6 +253,10 @@ a:focus {
 	list-style-image: url(img/music.png);
 }
 
+#searchResult li.track a {
+	font-weight: normal;
+}
+
 #searchResult li.album {
 	list-style-image: url(img/folder.png);
 }

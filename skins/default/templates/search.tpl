@@ -1,22 +1,11 @@
-<h2>{if $searchArtist}<a href="#" onclick="artist{if $smarty.const.find_over_search}Find{else}Search{/if}('{$searchArtist|addslashes}'); return false">{$searchArtist}</a> - {else}{$where}: {/if}
-<a href="#" onclick="javascript:
+<h2>{$what}</h2>
 {foreach from=$albums item=album}
-{	if $album->getName() == "" || $where == "album"}
-{		foreach from=$album->getTracks() item=track}
-queueFile ('{$track.file|addslashes}');
-{		/foreach}
-{	/if}
-{/foreach}
-return false" title="{$what}">{$what}</a>
-</h2>
+<h3 class="album">{if $where == "genre"}{$album->getartist()} - {/if}{$album->getname()}{if $album->getDisc()} (Disc {$album->getDisc()}){/if}</h3>
 <ul>
-{foreach from=$albums item=album}
-{	if $album->getName() == "" || $where == "album"}
+{	if $album->getName() == "" || $where != "album"}
 {		foreach from=$album->getTracks() item=track}
-	<li class="track"><a href="#" onclick="javascript:queueFile ('{$track.file|addslashes}'); return false" title="{$track.file}">{if $track.Track && $where == "album"}{$track.Track} - {/if}{$track.Artist} - {$track.Title}</a></li>
+	<li class="track"><a href="#" onclick="javascript:queueFile ('{$track.file|addslashes}'); return false">{$track.Track|string_format:"%02d"} - {$track.Artist} - {$track.Title}</a></li>
 {		/foreach}
-{	else}
-	<li class="album"><a href="#" onclick="javascript:album{if $smarty.const.find_over_search}Find{else}Search{/if}('{$album->getName()|addslashes}', '{$album->getArtist()|addslashes}'); return false">{if $where == "genre"}{$album->getArtist()} - {/if}{$album->getName()}</a>{if $where != "genre"} <span style="font-style: italic">[{$album->getArtist()}]</span>{/if}</li>
 {	/if}
-{/foreach}
 </ul>
+{/foreach}

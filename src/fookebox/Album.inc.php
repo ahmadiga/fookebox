@@ -1,7 +1,7 @@
 <?php
 /*
  * fookebox
- * Copyright (C) 2007-2009 Stefan Ott. All rights reserved.
+ * Copyright (C) 2007-2008 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,11 +28,12 @@ class Album
 	var $_name;
 	var $_tracks;
 
-	function Album ($artist, $name)
+	function Album ($artist, $name, $disc = '')
 	{
 		$this->_artist = $artist;
-		$this->_name = $name;
+		$this->_name = $name == '' ? 'Unknown Album' : $name;
 		$this->_tracks = array ();
+		$this->_disc = $disc;
 	}
 
 	function getName ()
@@ -83,9 +84,15 @@ class Album
 		return $this->_tracks;
 	}
 
+	function getDisc ()
+	{
+		return $this->_disc;
+	}
+
 	function equals ($other)
 	{
-		return ($this->_name == $other->getName ());
+		return ($this->_name == $other->getName () &&
+			$this->_disc == $other->getDisc ());
 	}
 }
 ?>

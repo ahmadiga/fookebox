@@ -14,5 +14,6 @@
 <script type="text/javascript">
 <!--
 	prepareProgressbar ();
+	parseLocation();
 -->
 </script>

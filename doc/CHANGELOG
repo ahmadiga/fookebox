@@ -1,10 +1,10 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
-== 0.2.1 ==
+== 0.3.0 ==
 
  * Switched to using PHP's internal JSON functions on recent PHP versions
- * Added link to get back to the artist from an album
+ * Albums in search results are now automatically expanded
 
 == 0.2.0 ==
 

@@ -1,7 +1,7 @@
 <?php
 /*
  * fookebox
- * Copyright (C) 2007-2009 Stefan Ott. All rights reserved.
+ * Copyright (C) 2007-2008 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,8 +32,8 @@ function compare_artists_and_albums ($a, $b)
 {
 	if ($a->getName () == '') return 1;
 	if ($b->getName () == '') return -1;
-	$aName = $a->getArtist () . " - " . $a->getName ();
-	$bName = $b->getArtist () . " - " . $b->getName ();
+	$aName = $a->getArtist() . " - " . $a->getName() . ' ' . $a->getDisc();
+	$bName = $b->getArtist() . " - " . $b->getName() . ' ' . $b->getDisc();
 	return strcasecmp ($aName, $bName);
 }
 
@@ -41,7 +41,8 @@ function compare_albums ($a, $b)
 {
 	if ($a->getName () == '') return 1;
 	if ($b->getName () == '') return -1;
-	return strcasecmp ($a->getName (), $b->getName ());
+	return strcasecmp ($a->getName() . ' ' . $a->getDisc(),
+		$b->getName () . ' ' . $b->getDisc());
 }
 
 $mpd = new mpd (mpd_host, mpd_port, mpd_pass);
@@ -57,24 +58,31 @@ $searchArtist = try_attribute ('artist', $data);
 
 $albums = array ();
 
-foreach ($mpd->Search ($where, $what) as $item)
+if (find_over_search)
+	$result = $mpd->Find($where, $what);
+else
+	$result = $mpd->Search($where, $what);
+
+foreach ($result as $item)
 {
 	$album = NULL;
 	$found = false;
 
 	$albumName = $item ['Album'];
 	$artist = $item ['Artist'];
+	$disc = $item ['Disc'];
 
 	for ($i=0; $i < count ($albums); $i++)
 	{
-		if ($albums [$i]->equals (new Album ($artist, $albumName)))
+		if ($albums [$i]->equals (new Album ($artist, $albumName,
+			$disc)))
 		{
 			$albums [$i]->addTrack ($item);
 			$found = true;
 		}
 	}
 	if (!$found) {
-		$album = new Album ($artist, $albumName);
+		$album = new Album ($artist, $albumName, $disc);
 		$album->addTrack ($item);
 		$albums [] = $album;
 	}
