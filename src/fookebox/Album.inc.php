@@ -21,6 +21,7 @@
  */
 
 require_once (realpath (dirname (__FILE__) . '/../../config/config.inc.php'));
+require_once (src_path . '/mpd.inc.php');
 
 class Album
 {
