@@ -13,8 +13,8 @@
 		<link rel="alternate" title="News RSS" href="{$smarty.const.base_url}{$id}/feed" type="application/rss+xml" />
 {/if}
 		<script type="text/javascript" src="{$smarty.const.base_url}js/fookebox.js"></script>
-		<script type="text/javascript" src="{$smarty.const.base_url}js/prototype/prototype.js"></script>
-		<script type="text/javascript" src="{$smarty.const.base_url}js/scriptaculous/scriptaculous.js?load=effects"></script>
+		<script type="text/javascript" src="{$smarty.const.prototype_url}/prototype.js"></script>
+		<script type="text/javascript" src="{$smarty.const.scriptaculous_url}/scriptaculous.js?load=effects"></script>
 		<script type="text/javascript">
 		<!--
 			var base_url="{$base_url}"

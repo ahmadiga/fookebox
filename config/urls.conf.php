@@ -17,22 +17,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id$
+ * $Id: site.conf.php-dist 6 2008-06-12 00:05:43Z stefan@ott.net $
  */
 
-$dir = dirname (__FILE__);
-require_once ($dir . '/general.conf.php');
-
-if (is_file ($dir . '/site.conf.php'))
-{
-	require_once ($dir . '/site.conf.php');
-	require_once ($dir . '/defaults.inc.php');
-	define ('smarty_template_dir', $base . '/skins/' . skin .'/templates');
-	require_once ($dir . '/urls.conf.php');
-}
-else
-{
-	die ('Please rename config/site.conf.php-dist to site.conf.php and fill it with your site configuration.');
-}
-
+define ('prototype_url', base_url . '/js/prototype');
+define ('scriptaculous_url', base_url . '/js/scriptaculous');
 ?>
