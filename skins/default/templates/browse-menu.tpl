@@ -23,6 +23,7 @@
 {/foreach}
 	</ul>
 	</div>
+<!-- {$genres|@sort} -->
 	<ul id="genreList" style="display: none">
 {foreach from=$genres item=genre}
 		<li><a href="#" onclick="genreSearch('{$genre}'); return false">{$genre}</a></li>
