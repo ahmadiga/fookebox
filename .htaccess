@@ -1,5 +1,4 @@
 RewriteEngine on
-RewriteBase /~stefan
 
 RewriteRule ^playlist$ playlist.php [L]
 RewriteRule ^status$ status.php [L]
