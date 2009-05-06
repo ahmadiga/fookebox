@@ -66,6 +66,7 @@ function ajax_post(url, data, onsucces) {
 
 function applyURL(url)
 {
+	url = unescape(url);
 	currentURL = url;
 
 	if (url.indexOf("#") > -1)
@@ -88,7 +89,7 @@ function parseLocation()
 {
 	var url = window.location.href;
 	applyURL(url);
-	setTimeout ("updateURL()", 200);
+	setTimeout ("updateURL()", 400);
 }
 
 function updateURL()
@@ -99,7 +100,7 @@ function updateURL()
 	if (url != currentURL)
 		applyURL(url);
 
-	setTimeout ("updateURL()", 200);
+	setTimeout ("updateURL()", 400);
 }
 
 function showProgressbar ()
