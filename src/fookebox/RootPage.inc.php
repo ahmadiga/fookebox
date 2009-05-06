@@ -22,8 +22,7 @@
 
 require_once (realpath (dirname (__FILE__) . '/../../config/config.inc.php'));
 require_once (smarty_src_path . '/Smarty.class.php');
-require_once (libdesire_path . 'view/Page.inc.php');
-require_once (libdesire_path . 'util/browser.inc.php');
+require_once (src_path . '/Page.inc.php');
 
 class RootPage extends Page
 {
@@ -33,11 +32,6 @@ class RootPage extends Page
 		$this->assign ('title', $title);
 		$this->assign ('base_url', base_url);
 		$this->assign ('css_url', base_url . 'style.css');
-		$browser = browser_detection ('full');
-		if ($browser [0] == 'ie')
-		{
-			$this->assign ('ie', true);
-		}
 		$this->_id = -1;
 	}
 

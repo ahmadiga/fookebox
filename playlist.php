@@ -24,7 +24,7 @@ require_once ('config/config.inc.php');
 require_once (src_path . '/mpd.inc.php');
 require_once (src_path . '/Jukebox.inc.php');
 require_once (src_path . '/RootPage.inc.php');
-require_once (libdesire_path . 'view/Page.inc.php');
+require_once (src_path . '/Page.inc.php');
 
 $jukebox = new Jukebox ();
 if (!$jukebox->isActive ())
