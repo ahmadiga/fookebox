@@ -268,13 +268,11 @@ a:focus {
 }
 
 #progress {
-	position: fixed;
-	left: 300px;
-	top: 200px;
-	background: white;
+	position: absolute;
+	right: 30px;
+	top: 40px;
 	padding: 5px;
 	color: black;
-	width: 120px;
 }
 
 #progress #icon {

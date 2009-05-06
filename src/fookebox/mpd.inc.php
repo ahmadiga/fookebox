@@ -1061,6 +1061,7 @@ class mpd {
 		MPD_CMD_SEARCH		=> "0.0.0",
 		MPD_CMD_PLADD		=> "0.0.0",
 		MPD_CMD_PLAY		=> "0.0.0",
+		MPD_CMD_PLREMOVE	=> "0.0.0",
 	);
 
     var $COMPATIBILITY_MAX_TBL = array(
@@ -1071,6 +1072,7 @@ class mpd {
 	MPD_CMD_SEARCH			=> "99.99.99",
 	MPD_CMD_PLADD			=> "99.99.99",
 	MPD_CMD_PLAY			=> "99.99.99",
+	MPD_CMD_PLREMOVE		=> "99.99.99",
     );
 
 }   // ---------------------------- end of class ------------------------------

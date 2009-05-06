@@ -104,20 +104,13 @@ function updateURL()
 
 function showProgressbar ()
 {
-	Effect.Appear ('progress', { 'duration' : '0.0' });
+	$('progress').show();
 }
 
 function hideProgressbar ()
 {
 	if (document.getElementById ('progress'))
-		Effect.Fade ('progress', { 'duration' : '0.4' });
-}
-
-function prepareProgressbar ()
-{
-	var element = document.getElementById ('progress');
-	var x = (self.screen.width / 2) - 60;
-	element.style.left = x + "px";
+		$('progress').hide();
 }
 
 function setTab (name)
@@ -357,7 +350,7 @@ function updatePlaylist ()
 	{
 		var response = transport.responseText;
 		var data = response.evalJSON();
-
-		setPlaylist(data.queue.splice (1));
+		data.queue.shift();
+		setPlaylist(data.queue);
 	});
 }
