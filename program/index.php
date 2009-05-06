@@ -23,7 +23,7 @@
 	require_once ('../config/status.conf.php');
 	require_once (src_path . '/Event.inc.php');
 	require_once (src_path . '/RootPage.inc.php');
-	require_once (libdesire_path . 'view/Page.inc.php');
+	require_once (src_path . '/Page.inc.php');
 
 	global $_PROGRAM;
 

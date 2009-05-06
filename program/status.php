@@ -24,8 +24,7 @@
 	require_once (src_path . '/Jukebox.inc.php');
 	require_once (src_path . '/Event.inc.php');
 	require_once (src_path . '/RootPage.inc.php');
-	require_once (libdesire_path . 'view/Page.inc.php');
-	require_once (libdesire_path . 'util/io.inc.php');
+	require_once (src_path . '/Page.inc.php');
 
 	$jukebox = new Jukebox ();
 	$state = $jukebox->isActive ();
@@ -48,5 +47,5 @@
 		$data ['nextTitle'] = $next->getAsNext ();
 		$data ['nextTime'] = $next->getTime ();
 	}
-	json_data ('statusPage', $data);
+	echo json_encode($data);
 ?>

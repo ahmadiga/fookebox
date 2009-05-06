@@ -298,8 +298,7 @@ function refreshProgram()
 	ajax_get(base_url + '/program/status', function(transport)
 	{
 		var response = transport.responseText;
-		var content = response.evalJSON();
-		var data = content.data;
+		var data = response.evalJSON();
 
 		$('clock').innerHTML = data.time;
 		$('currentTitle').innerHTML = data.currentTitle;
