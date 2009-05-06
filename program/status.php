@@ -1,7 +1,7 @@
 <?php
 /*
  * fookebox
- * Copyright (C) 2007-2008 Stefan Ott. All rights reserved.
+ * Copyright (C) 2007-2009 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,33 +19,33 @@
  *
  * $Id$
  */
-	require_once ('../config/config.inc.php');
-	require_once ('../config/status.conf.php');
-	require_once (src_path . '/Jukebox.inc.php');
-	require_once (src_path . '/Event.inc.php');
-	require_once (src_path . '/RootPage.inc.php');
-	require_once (src_path . '/Page.inc.php');
 
-	$jukebox = new Jukebox ();
-	$state = $jukebox->isActive ();
-	global $_PROGRAM;
+require_once ('../config/config.inc.php');
+require_once ('../config/status.conf.php');
+require_once (src_path . '/Jukebox.inc.php');
+require_once (src_path . '/Event.inc.php');
 
-	$current = $_PROGRAM [CURRENT_EVENT];
+$jukebox = new Jukebox ();
+$state = $jukebox->isActive ();
+global $_PROGRAM;
 
-	$dateFormat = date('s') % 2 == 0 ? 'H:i' : 'H i';
-	$data = array (
-		'time'		=>	date($dateFormat),
-		'currentTitle'	=>	$current->getAsCurrent (),
-		'currentState'	=>	$current->getState ()
-	);
+$current = $_PROGRAM [CURRENT_EVENT];
 
-	$data ['hasNext'] = CURRENT_EVENT < count($_PROGRAM) - 1;
+$dateFormat = date('s') % 2 == 0 ? 'H:i' : 'H i';
+$data = array (
+	'time'		=>	date($dateFormat),
+	'currentTitle'	=>	$current->getAsCurrent (),
+	'currentState'	=>	$current->getState ()
+);
 
-	if ($data ['hasNext'])
-	{
-		$next = $_PROGRAM [CURRENT_EVENT + 1];
-		$data ['nextTitle'] = $next->getAsNext ();
-		$data ['nextTime'] = $next->getTime ();
-	}
-	echo json_encode($data);
+$data ['hasNext'] = CURRENT_EVENT < count($_PROGRAM) - 1;
+
+if ($data ['hasNext'])
+{
+	$next = $_PROGRAM [CURRENT_EVENT + 1];
+	$data ['nextTitle'] = $next->getAsNext ();
+	$data ['nextTime'] = $next->getTime ();
+}
+echo json_encode($data);
+
 ?>

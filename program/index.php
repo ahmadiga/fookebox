@@ -1,7 +1,7 @@
 <?php
 /*
  * fookebox
- * Copyright (C) 2007-2008 Stefan Ott. All rights reserved.
+ * Copyright (C) 2007-2009 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,22 +19,26 @@
  *
  * $Id$
  */
-	require_once ('../config/config.inc.php');
-	require_once ('../config/status.conf.php');
-	require_once (src_path . '/Event.inc.php');
-	require_once (src_path . '/RootPage.inc.php');
-	require_once (src_path . '/Page.inc.php');
 
-	global $_PROGRAM;
+require_once ('../config/config.inc.php');
+require_once ('../config/status.conf.php');
+require_once (src_path . '/Event.inc.php');
+require_once (src_path . '/RootPage.inc.php');
+require_once (src_path . '/Page.inc.php');
 
-	$root = new RootPage ('foobar Program');
-	$page = new Page ();
-	$page->assign ('current', $_PROGRAM [CURRENT_EVENT]);
-	if (CURRENT_EVENT < count($_PROGRAM) - 1)
-	{
-		$page->assign ('next', $_PROGRAM [CURRENT_EVENT + 1]);
-	}
-	$root->assign ('body', $page->fetch ('program.tpl'));
-	$root->assign ('hideHeader', true);
-	$root->display ();
+global $_PROGRAM;
+
+$root = new RootPage ('foobar Program');
+$page = new Page ();
+$page->assign ('current', $_PROGRAM [CURRENT_EVENT]);
+
+if (CURRENT_EVENT < count($_PROGRAM) - 1)
+{
+	$page->assign ('next', $_PROGRAM [CURRENT_EVENT + 1]);
+}
+
+$root->assign ('body', $page->fetch ('program.tpl'));
+$root->assign ('hideHeader', true);
+$root->display ();
+
 ?>
