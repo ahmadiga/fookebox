@@ -29,18 +29,18 @@ require_once (libdesire_path . 'util/io.inc.php');
 require_once (libdesire_path . 'util/util.inc.php');
 
 $mpd = new mpd (mpd_host, mpd_port, mpd_pass);
-$data = json_get_post ();
+$data = json_get_post();
 
-$file = require_attribute ('file', $data);
-$pl = $mpd->getPlayList ();
+$file = require_attribute('file', $data);
+$pl = $mpd->getPlayList();
 
 if (count ($pl) >= max_queue_length)
 {
-	json_msg ('PLAYLIST_FULL');
-	die ();
+	header("HTTP/1.1 409 Conflict");
+	echo 'The playlist is full';
+	die();
 }
-$mpd->PLAdd ($file);
-$mpd->Play ();
 
-json_msg ('SONG_QUEUED');
+$mpd->PLAdd($file);
+$mpd->Play();
 ?>

@@ -30,7 +30,8 @@ require_once (libdesire_path . 'util/util.inc.php');
 
 if (!enable_controls)
 {
-	json_msg ('Permission denied');
+	header('HTTP/1.1 403 Forbidden');
+	echo 'Permission denied';
 	die ();
 }
 

@@ -29,19 +29,19 @@ var messageTimeout;
 var lastPlaylistUpdate = 0;
 
 // length of our currently known queue
-var queueLength = 0;
+var queueLength = -1;
 
 // the currently known url
 var currentURL = '';
 
-function ajax_get(url, args, onsucces) {
+function ajax_get(url, onsucces) {
 	var time = new Date().getTime();
 
-	new Ajax.Request(url + '?ms=' + time + args,
+	new Ajax.Request(url + '?ms=' + time,
 	{
 		method: 'get',
 		onSuccess: onsucces,
-		onFailure: function() {
+		onFailure: function(transport) {
 			showMessage ('Something bad happened');
 		}
 	});
@@ -55,8 +55,14 @@ function ajax_post(url, data, onsucces) {
 		method: 'post',
 		parameters: { 'data': data.toJSON() },
 		onSuccess: onsucces,
-		onFailure: function() {
-			showMessage ('Something bad happened');
+		onFailure: function(transport) {
+			var response = transport.responseText;
+
+			if (response)
+				showMessage(response);
+			else
+				showMessage('Something bad happened');
+
 		}
 	});
 }
@@ -137,21 +143,23 @@ function updateStatus ()
 {
 	setTimeout ("updateStatus()", 1000);
 
-	ajax_get('status', '&updated=' + lastPlaylistUpdate + '&qlen=' +
-			queueLength, function(transport)
+	ajax_get('status', function(transport)
 	{
 			var response = transport.responseText;
 			var content = response.evalJSON();
+			var data = content.data;
+			var jukebox = data.jukebox;
 
-			if (content.type == 'message') {
-				process_message(content.message)
-				return;
+			if (!jukebox)
+			{
+				window.location = 'disabled';
+				return
 			}
 
-			var data = content.data;
 			var artist = data.artist;
 			var track = data.track;
 			var timeTotal = data.timeTotal;
+			var serverQueue = data.queueLength;
 
 			if (artist != $('artist').innerHTML)
 				$('artist').innerHTML = artist;
@@ -160,6 +168,9 @@ function updateStatus ()
 			if (timeTotal != $('timeTotal').innerHTML)
 				$('timeTotal').innerHTML = timeTotal;
 			$('timePassed').innerHTML = data.timePassed;
+
+			if (serverQueue != queueLength)
+				updatePlaylist();
 	});
 }
 
@@ -179,33 +190,6 @@ function setPlaylist (data)
 			li.innerHTML = item;
 		else
 			li.innerHTML = '<span class="freeSlot">-- empty --</span>';
-	}
-}
-
-function process_message (message)
-{
-	switch (message)
-	{
-		case 'PLAYLIST_FULL':
-			showMessage ('The playlist is full');
-			break;
-		case 'JUKEBOX_DISABLED':
-			window.location = 'disabled';
-			break;
-		case 'JUKEBOX_ENABLED':
-			window.location = base_url;
-			break;
-		case 'SONG_QUEUED':
-			updatePlaylist ();
-			break;
-		case 'SONG_CHANGED':
-			updatePlaylist ();
-			break;
-		case 'SONG_REMOVED':
-			updatePlaylist ();
-			break;
-		default:
-			showMessage (message);
 	}
 }
 
@@ -304,9 +288,7 @@ function removeTrack (id)
 
 	ajax_post('remove', data, function(transport)
 	{
-		var response = transport.responseText;
-		var content = response.evalJSON();
-		process_message(content.message);
+		updatePlaylist();
 	});
 }
 
@@ -317,16 +299,14 @@ function queueFile (file)
 
 	ajax_post('queue', data, function(transport)
 	{
-		var response = transport.responseText;
-		var content = response.evalJSON();
-		process_message(content.message);
+		updatePlaylist();
 	});
 }
 
 function refreshProgram()
 {
 	setTimeout ('refreshProgram()', 1000);
-	ajax_get(base_url + '/program/status', '', function(transport)
+	ajax_get(base_url + '/program/status', function(transport)
 	{
 		var response = transport.responseText;
 		var content = response.evalJSON();
@@ -350,11 +330,14 @@ function updateDisabledJukebox ()
 {
 	setTimeout ('updateDisabledJukebox()', 1000);
 
-	ajax_get('disabled/status', '', function(transport)
+	ajax_get('status', function(transport)
 	{
 		var response = transport.responseText;
 		var content = response.evalJSON();
-		process_message(content.message);
+		var jukebox = content.data.jukebox;
+
+		if (jukebox)
+			window.location = base_url
 	});
 }
 
@@ -375,17 +358,12 @@ function updatePlaylist ()
 {
 	var time = new Date().getTime();
 
-	ajax_get('playlist', '', function(transport)
+	ajax_get('playlist', function(transport)
 	{
 		var response = transport.responseText;
 		var content = response.evalJSON();
-
-		if (content.type == 'message') {
-			process_message(content.message)
-			return;
-		}
-
 		var data = content.data;
+
 		setPlaylist(data.queue.splice (1));
 		lastPlaylistUpdate = data.updated;
 	});

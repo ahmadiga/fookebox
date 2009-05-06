@@ -73,13 +73,13 @@ function release_auto_queue_lock ()
 	shm_remove_var ($shm, 'queue_update');
 }
 
-$lastUpdate = require_key ('updated', $_GET);
-$clientQueueLength = require_key ('qlen', $_GET);
-
 $jukebox = new Jukebox ();
 if (!$jukebox->isActive ())
 {
-	json_msg ('JUKEBOX_DISABLED');
+	$data = array(
+		'jukebox' => false
+	);
+	json_data('status', $data);
 	die ();
 }
 
@@ -108,49 +108,30 @@ $time = $status ['time'];
 list ($timePassed, $timeTotal) = split (':', $time);
 
 if (empty ($timePassed))
-		$timePassed = 0;
+	$timePassed = 0;
 
-$currentTime = time ();
 $queueLength = max (count ($playlist) - 1, 0);
 
-
-if (($timePassed > 0) && ($currentTime - $lastUpdate > $timePassed))
-{
-	// the song has changed
-	json_msg ('SONG_CHANGED');
-}
-else if ($clientQueueLength < $queueLength)
-{
-	// somebody queued a song
-	json_msg ('SONG_QUEUED');
-}
-else if ($clientQueueLength > $queueLength)
-{
-	// somebody removed a song from the queue
-	json_msg ('SONG_REMOVED');
-}
-else if ($queueLength == 0 && $status['state'] == 'stop' && auto_queue
+if ($queueLength == 0 && $status['state'] == 'stop' && auto_queue
 	&& get_auto_queue_lock ())
 {
 	// we were running out of songs, queue a random one
 	$files = $mpd->listAll();
 	$length = sizeof($files);
 	$chosen = rand(0, $length - 1);
-	$file = $files[$chosen];
-	$mpd->PLAdd ($file['file']);
+	$current = $files[$chosen];
+	$mpd->PLAdd ($current['file']);
 	$mpd->Play ();
 	release_auto_queue_lock ();
-	json_msg ('SONG_CHANGED');
 }
-else
-{
-	$data = array (
-		'artist'	=> $current ['Artist'],
-		'track'		=> $current ['Title'],
-		'timePassed'	=> date ('i:s', $timePassed),
-		'timeTotal'	=> date ('i:s', $timeTotal),
-	);
+$data = array (
+	'artist'	=> $current ['Artist'],
+	'track'		=> $current ['Title'],
+	'timePassed'	=> date ('i:s', $timePassed),
+	'timeTotal'	=> date ('i:s', $timeTotal),
+	'queueLength'	=> $queueLength,
+	'jukebox'	=> true
+);
 
-	json_data ('status', $data);
-}
+json_data ('status', $data);
 ?>

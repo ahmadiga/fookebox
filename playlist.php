@@ -30,7 +30,6 @@ require_once (libdesire_path . 'util/io.inc.php');
 $jukebox = new Jukebox ();
 if (!$jukebox->isActive ())
 {
-	json_msg ('JUKEBOX_DISABLED');
 	die ();
 }
 

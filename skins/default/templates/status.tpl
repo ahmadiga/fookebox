@@ -2,6 +2,6 @@
 {include file="playlist.tpl"}
 <script type="text/javascript">
 <!--
-	updateStatus ();
+	updateStatus();
 -->
 </script>

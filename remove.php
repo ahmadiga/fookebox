@@ -30,16 +30,16 @@ require_once (libdesire_path . 'util/util.inc.php');
 
 if (!enable_song_removal)
 {
-	json_msg ('Permission denied');
-	die ();
+	header('HTTP/1.1 403 Forbidden');
+	echo 'Permission denied';
+	die();
 }
 
-$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
-$data = json_get_post ();
+$mpd = new mpd(mpd_host, mpd_port, mpd_pass);
+$data = json_get_post();
 
-$id = require_attribute ('id', $data);
+$id = require_attribute('id', $data);
 
-$mpd->PLRemove ($id);
-$playlist = $mpd->getPlaylist ();
-json_msg ('SONG_REMOVED');
+$mpd->PLRemove($id);
+$playlist = $mpd->getPlaylist();
 ?>

@@ -29,15 +29,6 @@ require_once (libdesire_path . 'util/util.inc.php');
 require_once (libdesire_path . 'util/io.inc.php');
 
 $jukebox = new Jukebox ();
-if (try_key ('json', $_GET))
-{
-	if ($jukebox->isActive ())
-	{
-		json_msg ('JUKEBOX_ENABLED');
-	}
-	die ();
-}
-
 $root = new RootPage ();
 $page = new Page ();
 $root->assign ('body', $page->fetch ('disabled.tpl'));
