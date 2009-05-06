@@ -31,7 +31,6 @@ class RootPage extends Page
 	{
 		parent::Page ();
 		$this->assign ('title', $title);
-		$this->assign ('version', planster_version);
 		$this->assign ('base_url', base_url);
 		$this->assign ('css_url', base_url . 'style.css');
 		$browser = browser_detection ('full');

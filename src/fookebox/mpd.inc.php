@@ -933,10 +933,15 @@ class mpd {
 		$this->volume = $status['volume'];
 		$this->uptime = $stats['uptime'];
 		$this->playtime = $stats['playtime'];
-		$this->num_songs_played = $stats['songs_played'];
-		$this->num_artists = $stats['num_artists'];
-		$this->num_songs = $stats['num_songs'];
-		$this->num_albums = $stats['num_albums'];
+
+		if (array_key_exists('songs_played', $stats))
+			$this->num_songs_played = $stats['songs_played'];
+		if (array_key_exists('num_artists', $stats))
+			$this->num_artists = $stats['num_artists'];
+		if (array_key_exists('num_songs', $stats))
+			$this->num_songs = $stats['num_songs'];
+		if (array_key_exists('num_albums', $stats))
+			$this->num_albums = $stats['num_albums'];
 		return TRUE;
 	}
 
@@ -1049,13 +1054,23 @@ class mpd {
 		MPD_CMD_PLSWAPTRACK	=> "0.9.1"	,
 		MPD_CMD_PLMOVETRACK	=> "0.9.1"  ,
 		MPD_CMD_PASSWORD	=> "0.10.0" ,
-	        MPD_CMD_SETVOL      	=> "0.10.0" ,
-		MPD_CMD_STATISTICS	=> "0.0.0"
+		MPD_CMD_SETVOL      	=> "0.10.0" ,
+		MPD_CMD_STATISTICS	=> "0.0.0",
+		MPD_CMD_STATUS		=> "0.0.0",
+		MPD_CMD_PLLIST		=> "0.0.0",
+		MPD_CMD_SEARCH		=> "0.0.0",
+		MPD_CMD_PLADD		=> "0.0.0",
+		MPD_CMD_PLAY		=> "0.0.0",
 	);
 
     var $COMPATIBILITY_MAX_TBL = array(
         MPD_CMD_VOLUME			=> "0.10.0",
-	MPD_CMD_STATISTICS		=> "99.99.99"
+	MPD_CMD_STATISTICS		=> "99.99.99",
+	MPD_CMD_STATUS			=> "99.99.99",
+	MPD_CMD_PLLIST			=> "99.99.99",
+	MPD_CMD_SEARCH			=> "99.99.99",
+	MPD_CMD_PLADD			=> "99.99.99",
+	MPD_CMD_PLAY			=> "99.99.99",
     );
 
 }   // ---------------------------- end of class ------------------------------

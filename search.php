@@ -25,8 +25,6 @@ require_once (src_path . '/mpd.inc.php');
 require_once (src_path . '/Album.inc.php');
 require_once (src_path . '/RootPage.inc.php');
 require_once (libdesire_path . 'view/Page.inc.php');
-require_once (libdesire_path . 'util/io.inc.php');
-require_once (libdesire_path . 'util/util.inc.php');
 
 function compare_artists_and_albums ($a, $b)
 {
@@ -45,12 +43,23 @@ function compare_albums ($a, $b)
 		$b->getName () . ' ' . $b->getDisc());
 }
 
-$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
-$data = json_get_post ();
+$mpd = new mpd(mpd_host, mpd_port, mpd_pass);
+$data = json_decode(file_get_contents("php://input"));
 
-$where = require_attribute ('where', $data);
-$what = require_attribute ('what', $data);
-$searchArtist = try_attribute ('artist', $data);
+if (!$data)
+{
+	header('HTTP/1.1 400 Bad Request');
+	die('Bad Request');
+}
+
+if (!array_key_exists('where', $data) || !array_key_exists('what', $data))
+{
+	header('HTTP/1.1 400 Bad Request');
+	die('Bad Request');
+}
+
+$where = $data->where;
+$what = $data->what;
 
 // force_in_array ($where, array (MPD_SEARCH_GENRE, MPD_SEARCH_ARTIST,
 // 							MPD_SEARCH_ALBUM));
@@ -71,9 +80,9 @@ foreach ($result as $item)
 	$album = NULL;
 	$found = false;
 
-	$albumName = $item ['Album'];
-	$artist = $item ['Artist'];
-	$disc = $item ['Disc'];
+	$disc = array_key_exists('Disco', $item) ? $item['Disc'] : '';
+	$artist = array_key_exists('Artist', $item) ? $item ['Artist'] : '';
+	$albumName = array_key_exists('Album', $item) ? $item['Album'] : '';
 
 	for ($i=0; $i < count ($albums); $i++)
 	{
@@ -105,7 +114,6 @@ $page = new Page ();
 $page->assign ('where', $where);
 $page->assign ('what', $what);
 $page->assign ('albums', $albums);
-if ($where == 'album')
-	$page->assign('searchArtist', $searchArtist);
-json_data ('searchResult', $page->fetch ('search.tpl'));
+
+echo($page->fetch('search.tpl'));
 ?>

@@ -25,7 +25,6 @@ require_once (src_path . '/mpd.inc.php');
 require_once (src_path . '/Jukebox.inc.php');
 require_once (src_path . '/RootPage.inc.php');
 require_once (libdesire_path . 'view/Page.inc.php');
-require_once (libdesire_path . 'util/io.inc.php');
 
 $jukebox = new Jukebox ();
 if (!$jukebox->isActive ())
@@ -50,8 +49,7 @@ foreach ($playlist as $item)
 	$data[] = $page->fetch ('playlist-entry.tpl');
 }
 
-json_data ('playlist', array (
-	'queue'		=> $data,
-	'updated'	=> time ()
+echo json_encode(array(
+	'queue' => $data,
 ));
 ?>

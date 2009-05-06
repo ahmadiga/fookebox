@@ -23,9 +23,6 @@
 require_once ('config/config.inc.php');
 require_once (src_path . '/mpd.inc.php');
 require_once (src_path . '/Jukebox.inc.php');
-require_once (src_path . '/RootPage.inc.php');
-require_once (libdesire_path . 'view/Page.inc.php');
-require_once (libdesire_path . 'util/io.inc.php');
 
 function get_auto_queue_lock()
 {
@@ -76,17 +73,10 @@ function release_auto_queue_lock ()
 $jukebox = new Jukebox ();
 if (!$jukebox->isActive ())
 {
-	$data = array(
-		'jukebox' => false
-	);
-	json_data('status', $data);
-	die ();
+	die(json_encode(array('jukebox' => false)));
 }
 
 $mpd = new mpd (mpd_host, mpd_port, mpd_pass);
-
-$page = new Page ();
-$page->assign ('mpd', $mpd);
 
 $status = $mpd->getStatus ();
 
@@ -124,14 +114,13 @@ if ($queueLength == 0 && $status['state'] == 'stop' && auto_queue
 	$mpd->Play ();
 	release_auto_queue_lock ();
 }
-$data = array (
+
+echo json_encode(array(
 	'artist'	=> $current ['Artist'],
 	'track'		=> $current ['Title'],
 	'timePassed'	=> date ('i:s', $timePassed),
 	'timeTotal'	=> date ('i:s', $timeTotal),
 	'queueLength'	=> $queueLength,
 	'jukebox'	=> true
-);
-
-json_data ('status', $data);
+));
 ?>

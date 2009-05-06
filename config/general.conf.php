@@ -19,6 +19,7 @@
  *
  * $Id$
  */
+	error_reporting(E_ALL);
 	$base = realpath (dirname (__FILE__) . '/../');
 
 	define ('adodb_path', '/usr/share/adodb');

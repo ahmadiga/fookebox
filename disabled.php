@@ -25,8 +25,6 @@ require_once (src_path . '/mpd.inc.php');
 require_once (src_path . '/Jukebox.inc.php');
 require_once (src_path . '/RootPage.inc.php');
 require_once (libdesire_path . 'view/Page.inc.php');
-require_once (libdesire_path . 'util/util.inc.php');
-require_once (libdesire_path . 'util/io.inc.php');
 
 $jukebox = new Jukebox ();
 $root = new RootPage ();

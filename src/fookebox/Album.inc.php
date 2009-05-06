@@ -30,7 +30,7 @@ class Album
 
 	function Album ($artist, $name, $disc = '')
 	{
-		$this->_artist = $artist;
+		$this->_artist = $artist == '' ? 'Unknown Artist' : $artist;
 		$this->_name = $name == '' ? 'Unknown Album' : $name;
 		$this->_tracks = array ();
 		$this->_disc = $disc;
@@ -48,8 +48,10 @@ class Album
 
 	function addTrack ($track)
 	{
-		$artist = $track ['Artist'];
-		if ($artist != $this->_artist)
+		$artist = array_key_exists('Artist', $track) ?
+			$track['Artist'] : 'Unknown Artist';
+
+		if ($artist != $this->_artist && $artist != '')
 		{
 			if (strpos ($this->_artist, $artist) === 0)
 			{

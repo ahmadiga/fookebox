@@ -23,23 +23,27 @@
 require_once ('config/config.inc.php');
 require_once (src_path . '/mpd.inc.php');
 require_once (src_path . '/Album.inc.php');
-require_once (src_path . '/RootPage.inc.php');
-require_once (libdesire_path . 'view/Page.inc.php');
-require_once (libdesire_path . 'util/io.inc.php');
-require_once (libdesire_path . 'util/util.inc.php');
 
 if (!enable_song_removal)
 {
 	header('HTTP/1.1 403 Forbidden');
-	echo 'Permission denied';
-	die();
+	die('Permission denied');
 }
 
 $mpd = new mpd(mpd_host, mpd_port, mpd_pass);
-$data = json_get_post();
+$data = json_decode(file_get_contents("php://input"));
 
-$id = require_attribute('id', $data);
+if (!$data)
+{
+	header('HTTP/1.1 400 Bad Request');
+	die('Bad Request');
+}
 
-$mpd->PLRemove($id);
-$playlist = $mpd->getPlaylist();
+if (!array_key_exists('id', $data))
+{
+	header('HTTP/1.1 400 Bad Request');
+	die('Bad Request');
+}
+
+$mpd->PLRemove($data->id);
 ?>

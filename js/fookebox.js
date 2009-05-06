@@ -25,9 +25,6 @@ var currentTab = 'artist';
 // the message timeout
 var messageTimeout;
 
-// when the playlist was last updated
-var lastPlaylistUpdate = 0;
-
 // length of our currently known queue
 var queueLength = -1;
 
@@ -53,7 +50,7 @@ function ajax_post(url, data, onsucces) {
 	new Ajax.Request(url + '?ms=' + time,
 	{
 		method: 'post',
-		parameters: { 'data': data.toJSON() },
+		postBody: data.toJSON(),
 		onSuccess: onsucces,
 		onFailure: function(transport) {
 			var response = transport.responseText;
@@ -146,8 +143,7 @@ function updateStatus ()
 	ajax_get('status', function(transport)
 	{
 			var response = transport.responseText;
-			var content = response.evalJSON();
-			var data = content.data;
+			var data = response.evalJSON();
 			var jukebox = data.jukebox;
 
 			if (!jukebox)
@@ -213,15 +209,17 @@ function fadeMessage ()
 
 function artistSearch (artist)
 {
-	showArtist (artist, 'search');
+	// TODO: remove function
+	showArtist(artist);
 }
 
 function genreSearch (genre)
 {
-	showGenre (genre, 'search');
+	// TODO: remove function
+	showGenre(genre);
 }
 
-function showArtist (artist, command)
+function showArtist(artist)
 {
 	showProgressbar ();
 
@@ -235,13 +233,12 @@ function showArtist (artist, command)
 	ajax_post('search', data, function(transport)
 	{
 		var response = transport.responseText;
-		var content = response.evalJSON();
-		$('searchResult').innerHTML = content.data;
+		$('searchResult').innerHTML = response;
 		hideProgressbar();
 	});
 }
 
-function showGenre (genre, command)
+function showGenre(genre)
 {
 	showProgressbar ();
 
@@ -254,8 +251,7 @@ function showGenre (genre, command)
 	ajax_post('search', data, function(transport)
 	{
 		var response = transport.responseText;
-		var content = response.evalJSON();
-		$('searchResult').innerHTML = content.data;
+		$('searchResult').innerHTML = response;
 		hideProgressbar();
 	});
 }
@@ -275,8 +271,7 @@ function search ()
 	ajax_post('search', data, function(transport)
 	{
 		var response = transport.responseText;
-		var content = response.evalJSON();
-		$('searchResult').innerHTML = content.data;
+		$('searchResult').innerHTML = response;
 		hideProgressbar();
 	});
 }
@@ -333,8 +328,8 @@ function updateDisabledJukebox ()
 	ajax_get('status', function(transport)
 	{
 		var response = transport.responseText;
-		var content = response.evalJSON();
-		var jukebox = content.data.jukebox;
+		var data = response.evalJSON();
+		var jukebox = data.jukebox;
 
 		if (jukebox)
 			window.location = base_url
@@ -361,10 +356,8 @@ function updatePlaylist ()
 	ajax_get('playlist', function(transport)
 	{
 		var response = transport.responseText;
-		var content = response.evalJSON();
-		var data = content.data;
+		var data = response.evalJSON();
 
 		setPlaylist(data.queue.splice (1));
-		lastPlaylistUpdate = data.updated;
 	});
 }
