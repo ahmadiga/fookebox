@@ -1,7 +1,7 @@
 <?php
 /*
  * fookebox
- * Copyright (C) 2007-2008 Stefan Ott. All rights reserved.
+ * Copyright (C) 2007-2009 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,17 +19,19 @@
  *
  * $Id$
  */
-	error_reporting(E_ALL);
-	$base = realpath (dirname (__FILE__) . '/../');
 
-	define ('adodb_path', '/usr/share/adodb');
-	define ('src_path', $base . '/src/fookebox');
+//error_reporting(E_ALL);
+$base = realpath (dirname (__FILE__) . '/../');
 
-	define ('smarty_src_path', $base . '/src/smarty');
-	define ('smarty_compile_dir', $base . '/skins/compiled');
+define ('adodb_path', '/usr/share/adodb');
+define ('src_path', $base . '/src/fookebox');
 
-	define ('VERSION', '0.2+svn');
+define ('smarty_src_path', $base . '/src/smarty');
+define ('smarty_compile_dir', $base . '/skins/compiled');
 
-	// we don't use a database, thus ignore the db-related fields
-	define ('libdesire_ignore', 'dbDriver:dbUser:dbPass:dbHost:dbName');
+define ('VERSION', '0.2+svn');
+
+// we don't use a database, thus ignore the db-related fields
+define ('libdesire_ignore', 'dbDriver:dbUser:dbPass:dbHost:dbName');
+
 ?>

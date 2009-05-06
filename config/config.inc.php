@@ -1,7 +1,7 @@
 <?php
 /*
  * fookebox
- * Copyright (C) 2007-2008 Stefan Ott. All rights reserved.
+ * Copyright (C) 2007-2009 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,18 +19,20 @@
  *
  * $Id$
  */
-	$dir = dirname (__FILE__);
-	require_once ($dir . '/general.conf.php');
 
-	if (is_file ($dir . '/site.conf.php'))
-	{
-		require_once ($dir . '/site.conf.php');
-		require_once ($dir . '/defaults.inc.php');
-		define ('smarty_template_dir', $base . '/skins/' . skin .'/templates');
-		require_once ($dir . '/../src/libdesire/config/libdesire.inc.php');
-	}
-	else
-	{
-		die ('Please rename config/site.conf.php-dist to site.conf.php and fill it with your site configuration.');
-	}
+$dir = dirname (__FILE__);
+require_once ($dir . '/general.conf.php');
+
+if (is_file ($dir . '/site.conf.php'))
+{
+	require_once ($dir . '/site.conf.php');
+	require_once ($dir . '/defaults.inc.php');
+	define ('smarty_template_dir', $base . '/skins/' . skin .'/templates');
+	require_once ($dir . '/../src/libdesire/config/libdesire.inc.php');
+}
+else
+{
+	die ('Please rename config/site.conf.php-dist to site.conf.php and fill it with your site configuration.');
+}
+
 ?>
