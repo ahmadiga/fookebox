@@ -1,6 +1,6 @@
 /*
  * fookebox
- * Copyright (C) 2007-2008 Stefan Ott. All rights reserved.
+ * Copyright (C) 2007-2009 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,7 +39,12 @@ function ajax_get(url, onsucces) {
 		method: 'get',
 		onSuccess: onsucces,
 		onFailure: function(transport) {
-			showMessage ('Something bad happened');
+			var response = transport.responseText;
+
+			if (response)
+				showMessage(response);
+			else
+				showMessage('Something bad happened');
 		}
 	});
 }
@@ -89,40 +94,39 @@ function parseLocation()
 {
 	var url = window.location.href;
 	applyURL(url);
-	setTimeout ("updateURL()", 400);
+	setTimeout("updateURL()", 400);
 }
 
 function updateURL()
 {
 	var url = window.location.href;
-	//alert(url);
 
 	if (url != currentURL)
 		applyURL(url);
 
-	setTimeout ("updateURL()", 400);
+	setTimeout("updateURL()", 400);
 }
 
-function showProgressbar ()
+function showProgressbar()
 {
 	$('progress').show();
 }
 
-function hideProgressbar ()
+function hideProgressbar()
 {
-	if (document.getElementById ('progress'))
+	if ($('progress'))
 		$('progress').hide();
 }
 
-function setTab (name)
+function setTab(name)
 {
 	if (name == currentTab) return;
 
 	$(name + 'List').show();
 	$(currentTab + 'List').hide();
 
-	document.getElementById (name + 'Tab').className = 'active';
-	document.getElementById (currentTab + 'Tab').className = 'inactive';
+	$(name + 'Tab').className = 'active';
+	$(currentTab + 'Tab').className = 'inactive';
 
 	currentTab = name;
 
@@ -130,9 +134,9 @@ function setTab (name)
 	currentURL = window.location.href;
 }
 
-function updateStatus ()
+function updateStatus()
 {
-	setTimeout ("updateStatus()", 1000);
+	setTimeout("updateStatus()", 1000);
 
 	ajax_get('status', function(transport)
 	{
@@ -152,62 +156,58 @@ function updateStatus ()
 			var serverQueue = data.queueLength;
 
 			if (artist != $('artist').innerHTML)
-				$('artist').innerHTML = artist;
+				$('artist').update(artist);
 			if (track != $('track').innerHTML)
-				$('track').innerHTML = track;
+				$('track').update(track);
 			if (timeTotal != $('timeTotal').innerHTML)
-				$('timeTotal').innerHTML = timeTotal;
-			$('timePassed').innerHTML = data.timePassed;
+				$('timeTotal').update(timeTotal);
+			$('timePassed').update(data.timePassed);
 
 			if (serverQueue != queueLength)
 				updatePlaylist();
 	});
 }
 
-function setPlaylist (data)
+function setPlaylist(data)
 {
 	queueLength = data.length;
-	var div = document.getElementById ('playlist');
-	var ols = div.getElementsByTagName ('ol');
-	var ol = ols [0];
-	var lis = ol.getElementsByTagName ('li');
+	var div = $('playlist');
+	var lis = div.select('li');
 
 	for (var i=0; i < lis.length; i++)
 	{
 		var li = lis [i];
 		var item = data [i];
 		if (item)
-			li.innerHTML = item;
+			li.update(item);
 		else
-			li.innerHTML = '<span class="freeSlot">-- empty --</span>';
+			li.update('<span class="freeSlot">-- empty --</span>');
 	}
 }
 
-function showMessage (message)
+function showMessage(message)
 {
 	if (messageTimeout)
-	{
 		clearTimeout(messageTimeout);
-	}
-	var element = document.getElementById ('messageText');
-	element.innerHTML = message;
-	messageTimeout = setTimeout ("fadeMessage()", 3000);
-	Effect.Appear ('message', { 'duration' : '0.1' });
+
+	var element = $('messageText');
+	element.update(message);
+	messageTimeout = setTimeout("fadeMessage()", 3000);
+	Effect.Appear('message', { 'duration' : '0.1' });
 }
 
-function fadeMessage ()
+function fadeMessage()
 {
-	var element = document.getElementById ('message');
-	Effect.Fade ('message', { 'duration' : '0.4' });
+	Effect.Fade('message', { 'duration' : '0.4' });
 }
 
-function artistSearch (artist)
+function artistSearch(artist)
 {
 	// TODO: remove function
 	showArtist(artist);
 }
 
-function genreSearch (genre)
+function genreSearch(genre)
 {
 	// TODO: remove function
 	showGenre(genre);
@@ -215,11 +215,12 @@ function genreSearch (genre)
 
 function showArtist(artist)
 {
-	showProgressbar ();
+	showProgressbar();
 
-	var data = new Hash();
-	data.set('where', 'artist');
-	data.set('what', artist);
+	var data = $H({
+		'where': 'artist',
+		'what' : artist
+	});
 
 	window.location = "#artist=" + artist;
 	currentURL = window.location.href;
@@ -227,53 +228,54 @@ function showArtist(artist)
 	ajax_post('search', data, function(transport)
 	{
 		var response = transport.responseText;
-		$('searchResult').innerHTML = response;
+		$('searchResult').update(response);
 		hideProgressbar();
 	});
 }
 
 function showGenre(genre)
 {
-	showProgressbar ();
+	showProgressbar();
 
-	var data = new Hash();
-	data.set('where', 'genre');
-	data.set('what', genre);
+	var data = $H({
+		'where': 'genre',
+		'what' : genre
+	});
 
 	window.location = "#genre=" + genre;
 
 	ajax_post('search', data, function(transport)
 	{
 		var response = transport.responseText;
-		$('searchResult').innerHTML = response;
+		$('searchResult').update(response);
 		hideProgressbar();
 	});
 }
 
-function search ()
+function search()
 {
-	showProgressbar ();
+	showProgressbar();
 
 	var form = document.forms["searchform"];
-	var searchType = form.elements["searchType"].value;
-	var searchTerm = form.elements["searchTerm"].value;
+	var searchType = $F(form.searchType);
+	var searchTerm = $F(form.searchTerm);
 
-	var data = new Hash();
-	data.set('where', searchType);
-	data.set('what', searchTerm);
+	var data = $H({
+		'where': searchType,
+		'what':  searchTerm
+	});
 
 	ajax_post('search', data, function(transport)
 	{
 		var response = transport.responseText;
-		$('searchResult').innerHTML = response;
+		$('searchResult').update(response);
 		hideProgressbar();
 	});
 }
 
-function removeTrack (id)
+function removeTrack(id)
 {
-	var data = new Hash()
-	data.set('id', id);
+	var data = $H({'id': id});
 
 	ajax_post('remove', data, function(transport)
 	{
@@ -281,10 +283,9 @@ function removeTrack (id)
 	});
 }
 
-function queueFile (file)
+function queueFile(file)
 {
-	var data = new Hash();
-	data.set('file', file);
+	var data = $H({'file': file});
 
 	ajax_post('queue', data, function(transport)
 	{
@@ -294,29 +295,30 @@ function queueFile (file)
 
 function refreshProgram()
 {
-	setTimeout ('refreshProgram()', 1000);
+	setTimeout('refreshProgram()', 1000);
+
 	ajax_get(base_url + '/program/status', function(transport)
 	{
 		var response = transport.responseText;
 		var data = response.evalJSON();
 
-		$('clock').innerHTML = data.time;
-		$('currentTitle').innerHTML = data.currentTitle;
-		$('currentState').innerHTML = data.currentState;
+		$('clock').update(data.time);
+		$('currentTitle').update(data.currentTitle);
+		$('currentState').update(data.currentState);
 
 		if (data.nextTitle) {
 			$('next').show();
-			$('nextTitle').innerHTML = data.nextTitle;
-			$('nextTime').innerHTML = data.nextTime;
+			$('nextTitle').update(data.nextTitle);
+			$('nextTime').update(data.nextTime);
 		} else {
 			$('next').hide();
 		}
 	});
 }
 
-function updateDisabledJukebox ()
+function updateDisabledJukebox()
 {
-	setTimeout ('updateDisabledJukebox()', 1000);
+	setTimeout('updateDisabledJukebox()', 1000);
 
 	ajax_get('status', function(transport)
 	{
@@ -331,8 +333,7 @@ function updateDisabledJukebox ()
 
 function control(action)
 {
-	var data = new Hash()
-	data.set('action', action);
+	var data = $H({'action': action});
 
 	ajax_post('control', data, function(transport)
 	{
@@ -342,7 +343,7 @@ function control(action)
 	});
 }
 
-function updatePlaylist ()
+function updatePlaylist()
 {
 	var time = new Date().getTime();
 
