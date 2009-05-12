@@ -61,9 +61,14 @@ if (!array_key_exists('where', $data) || !array_key_exists('what', $data))
 $where = $data->where;
 $what = $data->what;
 
-// force_in_array ($where, array (MPD_SEARCH_GENRE, MPD_SEARCH_ARTIST,
-// 							MPD_SEARCH_ALBUM));
-// TODO: re-activate this, check that search still works
+if (!in_array($where, array(
+	MPD_SEARCH_GENRE, MPD_SEARCH_ARTIST, MPD_SEARCH_ALBUM,
+	MPD_SEARCH_TITLE, MPD_SEARCH_FILENAME, MPD_SEARCH_ANY
+)))
+{
+	header('HTTP/1.1 400 Bad Request');
+	die("Illegal search type");
+}
 
 $albums = array ();
 
