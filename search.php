@@ -60,6 +60,7 @@ if (!array_key_exists('where', $data) || !array_key_exists('what', $data))
 
 $where = $data->where;
 $what = $data->what;
+$forceSearch = $data->forceSearch;
 
 if (!in_array($where, array(
 	MPD_SEARCH_GENRE, MPD_SEARCH_ARTIST, MPD_SEARCH_ALBUM,
@@ -72,7 +73,7 @@ if (!in_array($where, array(
 
 $albums = array ();
 
-if (find_over_search)
+if (find_over_search && !$forceSearch)
 	$result = $mpd->Find($where, $what);
 else
 	$result = $mpd->Search($where, $what);

@@ -251,7 +251,8 @@ function search()
 
 	var data = $H({
 		'where': searchType,
-		'what':  searchTerm
+		'what':  searchTerm,
+		'forceSearch': true
 	});
 
 	ajax_post('search', data, function(transport)

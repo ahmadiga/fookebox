@@ -1,4 +1,7 @@
 <h2>{$what}</h2>
+{if !$albums}
+Nothing found
+{/if}
 {foreach from=$albums item=album}
 <h3 class="album">{if $where == "genre"}{$album->getartist()} - {/if}{$album->getname()}{if $album->getDisc()} (Disc {$album->getDisc()}){/if}</h3>
 <ul>
