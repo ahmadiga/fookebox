@@ -912,7 +912,8 @@ class mpd {
 
         // Set Misc Other Variables
 		$this->state = $status['state'];
-		if ($status['playlistlength']>0) {
+		if ($status['playlistlength']>0 &&
+			array_key_exists('song', $status)) {
 			$this->current_track_id = $status['song'];
 		} else {
 			$this->current_track_id = -1;

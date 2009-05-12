@@ -25,7 +25,18 @@ require_once (src_path . '/mpd.inc.php');
 require_once (src_path . '/Page.inc.php');
 require_once (src_path . '/RootPage.inc.php');
 
-$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
+function index_handle_error($errno, $errstr, $errfile, $errline)
+{
+	header("HTTP/1.1 500 Internal Server Error");
+	echo "<h1>Error: Could not connect to mpd</h1>";
+	$error = error_get_last();
+	printf("line %s of %s: %s", $errline, $errfile, $errstr);
+	die();
+}
+
+set_error_handler(index_handle_error);
+$mpd = new mpd(mpd_host, mpd_port, mpd_pass);
+restore_error_handler();
 
 $root = new RootPage ();
 $page = new Page ();
