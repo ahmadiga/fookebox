@@ -243,6 +243,7 @@ function showGenre(genre)
 	});
 
 	window.location = "#genre=" + genre;
+	currentURL = window.location.href;
 
 	ajax_post('search', data, function(transport)
 	{
