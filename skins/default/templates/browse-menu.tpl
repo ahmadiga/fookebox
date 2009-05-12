@@ -18,7 +18,7 @@
 	<ul>
 {foreach from=$artists item=artist}
 {	assign var=char value=$artist|substr:0:1|upper}
-		<li{if $prevChar && $char != $prevChar} class="seperator"{/if}><a {if $char != $prevChar}name="{$char}" {/if}href="#" onclick="artistSearch('{$artist|addslashes}'); return false">{$artist}</a></li>
+		<li{if $prevChar && $char != $prevChar} class="seperator"{/if}><a {if $char != $prevChar}name="{$char}" {/if}href="#" onclick="showArtist('{$artist|addslashes}'); return false">{$artist}</a></li>
 {	assign var=prevChar value=$char}
 {/foreach}
 	</ul>
@@ -26,7 +26,7 @@
 <!-- {$genres|@sort} -->
 	<ul id="genreList" style="display: none">
 {foreach from=$genres item=genre}
-		<li><a href="#" onclick="genreSearch('{$genre}'); return false">{$genre}</a></li>
+		<li><a href="#" onclick="showGenre('{$genre}'); return false">{$genre}</a></li>
 {/foreach}
 	</ul>
 {if $smarty.const.show_search_tab}

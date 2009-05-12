@@ -82,9 +82,9 @@ function applyURL(url)
 		var value = params[1];
 
 		if (key == 'artist')
-			artistSearch(value);
+			showArtist(value);
 		else if (key == 'genre')
-			genreSearch(value);
+			showGenre(value);
 		else if (key == 'tab')
 			setTab(value);
 	}
@@ -199,18 +199,6 @@ function showMessage(message)
 function fadeMessage()
 {
 	Effect.Fade('message', { 'duration' : '0.4' });
-}
-
-function artistSearch(artist)
-{
-	// TODO: remove function
-	showArtist(artist);
-}
-
-function genreSearch(genre)
-{
-	// TODO: remove function
-	showGenre(genre);
 }
 
 function showArtist(artist)
