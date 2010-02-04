@@ -20,82 +20,80 @@
  * $Id$
  */
 
-require_once (realpath (dirname (__FILE__) . '/../../config/config.inc.php'));
-require_once (src_path . '/mpd.inc.php');
+require_once(realpath(dirname(__FILE__) . '/../../config/config.inc.php'));
+require_once(src_path . '/mpd.inc.php');
 
 class Album
 {
-	var $_artist;
-	var $_name;
-	var $_tracks;
+	private $artist;
+	private $name;
+	private $tracks;
+	private $disc;
 
-	function Album ($artist, $name, $disc = '')
+	function Album($artist, $name, $disc = '')
 	{
-		$this->_artist = $artist == '' ? 'Unknown Artist' : $artist;
-		$this->_name = $name == '' ? 'Unknown Album' : $name;
-		$this->_tracks = array ();
-		$this->_disc = $disc;
+		$this->artist = $artist == '' ? 'Unknown Artist' : $artist;
+		$this->name = $name == '' ? 'Unknown Album' : $name;
+		$this->tracks = array();
+		$this->disc = $disc;
 	}
 
-	function getName ()
+	public function getName()
 	{
-		return $this->_name;
+		return $this->name;
 	}
 
-	function getArtist ()
+	public function getArtist()
 	{
-		return $this->_artist;
+		return $this->artist;
 	}
 
-	function addTrack ($track)
+	public function addTrack($track)
 	{
 		$artist = array_key_exists('Artist', $track) ?
 			$track['Artist'] : 'Unknown Artist';
 
-		if ($artist != $this->_artist && $artist != '')
+		if ($artist != $this->artist && $artist != '')
 		{
-			if (strpos ($this->_artist, $artist) === 0)
+			if (strpos($this->artist, $artist) === 0)
 			{
-				$this->_artist = $artist;
+				$this->artist = $artist;
 			}
-			else if (strpos ($artist, $this->_artist) === 0)
+			else if (strpos($artist, $this->artist) !== 0)
 			{
-			}
-			else
-			{
-				$this->_artist = 'Various Artists';
+				$this->artist = 'Various Artists';
 			}
 		}
-		$this->_tracks [] = $track;
+		$this->tracks[] = $track;
 	}
 
-	function sortTracks ($a, $b)
+	public function getTracks()
 	{
-		if ($a ['Track'] && $b ['Track'] && $a ['Album'])
+		usort($this->tracks, array('Album', 'sortTracks'));
+		return $this->tracks;
+	}
+
+	public function getDisc()
+	{
+		return $this->disc;
+	}
+
+	public function equals($other)
+	{
+		return ($this->name == $other->name &&
+			$this->disc == $other->disc);
+	}
+
+	private function sortTracks($a, $b)
+	{
+		if ($a['Track'] && $b['Track'] && $a['Album'])
 		{
-			return $a ['Track'] > $b ['Track'];
+			return $a['Track'] > $b['Track'];
 		}
-		$aName = $a ['Artist'] . ' - ' . $a ['Title'];
-		$bName = $b ['Artist'] . ' - ' . $b ['Title'];
+		$aName = sprintf("%s - %s", $a['Artist'], $a['Title']);
+		$bName = sprintf("%s - %s", $b['Artist'], $b['Title']);
 
-		return strcasecmp ($aName, $bName);
-	}
-
-	function getTracks ()
-	{
-		usort ($this->_tracks, array ('Album', 'sortTracks'));
-		return $this->_tracks;
-	}
-
-	function getDisc ()
-	{
-		return $this->_disc;
-	}
-
-	function equals ($other)
-	{
-		return ($this->_name == $other->getName () &&
-			$this->_disc == $other->getDisc ());
+		return strcasecmp($aName, $bName);
 	}
 }
 ?>
