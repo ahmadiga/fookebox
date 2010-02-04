@@ -62,12 +62,15 @@ following settings:
  * site_name: A name for your site (eg. 'my home')
  * skin: Your fookebox skin (currently only 'default' exists)
  * max_queue_length: The maximum queue length (see below for details)
- * auto_queue: Whether to play random songs when the queue gets empty
+ * auto_queue: Whether to play random songs when the queue gets empty (see below)
+ * auto_queue_playlist: Playlist to play when idle (see below)
+ * auto_queue_random: (see below)
  * show_search_tab: Enable/disable 'search' tab (eg. for mouse-only jukeboxes)
  * enable_controls: Enable/disable mpd control (disable on public jukeboxes)
  * enable_song_removal: Whether to allow the user to remove songs in the queue
  * enable_queue_album: Enables/disables the ability to queue whole albums
  * find_over_search: Whether to use mpd's 'find' or 'search' (see below)
+ * album_cover_path: Path that contains album cover art (see below)
 
 
 == Secondary frontend ==
@@ -112,3 +115,16 @@ to 'find' that item or to 'search' for it. The difference is that 'find' only
 returns exact matches while 'search' also matches substrings (eg. if you click
 on 'Air', 'find' will only return songs by 'Air' while 'search' will also
 include 'Air feat. Joe Random' and 'Fair play').
+
+=== Auto-queuing ===
+
+If you enable 'auto_queue' fookebox will automatically pick a completely
+random song from your collection whenever there is nothing else to play. If
+you would like to have a predefined set of songs to be played instead, use
+'auto_queue_playlist' to specify a mpd playlist. If you want the song
+selection to be random but limited to a set of songs, define a playlist as
+explained before and set 'auto_queue_random' to true.
+
+Note: if you don't use auto_queue_random fookebox will have to modify your
+playlist. While this should not cause any harm, you might lose your playlist
+if things go wrong - keeping a backup is recommended.

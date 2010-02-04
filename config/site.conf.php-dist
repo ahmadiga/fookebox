@@ -35,6 +35,11 @@ define ('base_url', 'http://localhost/mpd/');
 
 // automatically queue a random song when the playlist gets empty
 //define ('auto_queue', false);
+// if you want the 'random' song to come from a pre-defined (mpd) playlist,
+// you can set the playlist's name here
+//define ('auto_queue_playlist', 'idle');
+// pick a random song from the idle playlist (see README)
+//define ('auto_queue_random', false);
 
 // show full-text search tab
 //define ('show_search_tab', true);

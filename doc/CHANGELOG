@@ -1,7 +1,11 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
-== 0.4.0 ==
+== 0.4.1 ==
+
+ * Can now pick the auto-queued songs from a predefined playlist
+
+== 0.4.0 (4 Feb 2010) ==
 
  * Fixed queuing of full albums
  * Added support for cover art
@@ -12,7 +16,7 @@
  * Updated prototype to version 1.6.1
  * Updated scriptaculous to version 1.8.3
 
-== 0.3.0 ==
+== 0.3.0 (11 May 2009) ==
 
  * Dropped php4 compatibility
  * Albums in search results are now automatically expanded
@@ -21,17 +25,21 @@
  * Updated smarty
  * Code cleanup
 
-== 0.2.0 ==
+== 0.2.0 (1 Dec 2008) ==
 
  * Added the ability to auto-queue songs when the playlist gets empty
  * Fixed some issues when running fookebox in a sub directory
  * Switched to using prototype for JSON data transport
  * Updated smarty, scriptaculous and prototype to their latest versions
 
-== 0.1.1 ==
+== 0.1.1 (12 Jun 2008) ==
 
- * Made the right part scrollable without scrolling the whole window (fixes #1)
- * Made sure all clients are informed on playlist updates (fixes #2)
+ * Made the right part scrollable without scrolling the whole window
+ * Made sure all clients are informed on playlist updates
  * Updated smarty to version 2.6.19
  * Updated the JavaScript JSON library
  * Minor documentation updates
+
+== 0.1.0 (11 Jun 2008) ==
+
+ * Initial public release

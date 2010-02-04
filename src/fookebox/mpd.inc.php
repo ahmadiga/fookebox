@@ -54,6 +54,7 @@ define("MPD_CMD_PLMOVETRACK", "move");
 define("MPD_CMD_PASSWORD",    "password");
 define("MPD_CMD_TABLE",       "list");
 define("MPD_CMD_LIST_ALL",    "listall");
+define("MPD_CMD_RM",          "rm");
 
 // Predefined MPD Response messages
 define("MPD_RESPONSE_ERR", "ACK");
@@ -459,6 +460,13 @@ class mpd {
 		if ( $this->debugging ) echo "mpd->PLSave()\n";
 		$resp = $this->SendCommand(MPD_CMD_PLSAVE,$file);
 		if ( $this->debugging ) echo "mpd->PLSave() / return\n";
+		return $resp;
+	}
+
+	function rm($file) {
+		if ( $this->debugging ) echo "mpd->rm()\n";
+		$resp = $this->SendCommand(MPD_CMD_RM, $file);
+		if ( $this->debugging ) echo "mpd->rm() / return\n";
 		return $resp;
 	}
 
@@ -1064,6 +1072,12 @@ class mpd {
 		MPD_CMD_PLAY		=> "0.0.0",
 		MPD_CMD_PLREMOVE	=> "0.0.0",
 		MPD_CMD_FIND		=> "0.0.0",
+		MPD_CMD_PLLOAD		=> "0.0.0",
+		MPD_CMD_PLSAVE		=> "0.0.0",
+		MPD_CMD_PLCLEAR		=> "0.0.0",
+		MPD_CMD_PLSHUFFLE	=> "0.0.0",
+		MPD_CMD_LIST_ALL	=> "0.0.0",
+		MPD_CMD_RM		=> "0.0.0",
 	);
 
     var $COMPATIBILITY_MAX_TBL = array(
@@ -1076,6 +1090,12 @@ class mpd {
 	MPD_CMD_PLAY			=> "99.99.99",
 	MPD_CMD_PLREMOVE		=> "99.99.99",
 	MPD_CMD_FIND			=> "99.99.99",
+	MPD_CMD_PLLOAD			=> "99.99.99",
+	MPD_CMD_PLSAVE			=> "99.99.99",
+	MPD_CMD_PLCLEAR			=> "99.99.99",
+	MPD_CMD_PLSHUFFLE		=> "99.99.99",
+	MPD_CMD_LIST_ALL		=> "99.99.99",
+	MPD_CMD_RM			=> "99.99.99",
     );
 
 }   // ---------------------------- end of class ------------------------------

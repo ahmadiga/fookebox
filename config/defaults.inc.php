@@ -28,6 +28,8 @@ $defaults = array
 	'site_name'		=> 'fookebox',
 	'skin'			=> 'default',
 	'auto_queue'		=> false,
+	'auto_queue_playlist'	=> '',
+	'auto_queue_random'	=> false,
 	'max_queue_length'	=> 3,
 	'show_search_tab'	=> true,
 	'enable_controls'	=> false,
@@ -39,9 +41,9 @@ $defaults = array
 
 foreach ($defaults as $key => $value)
 {
-	if (!defined ($key))
+	if (!defined($key))
 	{
-		define ($key, $value);
+		define($key, $value);
 	}
 }
 ?>
