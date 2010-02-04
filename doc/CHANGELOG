@@ -5,6 +5,7 @@
 
  * Fixed queuing of full albums
  * Added support for cover art
+ * Updated smarty to version 2.6.26
 
 == 0.3.0 ==
 
