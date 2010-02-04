@@ -46,5 +46,6 @@ define ('base_url', 'http://localhost/mpd/');
 //define ('enable_queue_album', false);
 // be anal about artist/album names (see README)
 //define ('find_over_search', false);
-
+// directory with cover art
+//define ('album_cover_path', '/home/stefan/.cache/rhythmbox/covers/');
 ?>
