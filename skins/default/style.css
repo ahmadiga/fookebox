@@ -250,6 +250,10 @@ a:focus {
 	overflow: auto;
 }
 
+#searchResult h3 {
+	padding-left: 16px;
+}
+
 #searchResult li.track {
 	list-style-image: url(img/music.png);
 }

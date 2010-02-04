@@ -1,7 +1,7 @@
 <?php
 /*
  * fookebox
- * Copyright (C) 2007-2009 Stefan Ott. All rights reserved.
+ * Copyright (C) 2007-2010 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,7 +34,7 @@ function index_handle_error($errno, $errstr, $errfile, $errline)
 	die();
 }
 
-set_error_handler(index_handle_error);
+set_error_handler('index_handle_error');
 $mpd = new mpd(mpd_host, mpd_port, mpd_pass);
 restore_error_handler();
 

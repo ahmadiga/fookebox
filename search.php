@@ -1,7 +1,7 @@
 <?php
 /*
  * fookebox
- * Copyright (C) 2007-2008 Stefan Ott. All rights reserved.
+ * Copyright (C) 2007-2010 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,6 +57,9 @@ if (!array_key_exists('where', $data) || !array_key_exists('what', $data))
 	header('HTTP/1.1 400 Bad Request');
 	die('Bad Request');
 }
+
+if (!property_exists($data, 'forceSearch'))
+	$data->forceSearch = false;
 
 $where = $data->where;
 $what = $data->what;

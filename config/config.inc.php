@@ -20,6 +20,9 @@
  * $Id$
  */
 
+// TODO: remove
+error_reporting(E_ALL);
+
 $dir = dirname (__FILE__);
 require_once ($dir . '/general.conf.php');
 

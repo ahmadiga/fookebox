@@ -95,6 +95,16 @@ so make sure to set your mpd's max_playlist_length accordingly (note that mpd's
 count includes the song which is being played so if you want 3 queue positions,
 set max_playlist_length to 4).
 
+=== Cover art ===
+
+Fookebox can display cover art for your music. In order to do that, set
+album_cover_path in your site.conf.php to a directory that contains your
+covers, named according to rockbox' album art file naming conventions
+(see http://www.rockbox.org/wiki/AlbumArt for details).
+
+Note that your covers need to be JPEG files and they will get scaled to
+a width of 100 pixels.
+
 === Find or search? ===
 
 When an artist/genre/album has been clicked, you can decide whether we tell mpd

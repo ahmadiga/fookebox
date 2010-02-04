@@ -33,7 +33,8 @@ $defaults = array
 	'enable_controls'	=> false,
 	'enable_song_removal'	=> false,
 	'enable_queue_album'	=> false,
-	'find_over_search'	=> false
+	'find_over_search'	=> false,
+	'album_cover_path'	=> ''
 );
 
 foreach ($defaults as $key => $value)

@@ -4,6 +4,7 @@
 == 0.3.1 ==
 
  * Fixed queuing of full albums
+ * Added support for cover art
 
 == 0.3.0 ==
 
