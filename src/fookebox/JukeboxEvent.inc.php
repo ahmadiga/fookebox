@@ -39,7 +39,7 @@ class JukeboxEvent extends Event
 
 		$current = $playlist[$index];
 
-		list ($timePassed, $timeTotal) = split(':', $time);
+		list ($timePassed, $timeTotal) = split(':', $this->getTime());
 
 		$artist	= $current['Artist'];
 		$track = $current['Title'];
