@@ -35,4 +35,9 @@ else
 	die ('Please rename config/site.conf.php-dist to site.conf.php and fill it with your site configuration.');
 }
 
+function __autoload($class_name)
+{
+	require_once(src_path . "/$class_name.inc.php");
+}
+
 ?>

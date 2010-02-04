@@ -20,29 +20,26 @@
  * $Id$
  */
 
-require_once (realpath (dirname (__FILE__) . '/../../config/config.inc.php'));
-require_once (src_path . '/Event.inc.php');
-
 class BandEvent extends Event
 {
-	function BandEvent ($time, $name)
+	public function getAsCurrent()
 	{
-		parent :: Event ($time, $name);
+		return sprintf("%s [LIVE]", $this->getName());
 	}
 
-	function getAsCurrent ()
+	public function getAsNext()
 	{
-		return $this->_name . ' [LIVE]';
+		return sprintf("LIVE BAND: %s", $this->getName());
 	}
 
-	function getAsNext ()
+	public function getState()
 	{
-		return 'LIVE BAND: ' . $this->_name;
+		return sprintf ('live @ %s', site_name);
 	}
 
-	function getState ()
+	public function isJukebox()
 	{
-		return 'live @ ' . site_name;
+		return false;
 	}
 }
 ?>

@@ -20,16 +20,12 @@
  * $Id$
  */
 
-require_once ('config/config.inc.php');
-require_once (src_path . '/mpd.inc.php');
-require_once (src_path . '/Jukebox.inc.php');
-require_once (src_path . '/RootPage.inc.php');
-require_once (src_path . '/Page.inc.php');
+require_once('config/config.inc.php');
 
-$jukebox = new Jukebox ();
-$root = new RootPage ();
-$page = new Page ();
-$root->assign ('body', $page->fetch ('disabled.tpl'));
-$root->assign ('hideHeader', true);
-$root->display ();
+$jukebox = new Jukebox();
+$root = new RootPage();
+$page = new Page();
+$root->assign('body', $page->fetch('disabled.tpl'));
+$root->assign('hideHeader', true);
+$root->display();
 ?>

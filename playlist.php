@@ -20,33 +20,28 @@
  * $Id$
  */
 
-require_once ('config/config.inc.php');
-require_once (src_path . '/mpd.inc.php');
-require_once (src_path . '/Jukebox.inc.php');
-require_once (src_path . '/RootPage.inc.php');
-require_once (src_path . '/Page.inc.php');
+require_once('config/config.inc.php');
 
-$jukebox = new Jukebox ();
-if (!$jukebox->isActive ())
+if (!Jukebox::isActive())
 {
-	die ();
+	die();
 }
 
-$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
+$mpd = new mpd(mpd_host, mpd_port, mpd_pass);
 
-$page = new Page ();
-$page->assign ('mpd', $mpd);
+$page = new Page();
+$page->assign('mpd', $mpd);
 
-$playlist = $mpd->getPlaylist ();
-$data = array ();
+$playlist = $mpd->getPlaylist();
+$data = array();
 
-foreach ($playlist as $item)
+foreach($playlist as $item)
 {
-	$page = new Page ();
-	$page->assign ('artist', $item ['Artist']);
-	$page->assign ('title', $item ['Title']);
-	$page->assign ('position', $item ['Pos']);
-	$data[] = $page->fetch ('playlist-entry.tpl');
+	$page = new Page();
+	$page->assign('artist', $item ['Artist']);
+	$page->assign('title', $item ['Title']);
+	$page->assign('position', $item ['Pos']);
+	$data[] = $page->fetch('playlist-entry.tpl');
 }
 
 echo json_encode(array(

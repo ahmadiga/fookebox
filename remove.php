@@ -21,8 +21,6 @@
  */
 
 require_once ('config/config.inc.php');
-require_once (src_path . '/mpd.inc.php');
-require_once (src_path . '/Album.inc.php');
 
 if (!enable_song_removal)
 {

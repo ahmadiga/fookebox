@@ -20,34 +20,30 @@
  * $Id$
  */
 
-require_once (realpath (dirname (__FILE__) . '/../../config/config.inc.php'));
-require_once (smarty_src_path . '/Smarty.class.php');
-require_once (src_path . '/Page.inc.php');
-
 class RootPage extends Page
 {
-	function RootPage ($title = site_name)
+	public function __construct($title = site_name)
 	{
-		parent::Page ();
-		$this->assign ('title', $title);
-		$this->assign ('base_url', base_url);
-		$this->assign ('css_url', base_url . 'style.css');
+		parent::__construct();
+		$this->assign('title', $title);
+		$this->assign('base_url', base_url);
+		$this->assign('css_url', base_url . 'style.css');
 		$this->_id = -1;
 	}
 
-	function setTitle ($title)
+	public function setTitle($title)
 	{
-		$this->assign ('title', $title);
+		$this->assign('title', $title);
 	}
 
-	function setID ($id)
+	public function setID($id)
 	{
-		$this->assign ('id', $id);
+		$this->assign('id', $id);
 	}
 
-	function display()
+	public function display()
 	{
-		parent::display ('root.tpl');
+		parent::display('root.tpl');
 	}
 }
 ?>

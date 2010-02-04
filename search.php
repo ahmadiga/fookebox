@@ -20,27 +20,24 @@
  * $Id$
  */
 
-require_once ('config/config.inc.php');
-require_once (src_path . '/mpd.inc.php');
-require_once (src_path . '/Album.inc.php');
-require_once (src_path . '/RootPage.inc.php');
-require_once (src_path . '/Page.inc.php');
+require_once('config/config.inc.php');
 
-function compare_artists_and_albums ($a, $b)
+function compare_artists_and_albums($a, $b)
 {
 	if ($a->getName () == '') return 1;
 	if ($b->getName () == '') return -1;
-	$aName = $a->getArtist() . " - " . $a->getName() . ' ' . $a->getDisc();
-	$bName = $b->getArtist() . " - " . $b->getName() . ' ' . $b->getDisc();
+	$aName = sprintf("%s - %s %s", $a->getArtist(), $a->getName(), $a->getDisc());
+	$bName = sprintf("%s - %s %s", $b->getArtist(), $b->getName(), $b->getDisc());
 	return strcasecmp ($aName, $bName);
 }
 
-function compare_albums ($a, $b)
+function compare_albums($a, $b)
 {
-	if ($a->getName () == '') return 1;
-	if ($b->getName () == '') return -1;
-	return strcasecmp ($a->getName() . ' ' . $a->getDisc(),
-		$b->getName () . ' ' . $b->getDisc());
+	if ($a->getName() == '') return 1;
+	if ($b->getName() == '') return -1;
+	$aDisc = sprintf("%s %s", $a->getName(), $a->getDisc());
+	$bDisc = sprintf("%s %s", $b->getName(), $b->getDisc());
+	return strcasecmp($aDisc, $bDisc);
 }
 
 $mpd = new mpd(mpd_host, mpd_port, mpd_pass);
@@ -89,40 +86,39 @@ foreach ($result as $item)
 	$album = NULL;
 	$found = false;
 
-	$disc = array_key_exists('Disco', $item) ? $item['Disc'] : '';
+	$disc = array_key_exists('Disc', $item) ? $item['Disc'] : '';
 	$artist = array_key_exists('Artist', $item) ? $item ['Artist'] : '';
 	$albumName = array_key_exists('Album', $item) ? $item['Album'] : '';
 
 	for ($i=0; $i < count ($albums); $i++)
 	{
-		if ($albums [$i]->equals (new Album ($artist, $albumName,
-			$disc)))
+		if ($albums[$i]->equals(new Album($artist, $albumName, $disc)))
 		{
-			$albums [$i]->addTrack ($item);
+			$albums[$i]->addTrack($item);
 			$found = true;
 		}
 	}
 	if (!$found) {
-		$album = new Album ($artist, $albumName, $disc);
-		$album->addTrack ($item);
-		$albums [] = $album;
+		$album = new Album($artist, $albumName, $disc);
+		$album->addTrack($item);
+		$albums[] = $album;
 	}
 }
 
 if ($where == 'genre')
 {
-	usort ($albums, 'compare_artists_and_albums');
+	usort($albums, 'compare_artists_and_albums');
 }
 else
 {
-	usort ($albums, 'compare_albums');
+	usort($albums, 'compare_albums');
 }
 
-$root = new RootPage ();
-$page = new Page ();
-$page->assign ('where', $where);
-$page->assign ('what', $what);
-$page->assign ('albums', $albums);
+$root = new RootPage();
+$page = new Page();
+$page->assign('where', $where);
+$page->assign('what', $what);
+$page->assign('albums', $albums);
 
 echo($page->fetch('search.tpl'));
 ?>

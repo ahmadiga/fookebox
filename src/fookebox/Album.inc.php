@@ -20,9 +20,6 @@
  * $Id$
  */
 
-require_once(realpath(dirname(__FILE__) . '/../../config/config.inc.php'));
-require_once(src_path . '/mpd.inc.php');
-
 class Album
 {
 	private $artist;
@@ -30,7 +27,7 @@ class Album
 	private $tracks;
 	private $disc;
 
-	function Album($artist, $name, $disc = '')
+	public function __construct($artist, $name, $disc = '')
 	{
 		$this->artist = $artist == '' ? 'Unknown Artist' : $artist;
 		$this->name = $name == '' ? 'Unknown Album' : $name;

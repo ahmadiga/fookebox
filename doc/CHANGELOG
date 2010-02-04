@@ -6,6 +6,7 @@
  * Fixed queuing of full albums
  * Added support for cover art
  * Minor CSS changes
+ * Some internal code cleanup
  * We now need at least PHP 5.1.0
  * Updated smarty to version 2.6.26
  * Updated prototype to version 1.6.1

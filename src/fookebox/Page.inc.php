@@ -24,9 +24,9 @@ require_once (smarty_src_path . '/Smarty.class.php');
 
 class Page extends Smarty
 {
-	function Page ()
+	public function __construct()
 	{
-		parent::Smarty ();
+		parent::Smarty();
 		$this->template_dir = smarty_template_dir;
 		$this->compile_dir = smarty_compile_dir;
 	}

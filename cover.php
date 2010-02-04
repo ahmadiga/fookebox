@@ -20,7 +20,7 @@
  * $Id: control.php 66 2009-05-06 01:21:44Z stefan@ott.net $
  */
 
-require_once ('config/config.inc.php');
+require_once('config/config.inc.php');
 
 if (!album_cover_path)
 {
@@ -38,22 +38,25 @@ function rb_clean($filename)
 {
 	// Substitute characters as explained on
 	// http://www.rockbox.org/wiki/AlbumArt
-	return preg_replace('/[\/:<>\?*|]/', '_', $filename);
+	return preg_replace('/[\/:<>\?*|]/', '_', stripslashes($filename));
 }
 
-$artist = rb_clean(stripslashes($_GET['artist']));
-$album = rb_clean(stripslashes($_GET['album']));
+function show_file($filename)
+{
+	header('Content-type: image/jpeg');
+	$file = fopen($filename, 'ro');
+	while(!feof($file)) echo fgetc($file);
+	fclose($file);
+}
 
-$path = album_cover_path . '/' . $artist . '-' . $album . '.jpg';
+$artist = rb_clean($_GET['artist']);
+$album = rb_clean($_GET['album']);
 
-#$path = '/home/stefan/.cache/rhythmbox/covers/Warlocks-Heavy Deavy Skull Lover.jpg';
+$path = sprintf("%s/%s-%s.jpg", album_cover_path, $artist, $album);
 
 if (!is_file($path)) {
 	header('HTTP/1.1 404 Not found');
 	die('Not found');
 }
 
-header('Content-type: image/jpeg');
-$file = fopen($path, 'ro');
-while(!feof($file)) echo fgetc($file);
-fclose($file);
+show_file($path);

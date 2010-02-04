@@ -20,47 +20,30 @@
  * $Id$
  */
 
-require_once (realpath (dirname (__FILE__) . '/../../config/config.inc.php'));
-
-class Event
+abstract class Event
 {
-	var $_name;
-	var $_time;
+	private $name;
+	private $time;
 
-	function Event ($time, $name)
+	abstract protected function getAsCurrent();
+	abstract protected function getAsNext();
+	abstract protected function getState();
+	abstract protected function isJukebox();
+
+	public function __construct($time, $name)
 	{
-		$this->_time = $time;
-		$this->_name = $name;
+		$this->time = $time;
+		$this->name = $name;
 	}
 
-	function getName ()
+	public function getName()
 	{
-		return $this->_name;
+		return $this->name;
 	}
 
-	function getTime ()
+	public function getTime()
 	{
-		return $this->_time;
-	}
-
-	function getAsCurrent ()
-	{
-		return $this->_name;
-	}
-
-	function getAsNext ()
-	{
-		return $this->getAsCurrent ();
-	}
-
-	function getState ()
-	{
-		return '@' . site_name;
-	}
-
-	function isJukebox ()
-	{
-		return false;
+		return $this->time;
 	}
 }
 ?>

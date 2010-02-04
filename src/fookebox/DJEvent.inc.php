@@ -20,24 +20,26 @@
  * $Id$
  */
 
-require_once (realpath (dirname (__FILE__) . '/../../config/config.inc.php'));
-require_once (src_path . '/Event.inc.php');
-
 class DJEvent extends Event
 {
-	function DJEvent ($time, $name)
+	public function getAsCurrent()
 	{
-		parent :: Event ($time, $name);
+		return sprintf("%s [DJ]", $this->getName());
 	}
 
-	function getAsCurrent ()
+	public function getAsNext()
 	{
-		return $this->_name . ' [DJ]';
+		return $this->getAsCurrent();
 	}
 
-	function getState ()
+	public function getState()
 	{
-		return 'live @ ' . site_name;
+		return sprintf('live @ %s', site_name);
+	}
+
+	public function isJukebox()
+	{
+		return false;
 	}
 }
 ?>

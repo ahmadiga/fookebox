@@ -20,16 +20,15 @@
  * $Id$
  */
 
-require_once (realpath (dirname (__FILE__) . '/../../config/config.inc.php'));
-require_once (realpath (dirname (__FILE__) . '/../../config/status.conf.php'));
+require_once(realpath(dirname (__FILE__) . '/../../config/status.conf.php'));
 
 class Jukebox
 {
-	function isActive ()
+	public static function isActive()
 	{
 		global $_PROGRAM;
-		$current = $_PROGRAM [CURRENT_EVENT];
-		return $current->isJukebox ();
+		$current = $_PROGRAM[CURRENT_EVENT];
+		return $current->isJukebox();
 	}
 }
 ?>

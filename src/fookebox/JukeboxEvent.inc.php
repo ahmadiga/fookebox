@@ -20,63 +20,63 @@
  * $Id$
  */
 
-require_once (realpath (dirname (__FILE__) . '/../../config/config.inc.php'));
-require_once (src_path . '/Event.inc.php');
-require_once (src_path . '/mpd.inc.php');
-
 class JukeboxEvent extends Event
 {
-	function JukeboxEvent ($time, $name = site_name)
+	public function __construct($time)
 	{
-		parent :: Event ($time, $name);
+		parent::__construct($time, site_name);
 	}
 
-	function getPlaylistItem ($index)
+	public function getPlaylistItem($index)
 	{
-		$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
-		$playlist = $mpd->getPlaylist ();
+		$mpd = new mpd(mpd_host, mpd_port, mpd_pass);
+		$playlist = $mpd->getPlaylist();
 
-		if (count ($playlist) < $index + 1)
+		if (count($playlist) < $index + 1)
 		{
 			return NULL;
 		}
 
-		$current = $playlist [$index];
+		$current = $playlist[$index];
 
-		list ($timePassed, $timeTotal) = split (':', $time);
+		list ($timePassed, $timeTotal) = split(':', $time);
 
-		$artist	= $current ['Artist'];
-		$track = $current ['Title'];
+		$artist	= $current['Artist'];
+		$track = $current['Title'];
 
-		return $artist . ' - ' . $track;
+		return sprintf("%s - %s", $artist, $track);
 	}
 
-	function getAsCurrent ()
+	public function getAsCurrent()
 	{
-		if ($cur = $this->getPlaylistItem (0))
+		if ($cur = $this->getPlaylistItem(0))
 		{
 			return $cur;
-		} else {
-			return $this->getName () . " jukebox";
 		}
-	}
-
-	function getAsNext ()
-	{
-		return $this->getName () . " jukebox";
-	}
-
-	function getState ()
-	{
-		if ($nxt = $this->getPlaylistItem (1))
+		else
 		{
-			return "next @ " . $this->getName () . " jukebox: $nxt";
-		} else {
-			return $this->getName () . " jukebox";
+			return sprintf("%s jukebox", $this->getName());
 		}
 	}
 
-	function isJukebox ()
+	public function getAsNext()
+	{
+		return sprintf("%s jukebox", $this->getName());
+	}
+
+	public function getState()
+	{
+		if ($next = $this->getPlaylistItem(1))
+		{
+			return sprintf("next @ %s jukebox: %s", $this->getName(), $next);
+		}
+		else
+		{
+			return sprintf("%s jukebox", $this->getName());
+		}
+	}
+
+	public function isJukebox()
 	{
 		return true;
 	}

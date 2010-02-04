@@ -20,10 +20,7 @@
  * $Id$
  */
 
-require_once ('config/config.inc.php');
-require_once (src_path . '/mpd.inc.php');
-require_once (src_path . '/Page.inc.php');
-require_once (src_path . '/RootPage.inc.php');
+require_once('config/config.inc.php');
 
 function index_handle_error($errno, $errstr, $errfile, $errline)
 {
@@ -38,10 +35,10 @@ set_error_handler('index_handle_error');
 $mpd = new mpd(mpd_host, mpd_port, mpd_pass);
 restore_error_handler();
 
-$root = new RootPage ();
-$page = new Page ();
-$page->assign ('mpd', $mpd);
+$root = new RootPage();
+$page = new Page();
+$page->assign('mpd', $mpd);
 
-$root->assign ('body', $page->fetch ('client.tpl'));
-$root->display ();
+$root->assign('body', $page->fetch ('client.tpl'));
+$root->display();
 ?>

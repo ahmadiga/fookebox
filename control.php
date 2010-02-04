@@ -20,8 +20,7 @@
  * $Id$
  */
 
-require_once ('config/config.inc.php');
-require_once (src_path . '/mpd.inc.php');
+require_once('config/config.inc.php');
 
 if (!enable_controls)
 {

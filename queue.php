@@ -21,8 +21,6 @@
  */
 
 require_once ('config/config.inc.php');
-require_once (src_path . '/mpd.inc.php');
-require_once (src_path . '/Album.inc.php');
 
 $mpd = new mpd (mpd_host, mpd_port, mpd_pass);
 $data = json_decode(file_get_contents("php://input"));
