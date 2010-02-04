@@ -6,6 +6,8 @@
  * Fixed queuing of full albums
  * Added support for cover art
  * Updated smarty to version 2.6.26
+ * Updated prototype to version 1.6.1
+ * Updated scriptaculous to version 1.8.3
 
 == 0.3.0 ==
 
