@@ -1,10 +1,11 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
-== 0.3.1 ==
+== 0.4.0 ==
 
  * Fixed queuing of full albums
  * Added support for cover art
+ * Minor CSS changes
  * Updated smarty to version 2.6.26
  * Updated prototype to version 1.6.1
  * Updated scriptaculous to version 1.8.3

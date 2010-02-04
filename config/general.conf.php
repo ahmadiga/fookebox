@@ -1,7 +1,7 @@
 <?php
 /*
  * fookebox
- * Copyright (C) 2007-2009 Stefan Ott. All rights reserved.
+ * Copyright (C) 2007-2010 Stefan Ott. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,5 @@ define ('src_path', $base . '/src/fookebox');
 define ('smarty_src_path', $base . '/src/smarty');
 define ('smarty_compile_dir', $base . '/skins/compiled');
 
-define ('VERSION', '0.3.0');
-
+define ('VERSION', '0.4.0');
 ?>
