@@ -45,7 +45,7 @@ class Album
 		return $this->artist;
 	}
 
-	public function addTrack($track)
+	public function addTrack(array $track)
 	{
 		$artist = array_key_exists('Artist', $track) ?
 			$track['Artist'] : 'Unknown Artist';
@@ -75,13 +75,13 @@ class Album
 		return $this->disc;
 	}
 
-	public function equals($other)
+	public function equals(Album $other)
 	{
 		return ($this->name == $other->name &&
 			$this->disc == $other->disc);
 	}
 
-	private function sortTracks($a, $b)
+	private function sortTracks(array $a, array $b)
 	{
 		if ($a['Track'] && $b['Track'] && $a['Album'])
 		{

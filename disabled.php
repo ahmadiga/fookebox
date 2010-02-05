@@ -22,7 +22,6 @@
 
 require_once('config/config.inc.php');
 
-$jukebox = new Jukebox();
 $root = new RootPage();
 $page = new Page();
 $root->assign('body', $page->fetch('disabled.tpl'));

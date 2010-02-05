@@ -61,14 +61,14 @@ function get_auto_queue_lock()
 	return true;
 }
 
-function release_auto_queue_lock ()
+function release_auto_queue_lock()
 {
 	$AUTO_QUEUE_LOCK = 1;
 	$shm = shm_attach($AUTO_QUEUE_LOCK);
 	shm_remove_var($shm, 'queue_update');
 }
 
-function queue_random_song($mpd)
+function queue_random_song(mpd $mpd)
 {
 	if (auto_queue_playlist != '')
 	{
@@ -105,7 +105,7 @@ function queue_random_song($mpd)
 	return $current;
 }
 
-function remove_old_songs_from_the_queue($mpd)
+function remove_old_songs_from_the_queue(mpd $mpd)
 {
 	$status = $mpd->getStatus();
 
@@ -119,7 +119,7 @@ function remove_old_songs_from_the_queue($mpd)
 	return $status;
 }
 
-function clear_queue_if_no_more_songs($status, $mpd)
+function clear_queue_if_no_more_songs(array $status, mpd $mpd)
 {
 	if (!array_key_exists('song', $status) && ($mpd->playlist_count > 0))
 	{

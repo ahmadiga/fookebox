@@ -20,25 +20,19 @@
  * $Id$
  */
 
-require_once ('../config/config.inc.php');
-require_once ('../config/status.conf.php');
-require_once (src_path . '/Event.inc.php');
-require_once (src_path . '/RootPage.inc.php');
-require_once (src_path . '/Page.inc.php');
+require_once(realpath(dirname(__FILE__) . '/../config/config.inc.php'));
 
-global $_PROGRAM;
+$root = new RootPage();
+$page = new Page();
 
-$root = new RootPage ('foobar Program');
-$page = new Page ();
-$page->assign ('current', $_PROGRAM [CURRENT_EVENT]);
+$page->assign('current', Jukebox::getEvent());
 
-if (CURRENT_EVENT < count($_PROGRAM) - 1)
+if (Jukebox::hasNextEvent())
 {
-	$page->assign ('next', $_PROGRAM [CURRENT_EVENT + 1]);
+	$page->assign('next', Jukebox::getNextEvent());
 }
 
-$root->assign ('body', $page->fetch ('program.tpl'));
-$root->assign ('hideHeader', true);
-$root->display ();
-
+$root->assign('body', $page->fetch('program.tpl'));
+$root->assign('hideHeader', true);
+$root->display();
 ?>

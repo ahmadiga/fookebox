@@ -22,16 +22,18 @@
 
 require_once('config/config.inc.php');
 
-function compare_artists_and_albums($a, $b)
+function compare_artists_and_albums(Album $a, Album $b)
 {
-	if ($a->getName () == '') return 1;
-	if ($b->getName () == '') return -1;
-	$aName = sprintf("%s - %s %s", $a->getArtist(), $a->getName(), $a->getDisc());
-	$bName = sprintf("%s - %s %s", $b->getArtist(), $b->getName(), $b->getDisc());
+	if ($a->getName() == '') return 1;
+	if ($b->getName() == '') return -1;
+	$aName = sprintf("%s - %s %s", $a->getArtist(), $a->getName(),
+		$a->getDisc());
+	$bName = sprintf("%s - %s %s", $b->getArtist(), $b->getName(),
+		$b->getDisc());
 	return strcasecmp ($aName, $bName);
 }
 
-function compare_albums($a, $b)
+function compare_albums(Album $a, Album $b)
 {
 	if ($a->getName() == '') return 1;
 	if ($b->getName() == '') return -1;

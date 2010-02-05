@@ -28,12 +28,6 @@ if (!album_cover_path)
 	die('Permission denied');
 }
 
-if (false)
-{
-	header('HTTP/1.1 404 Not found');
-	die('Bad Request');
-}
-
 function rb_clean($filename)
 {
 	// Substitute characters as explained on

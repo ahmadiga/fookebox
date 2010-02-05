@@ -20,16 +20,9 @@
  * $Id$
  */
 
-require_once ('../config/config.inc.php');
-require_once ('../config/status.conf.php');
-require_once (src_path . '/Jukebox.inc.php');
-require_once (src_path . '/Event.inc.php');
+require_once(realpath(dirname(__FILE__) . '/../config/config.inc.php'));
 
-$jukebox = new Jukebox ();
-$state = $jukebox->isActive ();
-global $_PROGRAM;
-
-$current = $_PROGRAM [CURRENT_EVENT];
+$current = Jukebox::getEvent();
 
 $dateFormat = date('s') % 2 == 0 ? 'H:i' : 'H i';
 $data = array (
@@ -38,14 +31,14 @@ $data = array (
 	'currentState'	=>	$current->getState ()
 );
 
-$data ['hasNext'] = CURRENT_EVENT < count($_PROGRAM) - 1;
+$data['hasNext'] = Jukebox::hasNextEvent();
 
-if ($data ['hasNext'])
+if ($data['hasNext'])
 {
-	$next = $_PROGRAM [CURRENT_EVENT + 1];
-	$data ['nextTitle'] = $next->getAsNext ();
-	$data ['nextTime'] = $next->getTime ();
+	$next = Jukebox::getNextEvent();
+	$data['nextTitle'] = $next->getAsNext ();
+	$data['nextTime'] = $next->getTime ();
 }
-echo json_encode($data);
 
+echo json_encode($data);
 ?>

@@ -20,14 +20,47 @@
  * $Id$
  */
 
-require_once(realpath(dirname (__FILE__) . '/../../config/status.conf.php'));
+global $_PROGRAM;
+
+require_once(realpath(dirname(__FILE__) . '/../../config/status.conf.php'));
 
 class Jukebox
 {
-	public static function isActive()
+	private static function getProgram()
 	{
 		global $_PROGRAM;
-		$current = $_PROGRAM[CURRENT_EVENT];
+		return $_PROGRAM;
+	}
+
+	private static function getCurrentEventId()
+	{
+		return CURRENT_EVENT;
+	}
+
+	public static function getEvent()
+	{
+		$program = Jukebox::getProgram();
+		$eventid = Jukebox::getCurrentEventId();
+		return $program[$eventid];
+	}
+
+	public static function hasNextEvent()
+	{
+		$program = Jukebox::getProgram();
+		$eventid = Jukebox::getCurrentEventId();
+		return $eventid < count($program) - 1;
+	}
+
+	public static function getNextEvent()
+	{
+		$program = Jukebox::getProgram();
+		$eventid = Jukebox::getCurrentEventId();
+		return $program[$eventid + 1];
+	}
+
+	public static function isActive()
+	{
+		$current = Jukebox::getEvent();
 		return $current->isJukebox();
 	}
 }
