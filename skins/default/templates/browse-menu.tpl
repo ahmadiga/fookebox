@@ -1,5 +1,5 @@
-{assign var=artists value=$mpd->getArtists()}
-{assign var=genres value=$mpd->getGenres()}
+{assign var=artists value=$jukebox->getArtists()}
+{assign var=genres value=$jukebox->getGenres()}
 <div id="browse-menu">
 	<ul id="selectType">
 		<li id="artistTab" class="active"><a href="#" onclick="javascript:setTab ('artist'); return false">Artists</a></li>

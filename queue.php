@@ -20,9 +20,8 @@
  * $Id$
  */
 
-require_once ('config/config.inc.php');
+require_once('config/config.inc.php');
 
-$mpd = new mpd (mpd_host, mpd_port, mpd_pass);
 $data = json_decode(file_get_contents("php://input"));
 
 if (!$data)
@@ -38,7 +37,9 @@ if (!array_key_exists('file', $data))
 }
 
 $file = $data->file;
-$pl = $mpd->getPlayList();
+
+$jukebox = new Jukebox();
+$pl = $jukebox->getPlayList();
 
 if (count($pl) >= max_queue_length)
 {
@@ -46,6 +47,5 @@ if (count($pl) >= max_queue_length)
 	die('The playlist is full');
 }
 
-$mpd->PLAdd($file);
-$mpd->Play();
+$jukebox->queue($file);
 ?>

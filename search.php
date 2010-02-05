@@ -42,7 +42,6 @@ function compare_albums(Album $a, Album $b)
 	return strcasecmp($aDisc, $bDisc);
 }
 
-$mpd = new mpd(mpd_host, mpd_port, mpd_pass);
 $data = json_decode(file_get_contents("php://input"));
 
 if (!$data)
@@ -64,25 +63,10 @@ $where = $data->where;
 $what = $data->what;
 $forceSearch = $data->forceSearch;
 
-if (!in_array($where, array(
-	MPD_SEARCH_GENRE, MPD_SEARCH_ARTIST, MPD_SEARCH_ALBUM,
-	MPD_SEARCH_TITLE, MPD_SEARCH_FILENAME, MPD_SEARCH_ANY
-)))
-{
-	header('HTTP/1.1 400 Bad Request');
-	die("Illegal search type");
-}
+$jukebox = new Jukebox();
+$result = $jukebox->search($where, $what, find_over_search && !$forceSearch);
 
-$albums = array ();
-
-if (find_over_search && !$forceSearch)
-	$result = $mpd->Find($where, $what);
-else
-	$result = $mpd->Search($where, $what);
-
-if (!$result)
-	$result = array();
-
+$albums = array();
 foreach ($result as $item)
 {
 	$album = NULL;

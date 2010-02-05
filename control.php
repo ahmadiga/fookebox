@@ -28,8 +28,6 @@ if (!enable_controls)
 	die('Permission denied');
 }
 
-$mpd = new mpd(mpd_host, mpd_port, mpd_pass);
-
 $data = json_decode(file_get_contents("php://input"));
 
 if (!$data)
@@ -44,23 +42,25 @@ if (!array_key_exists('action', $data))
 	die('Bad Request');
 }
 
+$jukebox = new Jukebox();
+
 switch ($data->action)
 {
-	case 'play': 		$mpd->Play();
+	case 'play': 		$jukebox->play();
 				break;
-	case 'pause': 		$mpd->Pause();
+	case 'pause': 		$jukebox->Pause();
 				break;
-	case 'prev': 		$mpd->Previous();
+	case 'prev': 		$jukebox->previous();
 				break;
-	case 'next': 		$mpd->Next();
+	case 'next': 		$jukebox->next();
 				break;
-	case 'stop': 		$mpd->Stop();
+	case 'stop': 		$jukebox->stop();
 				break;
-	case 'voldown': 	$mpd->AdjustVolume(-5);
+	case 'voldown': 	$jukebox->volumeDown();
 				break;
-	case 'volup': 		$mpd->AdjustVolume(5);
+	case 'volup':	 	$jukebox->volumeUp();
 				break;
-	case 'rebuild': 	$mpd->DBRefresh();
+	case 'rebuild': 	$jukebox->refreshDB();
 				break;
 }
 ?>

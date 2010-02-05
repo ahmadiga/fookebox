@@ -20,7 +20,7 @@
  * $Id$
  */
 
-require_once ('config/config.inc.php');
+require_once('config/config.inc.php');
 
 if (!enable_song_removal)
 {
@@ -28,7 +28,7 @@ if (!enable_song_removal)
 	die('Permission denied');
 }
 
-$mpd = new mpd(mpd_host, mpd_port, mpd_pass);
+$jukebox = new Jukebox();
 $data = json_decode(file_get_contents("php://input"));
 
 if (!$data)
@@ -43,5 +43,5 @@ if (!array_key_exists('id', $data))
 	die('Bad Request');
 }
 
-$mpd->PLRemove($data->id);
+$jukebox->unqueue($data->id);
 ?>

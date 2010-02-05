@@ -32,12 +32,12 @@ function index_handle_error($errno, $errstr, $errfile, $errline)
 }
 
 set_error_handler('index_handle_error');
-$mpd = new mpd(mpd_host, mpd_port, mpd_pass);
+$jukebox = new Jukebox();
 restore_error_handler();
 
 $root = new RootPage();
 $page = new Page();
-$page->assign('mpd', $mpd);
+$page->assign('jukebox', $jukebox);
 
 $root->assign('body', $page->fetch ('client.tpl'));
 $root->display();

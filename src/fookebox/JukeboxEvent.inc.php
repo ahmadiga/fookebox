@@ -29,8 +29,8 @@ class JukeboxEvent extends Event
 
 	public function getPlaylistItem($index)
 	{
-		$mpd = new mpd(mpd_host, mpd_port, mpd_pass);
-		$playlist = $mpd->getPlaylist();
+		$jukebox = new Jukebox();
+		$playlist = $jukebox->getPlaylist();
 
 		if (count($playlist) < $index + 1)
 		{

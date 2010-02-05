@@ -27,12 +27,11 @@ if (!Jukebox::isActive())
 	die();
 }
 
-$mpd = new mpd(mpd_host, mpd_port, mpd_pass);
+$jukebox = new Jukebox();
 
 $page = new Page();
-$page->assign('mpd', $mpd);
 
-$playlist = $mpd->getPlaylist();
+$playlist = $jukebox->getPlaylist();
 $data = array();
 
 foreach($playlist as $item)

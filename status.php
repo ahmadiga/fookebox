@@ -22,149 +22,30 @@
 
 require_once ('config/config.inc.php');
 
-function get_auto_queue_lock()
-{
-	// Make sure nobody else can be running this function at the same time
-	//
-	// Yes, this could be done in a less annoying way if php's sem_acquire
-	// were non-blocking
-
-	// System V IPC functionality is not available on all OS' (eg. Windows)
-	// If it isn't, good luck...
-	if (!function_exists('shm_remove_var'))
-		return true;
-
-	$AUTO_QUEUE_LOCK = 1;
-
-	$sem = sem_get($AUTO_QUEUE_LOCK, 1);
-	sem_acquire($sem);
-
-	// Now that we're alone, check whether anyone else is updating
-	$shm = shm_attach($AUTO_QUEUE_LOCK);
-	$update = @shm_get_var($shm, 'queue_update');
-
-	$time = time();
-
-	if ($update)
-	{
-		// Remove the lock if it's older than 10 seconds
-		if ($time - $update < 5)
-		{
-			sem_release($sem);
-			return false;
-		}
-		shm_remove_var($shm, 'queue_update');
-	}
-	shm_put_var($shm, 'queue_update', $time);
-
-	sem_release($sem);
-	return true;
-}
-
-function release_auto_queue_lock()
-{
-	$AUTO_QUEUE_LOCK = 1;
-	$shm = shm_attach($AUTO_QUEUE_LOCK);
-	shm_remove_var($shm, 'queue_update');
-}
-
-function queue_random_song(mpd $mpd)
-{
-	if (auto_queue_playlist != '')
-	{
-		$mpd->PLLoad(auto_queue_playlist);
-
-		if (!auto_queue_random)
-		{
-			$mpd->PLShuffle();
-			$files = $mpd->GetPlaylist();
-			$current = $files[0];
-		}
-		else
-		{
-			$files = $mpd->GetPlaylist();
-			$current = $files[0];
-			$mpd->PLRemove(0);
-			$mpd->PLAdd($current['file']);
-			$mpd->rm(auto_queue_playlist);
-			$mpd->PLSave(auto_queue_playlist);
-		}
-		$mpd->PLClear();
-		$mpd->PLAdd($current['file']);
-		$mpd->Play();
-	}
-	else
-	{
-		$files = $mpd->listAll();
-		$length = sizeof($files);
-		$chosen = rand(0, $length - 1);
-		$current = $files[$chosen];
-		$mpd->PLAdd($current['file']);
-		$mpd->Play();
-	}
-	return $current;
-}
-
-function remove_old_songs_from_the_queue(mpd $mpd)
-{
-	$status = $mpd->getStatus();
-
-	while (array_key_exists('song', $status) && $status['song'] > 0)
-	{
-		// Some songs finished playing but are still in the playlist
-		$mpd->PLRemove(0);
-		$status = $mpd->getStatus();
-	}
-
-	return $status;
-}
-
-function clear_queue_if_no_more_songs(array $status, mpd $mpd)
-{
-	if (!array_key_exists('song', $status) && ($mpd->playlist_count > 0))
-	{
-		// We ran out of songs - clear the playlist
-		$mpd->PLRemove(0);
-	}
-}
-
 if (!Jukebox::isActive())
 {
 	die(json_encode(array('jukebox' => false)));
 }
 
-$mpd = new mpd(mpd_host, mpd_port, mpd_pass);
+$jukebox = new Jukebox();
+$jukebox->cleanQueue();
+$time = $jukebox->getCurrentTrackTime();
 
-$status = remove_old_songs_from_the_queue($mpd);
-clear_queue_if_no_more_songs($status, $mpd);
-
-$time = array_key_exists('time', $status) ? $status['time'] : '0:0';
-
-list($timePassed, $timeTotal) = split(':', $time);
-
-if (empty($timePassed))
-	$timePassed = 0;
-
-$playlist = $mpd->getPlaylist();
+$playlist = $jukebox->getPlaylist();
 $queueLength = max(count($playlist) - 1, 0);
 
-if ($queueLength == 0 && $status['state'] == 'stop' && auto_queue
-	&& get_auto_queue_lock())
+if ($queueLength == 0 && $jukebox->isStopped() && auto_queue)
 {
-	// we were running out of songs, queue a random one
-	$current = queue_random_song($mpd);
-	release_auto_queue_lock();
+	$jukebox->autoQueue();
 }
-else
-{
-	$current = $playlist[$status['song']];
-}
+
+$current = $jukebox->getCurrentTrack();
 
 echo json_encode(array(
 	'artist'	=> $current['Artist'],
 	'track'		=> $current['Title'],
-	'timePassed'	=> date('i:s', $timePassed),
-	'timeTotal'	=> date('i:s', $timeTotal),
+	'timePassed'	=> date('i:s', $time['passed']),
+	'timeTotal'	=> date('i:s', $time['total']),
 	'queueLength'	=> $queueLength,
 	'jukebox'	=> true
 ));
