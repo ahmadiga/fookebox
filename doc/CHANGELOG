@@ -5,6 +5,7 @@
 
  * Can now pick the auto-queued songs from a predefined playlist
  * Some internal code cleanup
+ * Changed license to GPLv3
 
 == 0.4.0 (4 Feb 2010) ==
 
