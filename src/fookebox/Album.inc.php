@@ -45,10 +45,9 @@ class Album
 		return $this->artist;
 	}
 
-	public function addTrack(array $track)
+	public function addTrack(Track $track)
 	{
-		$artist = array_key_exists('Artist', $track) ?
-			$track['Artist'] : 'Unknown Artist';
+		$artist = $track->artist;
 
 		if ($artist != $this->artist && $artist != '')
 		{
@@ -81,14 +80,14 @@ class Album
 			$this->disc == $other->disc);
 	}
 
-	private function sortTracks(array $a, array $b)
+	private function sortTracks(Track $a, Track $b)
 	{
-		if ($a['Track'] && $b['Track'] && $a['Album'])
+		if ($a->track != $b->track)
 		{
-			return $a['Track'] > $b['Track'];
+			return $a->track > $b->track;
 		}
-		$aName = sprintf("%s - %s", $a['Artist'], $a['Title']);
-		$bName = sprintf("%s - %s", $b['Artist'], $b['Title']);
+		$aName = sprintf("%s - %s", $a->artist, $a->title);
+		$bName = sprintf("%s - %s", $b->artist, $b->title);
 
 		return strcasecmp($aName, $bName);
 	}

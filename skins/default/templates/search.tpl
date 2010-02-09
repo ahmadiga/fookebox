@@ -8,10 +8,10 @@ Nothing found
 {if $smarty.const.album_cover_path}
 	<img src="cover/{$album->getartist()|escape:'url'|escape:'url'}/{$album->getname()|escape:'url'|escape:'url'}" width="200" style="float: right; clear: both; margin: 10px" alt="" />
 {/if}
-<h3 class="album">{if $where == "genre"}{$album->getartist()} - {/if}{if $smarty.const.enable_queue_album}<a href="#" onclick="{foreach from=$album->getTracks() item=track}queueFile('{$track.file|addslashes}');{/foreach}return false">{/if}{$album->getname()}{if $album->getDisc()} (Disc {$album->getDisc()}){/if}{if $smarty.const.enable_queue_album}</a>{/if}</h3>
+<h3 class="album">{if $where == "genre"}{$album->getartist()} - {/if}{if $smarty.const.enable_queue_album}<a href="#" onclick="{foreach from=$album->getTracks() item=track}queueFile('{$track->file|addslashes}');{/foreach}return false">{/if}{$album->getname()}{if $album->getDisc()} (Disc {$album->getDisc()}){/if}{if $smarty.const.enable_queue_album}</a>{/if}</h3>
 <ul style="padding-bottom: 10px">
 {	foreach from=$album->getTracks() item=track}
-	<li class="track"><a href="#" onclick="javascript:queueFile ('{$track.file|addslashes}'); return false">{$track.Track|string_format:"%02d"} - {$track.Artist} - {$track.Title}</a></li>
+	<li class="track"><a href="#" onclick="javascript:queueFile('{$track->file|addslashes}'); return false">{$track->track|string_format:"%02d"} - {$track->artist} - {$track->title}</a></li>
 {	/foreach}
 </ul>
 </li>

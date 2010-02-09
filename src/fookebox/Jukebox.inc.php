@@ -100,8 +100,13 @@ class Jukebox
 	public function getPlaylist()
 	{
 		if ($this->playlist == null)
-			$this->playlist = $this->mpd->GetPlaylist();
-
+		{
+			$this->playlist = array();
+			foreach ($this->mpd->GetPlaylist() as $item)
+			{
+				$this->playlist[] = new Track($item);
+			}
+		}
 		return $this->playlist;
 	}
 

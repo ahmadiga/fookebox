@@ -42,8 +42,8 @@ if ($queueLength == 0 && $jukebox->isStopped() && auto_queue)
 $current = $jukebox->getCurrentTrack();
 
 echo json_encode(array(
-	'artist'	=> $current['Artist'],
-	'track'		=> $current['Title'],
+	'artist'	=> $current->artist,
+	'track'		=> $current->title,
 	'timePassed'	=> date('i:s', $time['passed']),
 	'timeTotal'	=> date('i:s', $time['total']),
 	'queueLength'	=> $queueLength,

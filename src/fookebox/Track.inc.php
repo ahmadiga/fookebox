@@ -17,33 +17,39 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * $Id$
+ * $Id: Album.inc.php 109 2010-02-05 02:18:00Z stefan@ott.net $
  */
 
-require_once('config/config.inc.php');
-
-if (!Jukebox::isActive())
+class Track
 {
-	die();
+	public $artist;
+	public $track;
+	public $title;
+	public $file;
+	public $disc;
+	public $pos;
+	public $albumName;
+
+	public function __construct(array $data)
+	{
+		$this->artist = 'Unknown Artist';
+		$this->track = 0;
+		$this->pos = 0;
+		$this->title = '';
+
+		$this->file = $data['file'];
+
+		if (array_key_exists('Artist', $data))
+			$this->artist = $data['Artist'];
+		if (array_key_exists('Track', $data))
+			$this->track = $data['Track'];
+		if (array_key_exists('Title', $data))
+			$this->title = $data['Title'];
+		if (array_key_exists('Disc', $data))
+			$this->disc = $data['Disc'];
+		if (array_key_exists('Pos', $data))
+			$this->pos = $data['Pos'];
+		if (array_key_exists('Album', $data))
+			$this->albumName = $data['Album'];
+	}
 }
-
-$jukebox = new Jukebox();
-
-$page = new Page();
-
-$playlist = $jukebox->getPlaylist();
-$data = array();
-
-foreach($playlist as $item)
-{
-	$page = new Page();
-	$page->assign('artist', $item->artist);
-	$page->assign('title', $item->title);
-	$page->assign('position', $item->pos);
-	$data[] = $page->fetch('playlist-entry.tpl');
-}
-
-echo json_encode(array(
-	'queue' => $data,
-));
-?>

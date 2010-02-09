@@ -69,36 +69,22 @@ $result = $jukebox->search($where, $what, find_over_search && !$forceSearch);
 $albums = array();
 foreach ($result as $item)
 {
-	$album = NULL;
-	$found = false;
+	$track = new Track($item);
 
-	$disc = array_key_exists('Disc', $item) ? $item['Disc'] : '';
-	$artist = array_key_exists('Artist', $item) ? $item ['Artist'] : '';
-	$albumName = array_key_exists('Album', $item) ? $item['Album'] : '';
+	$albumHash = $track->albumName . 'disc' . $track->disc;
 
-	for ($i=0; $i < count ($albums); $i++)
+	if (!array_key_exists($albumHash, $albums))
 	{
-		if ($albums[$i]->equals(new Album($artist, $albumName, $disc)))
-		{
-			$albums[$i]->addTrack($item);
-			$found = true;
-		}
+		$albums[$albumHash] = new Album($track->artist,
+			$track->albumName, $track->disc);
 	}
-	if (!$found) {
-		$album = new Album($artist, $albumName, $disc);
-		$album->addTrack($item);
-		$albums[] = $album;
-	}
+
+	$album = $albums[$albumHash];
+	$album->addTrack($track);
 }
 
-if ($where == 'genre')
-{
-	usort($albums, 'compare_artists_and_albums');
-}
-else
-{
-	usort($albums, 'compare_albums');
-}
+$func = $where == 'genre' ? 'compare_artists_and_albums' : 'compare_albums';
+usort($albums, $func);
 
 $root = new RootPage();
 $page = new Page();

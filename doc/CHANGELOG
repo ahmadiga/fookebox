@@ -4,6 +4,7 @@
 == 0.4.1 ==
 
  * Can now pick the auto-queued songs from a predefined playlist
+ * Some internal code cleanup
 
 == 0.4.0 (4 Feb 2010) ==
 

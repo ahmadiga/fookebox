@@ -41,8 +41,8 @@ class JukeboxEvent extends Event
 
 		list ($timePassed, $timeTotal) = split(':', $this->getTime());
 
-		$artist	= $current['Artist'];
-		$track = $current['Title'];
+		$artist	= $current->artist;
+		$track = $current->title;
 
 		return sprintf("%s - %s", $artist, $track);
 	}
