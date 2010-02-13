@@ -36,7 +36,8 @@ $defaults = array
 	'enable_queue_album'	=> false,
 	'find_over_search'	=> false,
 	'album_cover_path'	=> '',
-	'compliations_name'	=> 'Various Artists'
+	'compliations_name'	=> 'Various Artists',
+	'auto_queue_time_left'	=> 1,
 );
 
 foreach ($defaults as $key => $value)

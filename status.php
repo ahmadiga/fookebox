@@ -28,12 +28,14 @@ if (!Jukebox::isActive())
 
 $jukebox = new Jukebox();
 $jukebox->cleanQueue();
-$time = $jukebox->getCurrentTrackTime();
 
 $playlist = $jukebox->getPlaylist();
 $queueLength = max(count($playlist) - 1, 0);
 
-if ($queueLength == 0 && $jukebox->isStopped() && auto_queue)
+$time = $jukebox->getCurrentTrackTime();
+$time['left'] = $time['total'] - $time['passed'];
+
+if (auto_queue && $queueLength == 0 && $time['left'] < auto_queue_time_left)
 {
 	$jukebox->autoQueue();
 }

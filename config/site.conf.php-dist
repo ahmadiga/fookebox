@@ -34,6 +34,8 @@ define ('base_url', 'http://localhost/mpd/');
 
 // automatically queue a random song when the playlist gets empty
 //define ('auto_queue', false);
+// do auto-queuing before the playlist is empty [seconds]
+//define ('auto_queue_time_left', 1);
 // if you want the 'random' song to come from a pre-defined (mpd) playlist,
 // you can set the playlist's name here
 //define ('auto_queue_playlist', 'idle');

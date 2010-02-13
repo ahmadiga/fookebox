@@ -125,11 +125,14 @@ include 'Air feat. Joe Random' and 'Fair play').
 === Auto-queuing ===
 
 If you enable 'auto_queue' fookebox will automatically pick a completely
-random song from your collection whenever there is nothing else to play. If
-you would like to have a predefined set of songs to be played instead, use
-'auto_queue_playlist' to specify a mpd playlist. If you want the song
-selection to be random but limited to a set of songs, define a playlist as
-explained before and set 'auto_queue_random' to true.
+random song from your collection whenever there is nothing else to play (by
+setting 'auto_queue_time_left' you can define how many seconds before the
+current song ends this happens - useful for large music collections on slow
+machines where auto-queuing takes a few seconds). If you would like to have a
+predefined set of songs to be played instead, use 'auto_queue_playlist' to
+specify a mpd playlist. If you want the song selection to be random but
+limited to a set of songs, define a playlist as explained before and set
+'auto_queue_random' to true.
 
 Note: if you don't use auto_queue_random fookebox will have to modify your
 playlist. While this should not cause any harm, you might lose your playlist
