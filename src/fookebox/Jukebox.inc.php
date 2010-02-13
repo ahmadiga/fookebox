@@ -267,12 +267,12 @@ class Jukebox
 				$files = $this->getPlaylist();
 				$file = $files[0];
 				$this->mpd->PLRemove(0);
-				$this->mpd->PLAdd($file['file']);
+				$this->mpd->PLAdd($file->file);
 				$this->mpd->rm(auto_queue_playlist);
 				$this->mpd->PLSave(auto_queue_playlist);
 			}
 			$this->mpd->PLClear();
-			$this->queue($file['file']);
+			$this->queue($file->file);
 		}
 		else
 		{

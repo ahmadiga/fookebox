@@ -3,9 +3,12 @@
 
 == 0.4.1 ==
 
+ * Thanks to Gavin Cameron for his contributions
  * Can now pick the auto-queued songs from a predefined playlist
  * Some internal code cleanup
  * Changed license to GPLv3
+ * Set the default time zone to UTC to get PHP to shut up (thanks to Gavin)
+ * Replaced calls to split (deprecated) with explode (Gavin)
 
 == 0.4.0 (4 Feb 2010) ==
 

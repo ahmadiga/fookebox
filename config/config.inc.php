@@ -39,4 +39,6 @@ function __autoload($class_name)
 	require_once(src_path . "/$class_name.inc.php");
 }
 
+date_default_timezone_set('UTC');
+
 ?>
