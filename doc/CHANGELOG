@@ -10,6 +10,7 @@
  * Set the default time zone to UTC to get PHP to shut up (Gavin)
  * Replaced calls to split (deprecated) with explode (Gavin)
  * Added support for cover art for compilations (Gavin again, also: see README)
+ * Added the ability to auto queue songs before the playlist is empty
 
 == 0.4.0 (4 Feb 2010) ==
 
