@@ -47,9 +47,18 @@ $album = rb_clean($_GET['album']);
 
 $path = sprintf("%s/%s-%s.jpg", album_cover_path, $artist, $album);
 
-if (!is_file($path)) {
-	header('HTTP/1.1 404 Not found');
-	die('Not found');
+if (!is_file($path))
+{
+	// Can't find the album cover by artist name. Is it a compilation?
+	$path = sprintf("%s/%s-%s.jpg", album_cover_path,
+		compliations_name, $album);
+
+	if (!is_file($path))
+	{
+		// Still can't find it
+		header('HTTP/1.1 404 Not found');
+		die('Not found');
+	}
 }
 
 show_file($path);

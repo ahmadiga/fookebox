@@ -52,4 +52,6 @@ define ('base_url', 'http://localhost/mpd/');
 //define ('find_over_search', false);
 // directory with cover art
 //define ('album_cover_path', '/home/stefan/.cache/rhythmbox/covers/');
+// what to use as artist name when looking for compilations' cover art?
+//define ('compliations_name', 'Various Artists');
 ?>

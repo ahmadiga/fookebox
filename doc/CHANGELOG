@@ -7,8 +7,9 @@
  * Can now pick the auto-queued songs from a predefined playlist
  * Some internal code cleanup
  * Changed license to GPLv3
- * Set the default time zone to UTC to get PHP to shut up (thanks to Gavin)
+ * Set the default time zone to UTC to get PHP to shut up (Gavin)
  * Replaced calls to split (deprecated) with explode (Gavin)
+ * Added support for cover art for compilations (see README)
 
 == 0.4.0 (4 Feb 2010) ==
 

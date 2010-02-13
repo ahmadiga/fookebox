@@ -35,7 +35,8 @@ $defaults = array
 	'enable_song_removal'	=> false,
 	'enable_queue_album'	=> false,
 	'find_over_search'	=> false,
-	'album_cover_path'	=> ''
+	'album_cover_path'	=> '',
+	'compliations_name'	=> 'Various Artists'
 );
 
 foreach ($defaults as $key => $value)
