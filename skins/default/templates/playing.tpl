@@ -17,3 +17,6 @@
 {/if}
 	</ol>
 </div>
+<div>
+	<img id="nowPlayingCover" src="" width="200" alt="" />
+</div>

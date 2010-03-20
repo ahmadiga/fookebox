@@ -153,6 +153,7 @@ function updateStatus()
 			var track = data.track;
 			var timeTotal = data.timeTotal;
 			var serverQueue = data.queueLength;
+			var album = data.album;
 
 			if (artist != $('artist').innerHTML)
 				$('artist').update(artist);
@@ -161,6 +162,9 @@ function updateStatus()
 			if (timeTotal != $('timeTotal').innerHTML)
 				$('timeTotal').update(timeTotal);
 			$('timePassed').update(data.timePassed);
+
+			img = $('nowPlayingCover');
+			img.src = '/cover/' + artist + '/' + album;
 
 			if (serverQueue != queueLength)
 				updatePlaylist();

@@ -276,6 +276,7 @@ class Jukebox
 		}
 		else
 		{
+			$this->mpd->PLClear();
 			$files = $this->mpd->listAll();
 			$length = sizeof($files);
 			$chosen = rand(0, $length - 1);
