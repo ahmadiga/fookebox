@@ -27,13 +27,6 @@ if (!album_cover_path)
 	die('Permission denied');
 }
 
-function rb_clean($filename)
-{
-	// Substitute characters as explained on
-	// http://www.rockbox.org/wiki/AlbumArt
-	return preg_replace('/[\/:<>\?*|]/', '_', stripslashes($filename));
-}
-
 function show_file($filename)
 {
 	header('Content-type: image/jpeg');
@@ -42,23 +35,16 @@ function show_file($filename)
 	fclose($file);
 }
 
-$artist = rb_clean($_GET['artist']);
-$album = rb_clean($_GET['album']);
+$artist = stripslashes($_GET['artist']);
+$albumName = stripslashes($_GET['album']);
 
-$path = sprintf("%s/%s-%s.jpg", album_cover_path, $artist, $album);
+$album = new Album($artist, $albumName);
+$cover = $album->getCover();
 
-if (!is_file($path))
+if (!$cover)
 {
-	// Can't find the album cover by artist name. Is it a compilation?
-	$path = sprintf("%s/%s-%s.jpg", album_cover_path,
-		compliations_name, $album);
-
-	if (!is_file($path))
-	{
-		// Still can't find it
-		header('HTTP/1.1 404 Not found');
-		die('Not found');
-	}
+	header('HTTP/1.1 404 Not found');
+	die('Not found');
 }
 
-show_file($path);
+show_file($cover);

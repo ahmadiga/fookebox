@@ -41,11 +41,13 @@ if (auto_queue && $queueLength == 0 && $time['left'] < auto_queue_time_left)
 }
 
 $current = $jukebox->getCurrentTrack();
+$album = new Album($current->artist, $current->albumName);
 
 echo json_encode(array(
 	'artist'	=> $current->artist,
 	'track'		=> $current->title,
 	'album'		=> $current->albumName,
+	'has_cover'	=> $album->getCover() != NULL,
 	'timePassed'	=> date('i:s', $time['passed']),
 	'timeTotal'	=> date('i:s', $time['total']),
 	'queueLength'	=> $queueLength,

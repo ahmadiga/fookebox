@@ -139,35 +139,42 @@ function updateStatus()
 
 	ajax_get('status', function(transport)
 	{
-			var response = transport.responseText;
-			var data = response.evalJSON();
-			var jukebox = data.jukebox;
+		var response = transport.responseText;
+		var data = response.evalJSON();
+		var jukebox = data.jukebox;
 
-			if (!jukebox)
-			{
-				window.location = 'disabled';
-				return
-			}
+		if (!jukebox)
+		{
+			window.location = 'disabled';
+			return
+		}
 
-			var artist = data.artist;
-			var track = data.track;
-			var timeTotal = data.timeTotal;
-			var serverQueue = data.queueLength;
-			var album = data.album;
+		var artist = data.artist;
+		var track = data.track;
+		var timeTotal = data.timeTotal;
+		var serverQueue = data.queueLength;
+		var album = data.album;
+		var hasCover = data.has_cover;
 
-			if (artist != $('artist').innerHTML)
-				$('artist').update(artist);
-			if (track != $('track').innerHTML)
-				$('track').update(track);
-			if (timeTotal != $('timeTotal').innerHTML)
-				$('timeTotal').update(timeTotal);
-			$('timePassed').update(data.timePassed);
+		if (artist != $('artist').innerHTML)
+			$('artist').update(artist);
+		if (track != $('track').innerHTML)
+			$('track').update(track);
+		if (timeTotal != $('timeTotal').innerHTML)
+			$('timeTotal').update(timeTotal);
+		$('timePassed').update(data.timePassed);
 
-			img = $('nowPlayingCover');
+		var img = $('nowPlayingCover');
+		if (hasCover)
+		{
 			img.src = '/cover/' + artist + '/' + album;
+			img.show();
+		}
+		else
+			img.hide();
 
-			if (serverQueue != queueLength)
-				updatePlaylist();
+		if (serverQueue != queueLength)
+			updatePlaylist();
 	});
 }
 

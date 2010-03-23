@@ -79,6 +79,31 @@ class Album
 			$this->disc == $other->disc);
 	}
 
+	public function getCover()
+	{
+		$album = preg_replace('/[\/:<>\?*|]/', '_', $this->name);
+		$artist = preg_replace('/[\/:<>\?*|]/', '_', $this->artist);
+
+		$path = sprintf("%s/%s-%s.jpg", album_cover_path,
+			$artist, $album);
+
+		if (!is_file($path))
+		{
+			// Can't find the album cover by artist name.
+			// Is it a compilation?
+			$path = sprintf("%s/%s-%s.jpg", album_cover_path,
+				compliations_name, $this->name);
+
+			if (!is_file($path))
+			{
+				return NULL;
+			}
+		}
+
+		return $path;
+
+	}
+
 	private function sortTracks(Track $a, Track $b)
 	{
 		if ($a->track != $b->track)
