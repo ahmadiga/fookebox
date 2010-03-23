@@ -167,10 +167,7 @@ function updateStatus()
 		var img = $('nowPlayingCover');
 		if (hasCover)
 		{
-			// A whole lot of escaping!
-			album = escape(escape(album).escapeHTML());
-			artist = escape(escape(artist).escapeHTML());
-			img.src = '/cover/' + artist + '/' + album;
+			img.src = '/cover/current/' + artist + '/' + album;
 			img.show();
 		}
 		else

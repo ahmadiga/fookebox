@@ -36,10 +36,21 @@ function show_file($filename)
 }
 
 $artist = stripslashes($_GET['artist']);
-$albumName = stripslashes($_GET['album']);
 
-$album = new Album($artist, $albumName);
-$cover = $album->getCover();
+if ($artist == 'current')
+{
+	$jukebox = new Jukebox();
+	$current = $jukebox->getCurrentTrack();
+	$album = new Album($current->artist, $current->albumName);
+	$cover = $album->getCover();
+}
+else
+{
+	$albumName = stripslashes($_GET['album']);
+
+	$album = new Album($artist, $albumName);
+	$cover = $album->getCover();
+}
 
 if (!$cover)
 {
