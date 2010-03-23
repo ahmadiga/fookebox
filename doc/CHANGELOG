@@ -1,7 +1,7 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
-== 0.4.1 ==
+== 0.4.1 (23 Mar 2010) ==
 
  * Thanks to Gavin Cameron for his contributions
  * Can now pick the auto-queued songs from a predefined playlist
