@@ -171,7 +171,10 @@ function updateStatus()
 			img.show();
 		}
 		else
+		{
 			img.hide();
+			img.src = '';
+		}
 
 		if (serverQueue != queueLength)
 			updatePlaylist();
