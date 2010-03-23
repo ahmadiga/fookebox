@@ -1,6 +1,10 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
+== 0.4.2 ==
+
+ * Fixed typo in README
+
 == 0.4.1 (23 Mar 2010) ==
 
  * Thanks to Gavin Cameron for his contributions
