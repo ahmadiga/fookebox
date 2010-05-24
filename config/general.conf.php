@@ -27,5 +27,5 @@ define ('src_path', $base . '/src/fookebox');
 define ('smarty_src_path', $base . '/src/smarty');
 define ('smarty_compile_dir', $base . '/skins/compiled');
 
-define ('VERSION', '0.4.1');
+define ('VERSION', '0.4.2');
 ?>
