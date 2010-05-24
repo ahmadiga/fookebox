@@ -1,8 +1,9 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
-== 0.4.2 ==
+== 0.4.2 (24 May 2010) ==
 
+ * Database rebuild was broken, fixed
  * Fixed typo in README
 
 == 0.4.1 (23 Mar 2010) ==

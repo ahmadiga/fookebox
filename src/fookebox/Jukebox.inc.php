@@ -82,7 +82,7 @@ class Jukebox
 
 	public function refreshDB()
 	{
-		if (!enable_controls) return
+		if (!enable_controls) return;
 		$this->mpd->DBRefresh();
 	}
 
