@@ -2,6 +2,7 @@ MANIFEST.in
 README.txt
 development.ini
 ez_setup.py
+production.ini
 setup.cfg
 setup.py
 test.ini
