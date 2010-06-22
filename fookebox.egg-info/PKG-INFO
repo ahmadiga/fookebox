@@ -1,0 +1,14 @@
+Metadata-Version: 1.0
+Name: fookebox
+Version: 0.5dev
+Summary: fookebox is a jukebox-style web-frontend to mpd
+Home-page: http://fookebox.googlecode.com/
+Author: Stefan Ott
+Author-email: stefan@ott.net
+License: GPLv3
+Description: fookebox is a jukebox-style web-frontend to mpd.
+
+Use as a keyboard-less jukebox frontend
+Or as a powerful mpd control frontend
+Platform: UNKNOWN
+Keywords: mpd jukebox web music party
