@@ -5,6 +5,7 @@ setup.cfg
 setup.py
 apache/apache.conf
 apache/fookebox.wsgi
+docs/changes.txt
 docs/config.txt
 fookebox/__init__.py
 fookebox/websetup.py
