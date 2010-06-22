@@ -1,4 +1,6 @@
 include fookebox/config/deployment.ini_tmpl
+include docs/config.txt
+exclude docs/index.txt
 recursive-include fookebox/public *
 recursive-include fookebox/templates *
 exclude *ini

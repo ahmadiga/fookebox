@@ -5,7 +5,7 @@ setup.cfg
 setup.py
 apache/apache.conf
 apache/fookebox.wsgi
-docs/index.txt
+docs/config.txt
 fookebox/__init__.py
 fookebox/websetup.py
 fookebox.egg-info/PKG-INFO

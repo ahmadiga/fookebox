@@ -1,0 +1,126 @@
+﻿#summary ReadMe for fookebox
+#labels Featured,Phase-Deploy
+
+fookebox is a jukebox-style web-frontend to mpd.
+
+It offers the following jukebox features:
+
+ * Browse your music library by artist or genre
+ * Add songs to the play list (obviously)
+ * Limit the queue size (see note below)
+ * Add whole albums to the play list (optional)
+ * Remove songs from the play list (optional)
+ * Search for artists/albums/titles/files (optional)
+ * Control mpd (optional)
+
+In addition to that, fookebox has a second frontend intended for a projector
+showing the currently playing song as well as the first queue entry. Also, in
+case you are organizing an event where you only want to use the jukebox between
+other events (live bands, DJs) fookebox can be told so and display that
+information on the secondary frontend (details: see below).
+
+
+== What you need ==
+
+In order to run fookebox you will need:
+
+ * MPD
+ * Some web server (eg. apache) with WSGI support
+ * Pylons (http://pylonshq.com/)
+
+== How to set it up ==
+
+=== web server ===
+
+Use the provided apache.conf and fookebox.wsgi to load fookebox.
+
+=== fookebox ===
+
+Have a look at README.txt for general information on how to install and
+configure fookebox. For details on the config options, see below.
+
+Also, make sure that your webserver can write to the data/templates directory.
+
+
+== Detailed setup ==
+
+You can tweak the following fookebox-specific settings:
+
+ * mpd_host: The host name of the machine running mpd (eg. localhost)
+ * mpd_port: The port mpd is running on (6600 by default)
+ * mpd_pass: The password required to access mpd
+ * site_name: A name for your site (eg. 'my home')
+ * max_queue_length: The maximum queue length (see below for details)
+ * auto_queue: Whether to play random songs when the queue gets empty (see below)
+ * auto_queue_playlist: Playlist to play when idle (see below)
+ * auto_queue_random: (see below)
+ * show_search_tab: Enable/disable 'search' tab (eg. for mouse-only jukeboxes)
+ * enable_controls: Enable/disable mpd control (disable on public jukeboxes)
+ * enable_song_removal: Whether to allow the user to remove songs in the queue
+ * enable_queue_album: Enables/disables the ability to queue whole albums
+ * find_over_search: Whether to use mpd's 'find' or 'search' (see below)
+ * album_cover_path: Path that contains album cover art (see below)
+
+
+== Secondary frontend ==
+
+If you don't care about projectors and stuff, just ignore this section. It's
+purely optional.
+
+If you point your browser to yourfookeboxurl/program you will see fookebox'
+secondary front end which is intended to be projected to a wall / shown on
+a screen without user interaction. It will not only inform users about the
+currently playing and the next song but in case you're using fookebox at some
+kind of party, this front end will allow you to inform your users about any
+other events that might be coming up (eg. a live band or a DJ).
+
+!! TODO !!
+An example of how to define such a program can be found in
+config/status.conf.php which should be pretty self-explanatory.
+!! TODO !!
+
+== Additional notes ==
+
+=== Queue length ===
+
+It's important to note that while fookebox does try to enforce your mpd queue
+length value, people who click fast enough might be able to bypass that check
+so make sure to set your mpd's max_playlist_length accordingly (note that mpd's
+count includes the song which is being played so if you want 3 queue positions,
+set max_playlist_length to 4).
+
+=== Cover art ===
+
+Fookebox can display cover art for your music. In order to do that, set
+album_cover_path to a directory that contains your covers, named according to
+rockbox' file naming conventions (see http://www.rockbox.org/wiki/AlbumArt for
+details).
+
+In case no cover art is found for an album, fookebox tries to be smart and
+assumes this is a compilation. The 'compliations_name' ('Various Artists' by
+default) determines what artist name is used for compilations. So if you want
+to provide a cover for a compilation called 'My Best Music', the corresponding
+cover art file would be called 'Various Artists-My Best Music.jpg'.
+
+Note that your covers need to be JPEG files and they will get scaled to
+a width of 100 pixels.
+
+=== Find or search? ===
+
+When an artist/genre/album has been clicked, you can decide whether we tell mpd
+to 'find' that item or to 'search' for it. The difference is that 'find' only
+returns exact matches while 'search' also matches substrings (eg. if you click
+on 'Air', 'find' will only return songs by 'Air' while 'search' will also
+include 'Air feat. Joe Random' and 'Fair play').
+
+=== Auto-queuing ===
+
+If you enable 'auto_queue', fookebox will automatically pick a completely
+random song from your collection whenever there is nothing else to play (by
+setting 'auto_queue_time_left' you can define how many seconds before the
+current song ends this happens - useful for large music collections on slow
+machines where auto-queuing takes a few seconds). If you would like to have a
+predefined set of songs to be played instead, use 'auto_queue_playlist' to
+specify an mpd playlist. If you want the song selection to be random but
+limited to a set of songs, define a playlist as explained before and set
+'auto_queue_random' to true.
