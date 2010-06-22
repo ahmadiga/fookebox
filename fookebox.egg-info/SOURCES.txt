@@ -1,7 +1,13 @@
 MANIFEST.in
 README.txt
+development.ini
+ez_setup.py
 setup.cfg
 setup.py
+test.ini
+apache/apache.conf
+apache/fookebox.wsgi
+docs/index.txt
 fookebox/__init__.py
 fookebox/websetup.py
 fookebox.egg-info/PKG-INFO
@@ -65,4 +71,4 @@ fookebox/templates/status.tpl
 fookebox/tests/__init__.py
 fookebox/tests/test_models.py
 fookebox/tests/functional/__init__.py
-fookebox/tests/functional/test_status.py
+fookebox/tests/functional/test_jukebox.py
