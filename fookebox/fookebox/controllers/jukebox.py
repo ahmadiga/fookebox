@@ -26,6 +26,10 @@ class JukeboxController(BaseController):
 			'config': config,
 		})
 
+	def delme(self):
+		jukebox = Jukebox()
+		return jukebox.delme()
+
 	def status(self):
 		log.debug("STATUS: Client updating")
 		jukebox = Jukebox()
@@ -68,10 +72,9 @@ class JukeboxController(BaseController):
 
 		log.debug("STATUS: Queue length: %d" % queueLength)
 		data['queueLength'] = queueLength
-		data['jukebox'] = True
+		data['jukebox'] = jukebox.isEnabled()
 
 		response.headers['content-type'] = 'application/json'
-		log.debug(config.get('site_name'))
 		return simplejson.dumps(data)
 
 	def _showQueue(self):

@@ -6,6 +6,9 @@ from pylons.configuration import PylonsConfig
 from pylons.error import handle_mako_error
 from paste.deploy.converters import asbool
 
+from sqlalchemy import engine_from_config
+from fookebox.model import init_model
+
 import fookebox.lib.app_globals as app_globals
 import fookebox.lib.helpers
 from fookebox.config.routing import make_map
@@ -33,6 +36,10 @@ def load_environment(global_conf, app_conf):
 	# Setup cache object as early as possible
 	import pylons
 	pylons.cache._push_object(config['pylons.app_globals'].cache)
+
+	# Create the database engine
+	engine = engine_from_config(config, 'sqlalchemy.')
+	init_model(engine)
 
 	# Create the Mako TemplateLookup, with the default auto-escaping
 	config['pylons.app_globals'].mako_lookup = TemplateLookup(
