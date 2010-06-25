@@ -297,14 +297,16 @@ function refreshProgram()
 {
 	setTimeout('refreshProgram()', 1000);
 
-	ajax_get(base_url + '/program/status', function(transport)
+	ajax_get('program/status', function(transport)
 	{
 		var response = transport.responseText;
 		var data = response.evalJSON();
 
 		$('clock').update(data.time);
 		$('currentTitle').update(data.currentTitle);
+
 		$('currentState').update(data.currentState);
+		$('currentState').show();
 
 		if (data.nextTitle) {
 			$('next').show();
@@ -318,7 +320,7 @@ function refreshProgram()
 
 function updateDisabledJukebox()
 {
-	setTimeout('updateDisabledJukebox()', 1000);
+	setTimeout('updateDisabledJukebox()', 3000);
 
 	ajax_get('status', function(transport)
 	{
@@ -326,7 +328,7 @@ function updateDisabledJukebox()
 		var jukebox = data.jukebox;
 
 		if (jukebox)
-			window.location = base_url
+			window.location = '/' // TODO: real path
 	});
 }
 

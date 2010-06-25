@@ -23,6 +23,7 @@ def make_map(config):
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}/{id}')
 
+    map.connect('/program', controller='program', action='index')
     map.connect('/', controller='jukebox', action='index')
     map.connect('/{action}', controller='jukebox')
     map.connect('/cover/{artist}/{album}', controller='jukebox', action='cover')

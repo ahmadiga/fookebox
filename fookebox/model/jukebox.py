@@ -9,6 +9,8 @@ from threading import BoundedSemaphore
 
 from pylons import config
 
+from schedule import Event
+
 log = logging.getLogger(__name__)
 
 class Lock(object):
@@ -301,6 +303,40 @@ class Jukebox(object):
 	def getQueueLength(self):
 		playlist = self.client.playlist()
 		return max(len(playlist) - 1, 0)
+
+	def delme(self):
+		from fookebox.model import meta
+
+		import datetime
+		e = Event()
+		e.name = 'Event 1'
+		e.time = datetime.datetime.now()
+		e.type = 'FOOKEBOX'
+		meta.Session.save(e)
+
+		event_q = meta.Session.query(Event)
+		events = event_q.all()
+		event = events[0]
+		return event.name
+
+	def getCurrentEvent(self):
+		event = Event()
+		event.name = 'Foobar Jukebox'
+		event.type = 0
+		event.jukebox = self
+		return event
+
+	def getNextEvent(self):
+		event = Event()
+		event.name = 'The Freak'
+		event.type = 1
+		import datetime
+		event.time = datetime.datetime.now()
+		return event
+
+	def isEnabled(self):
+		event = self.getCurrentEvent()
+		return event.type == 0
 
 	def remove(self, id):
 		log.info("Removing playlist item #%d" % id)

@@ -20,6 +20,8 @@ full_stack = true
 static_files = true
 
 cache_dir = %(here)s/data
+sqlalchemy.url = sqlite:///%(cache_dir)s/fookebox.sqlite
+
 beaker.session.key = fookebox
 beaker.session.secret = ${app_instance_secret}
 app_instance_uuid = ${app_instance_uuid}
