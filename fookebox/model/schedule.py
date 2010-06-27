@@ -1,43 +1,128 @@
+import logging
 import sqlalchemy as sa
 from sqlalchemy import orm
 
-from pylons import config
 from fookebox.model import meta
+from pylons import app_globals as g
+
+log = logging.getLogger(__name__)
 
 t_event = sa.Table("Events", meta.metadata,
 	sa.Column("id", sa.types.Integer, primary_key=True),
-	sa.Column("type", sa.types.String(100), nullable=False),
+	sa.Column("index", sa.types.Integer, primary_key=False),
+	sa.Column("type", sa.types.Integer, nullable=False),
 	sa.Column("name", sa.types.String(100), nullable=False),
 	sa.Column("time", sa.types.Time, nullable=False),
 )
 
 class Event(object):
-	def getAsCurrent(self):
-		if self.type == 0:
-			currentSong = self.jukebox.getCurrentSong()
-			return "%s - %s" % (currentSong['artist'],
-					currentSong['title'])
-		elif self.type == 1:
-			return "%s [LIVE]" % self.name
-		elif self.type == 2:
-			return "%s [DJ]" % self.name
+	def __str__(self):
+		return "[type %s] %s @ %s (index=%d)" % (
+				self.type, self.name, self.time, self.index)
 
-	def getAsCurrentState(self):
-		if self.type == 0:
-			return "%s jukebox" % config.get('site_name')
-		else:
-			return "live @ %s" % config.get('site_name')
+	@staticmethod
+	def currentID():
+		id = g.eventID;
+		if id == None:
+			events = Event.all()
+			if len(events) > 0:
+				g.eventID = events[0].id
+			else:
+				return -1
 
-	def getAsNext(self):
-		if self.type == 0:
-			return self.getAsCurrentState()
-		elif self.type == 1:
-			return "LIVE BAND: %s" % self.name
-		elif self.type == 2:
-			return "%s [DJ]" % self.name
+		return g.eventID
 
-	def getTime(self):
-		return self.time.strftime("%H:%M")
+	@staticmethod
+	def all():
+		event_q = meta.Session.query(Event)
+		return event_q.order_by([Event.index.asc()]).all()
+
+	@staticmethod
+	def get(id):
+		event_q = meta.Session.query(Event)
+		return event_q.get(id)
+
+	@staticmethod
+	def getCurrent():
+		event_q = meta.Session.query(Event)
+		event = event_q.get(Event.currentID())
+
+		if event == None:
+			event = Event()
+			event.name = 'fookebox jukebox'
+			event.type = 0
+			event.index = 0
+
+		return event
+
+	@staticmethod
+	def getNext():
+		event_q = meta.Session.query(Event)
+		current = Event.getCurrent()
+		events = event_q.filter(Event.index > current.index)
+		return events.order_by([Event.index.asc()]).first()
+
+	@staticmethod
+	def delete(id):
+		event_q = meta.Session.query(Event)
+		event = event_q.get(id)
+
+		log.info("Deleting event %s" % event)
+
+		meta.Session.delete(event)
+		meta.Session.commit()
+
+	@staticmethod
+	def add(name, type, time):
+		event_q = meta.Session.query(Event)
+		event = Event()
+		event.name = name
+		event.type = type
+		event.time = time
+		meta.Session.save(event)
+		meta.Session.commit()
+
+		event.index = event.id
+		meta.Session.commit()
+
+		log.info("Created event %s" % event)
+
+	@staticmethod
+	def update(id, name, type, time):
+		event_q = meta.Session.query(Event)
+		event = event_q.get(id)
+		event.name = name
+		event.type = type
+		event.time = time
+		meta.Session.commit()
+
+	@staticmethod
+	def up(id):
+		event_q = meta.Session.query(Event)
+		event = event_q.get(id)
+
+		prev = event_q.filter(Event.index < event.index).order_by(
+			[Event.index.desc()]).first()
+
+		if prev != None:
+			tmp = prev.index
+			prev.index = event.index
+			event.index = tmp
+			meta.Session.commit()
+
+	@staticmethod
+	def down(id):
+		event_q = meta.Session.query(Event)
+		event = event_q.get(id)
+
+		next = event_q.filter(Event.index > event.index).order_by(
+			[Event.index.asc()]).first()
+
+		if next != None:
+			tmp = next.index
+			next.index = event.index
+			event.index = tmp
+			meta.Session.commit()
 
 orm.mapper(Event, t_event)
 

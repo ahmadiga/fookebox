@@ -32,7 +32,8 @@ class ErrorController(BaseController):
 	if accept == 'application/json' and error:
 		content = error.detail
 	elif accept == 'application/json':
-		content = "ERROR"
+		pass
+		#content = "ERROR"
 
         page = error_document_template % \
             dict(prefix=request.environ.get('SCRIPT_NAME', ''),

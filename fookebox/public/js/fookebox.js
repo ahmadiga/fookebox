@@ -30,6 +30,12 @@ var queueLength = -1;
 // the currently known url
 var currentURL = '';
 
+// schedule event types
+var TYPE_JUKEBOX = 0;
+var TYPE_BAND = 1;
+var TYPE_DJ = 2;
+
+
 function ajax_get(url, onsucces) {
 	var time = new Date().getTime();
 
@@ -293,6 +299,62 @@ function queueFile(file)
 	});
 }
 
+function showCurrentProgramItem(item)
+{
+	var name = item.title;
+
+	switch (item.type)
+	{
+		case TYPE_JUKEBOX:
+			var tracks = item.tracks;
+			var artist = tracks[0].artist;
+			var title = tracks[0].title;
+			$('currentTitle').update(artist + " - " + title);
+
+			var box = $('currentState');
+			if (tracks.length > 1)
+			{
+				var artist = tracks[1].artist;
+				var track = tracks[1].title;
+
+				box.update('next @ ' + name + ': ' + artist +
+						' - ' + track);
+			}
+			else
+			{
+				box.update(name);
+			}
+			break;
+		case TYPE_BAND:
+			$('currentTitle').update(name);
+			$('currentState').update('live');
+			break;
+		case TYPE_DJ:
+			$('currentTitle').update(name + ' [DJ]');
+			$('currentState').update('live');
+			break;
+	}
+}
+
+function showNextProgramItem(item)
+{
+	$('next').show();
+
+	switch (item.type)
+	{
+		case TYPE_JUKEBOX:
+			$('nextTitle').update(item.title);
+			break;
+		case TYPE_BAND:
+			$('nextTitle').update('LIVE BAND: ' + item.title);
+			break;
+		case TYPE_DJ:
+			$('nextTitle').update(item.title + ' [DJ]');
+			break;
+	}
+	$('nextTime').update(item.time);
+}
+
 function refreshProgram()
 {
 	setTimeout('refreshProgram()', 1000);
@@ -303,15 +365,17 @@ function refreshProgram()
 		var data = response.evalJSON();
 
 		$('clock').update(data.time);
-		$('currentTitle').update(data.currentTitle);
+		//$('currentTitle').update(data.currentTitle);
 
 		$('currentState').update(data.currentState);
 		$('currentState').show();
 
-		if (data.nextTitle) {
-			$('next').show();
-			$('nextTitle').update(data.nextTitle);
-			$('nextTime').update(data.nextTime);
+		var TYPE_JUKEBOX = 0;
+		var events = data.events;
+		var current = events.current;
+		showCurrentProgramItem(events.current);
+		if (events.next) {
+			showNextProgramItem(events.next);
 		} else {
 			$('next').hide();
 		}
@@ -345,5 +409,18 @@ function updatePlaylist()
 	{
 		var queue = transport.responseJSON;
 		setPlaylist(queue);
+	});
+}
+
+function saveNewProgramItem(form)
+{
+	var data = $H({
+		'name': form.name.getValue(),
+		'time': form.hour.getValue() + ':' + form.minute.getValue(),
+		'type': form.type.getValue(),
+	});
+
+	ajax_post('schedule', data, function(transport) {
+		form.reset();
 	});
 }
