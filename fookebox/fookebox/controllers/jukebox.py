@@ -26,10 +26,6 @@ class JukeboxController(BaseController):
 			'config': config,
 		})
 
-	def delme(self):
-		jukebox = Jukebox()
-		return jukebox.delme()
-
 	def status(self):
 		log.debug("STATUS: Client updating")
 		jukebox = Jukebox()

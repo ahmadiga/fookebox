@@ -8,6 +8,7 @@ import logging
 from threading import BoundedSemaphore
 
 from pylons import config
+from pylons import app_globals as g
 
 from schedule import Event
 
@@ -136,7 +137,6 @@ class Track(object):
 			self.queuePosition = int(song['pos'])
 
 class Jukebox(object):
-
 	client = None
 	lastAutoQueued = -1
 
@@ -146,7 +146,7 @@ class Jukebox(object):
 	def __del__(self):
 		self._disconnect()
 
-	def _connect(self, to=None):
+	def _connect2(self, to=None):
 		log.debug("Connecting to mpd")
 
 		if not to == None:
@@ -163,10 +163,41 @@ class Jukebox(object):
 		if password:
 			self.client.password(password)
 
-	def _disconnect(self):
+	def _disconnect2(self):
 		log.debug("Disconnecting from mpd")
 		self.client.close()
 		self.client.disconnect()
+
+	def _connect3(self, to=None):
+		log.debug("Connecting to mpd")
+
+		if not to == None:
+			self.client = to
+			return
+
+		if g.mpd == None:
+			host = config.get('mpd_host')
+			port = config.get('mpd_port')
+			password = config.get('mpd_pass')
+
+			client = mpd.MPDClient()
+			client.connect(host, port)
+
+			if password:
+				client.password(password)
+
+			g.mpd = client
+
+		self.client = g.mpd
+
+	def _disconnect3(self):
+		pass
+
+	def _connect(self, to=None):
+		self._connect2(to)
+
+	def _disconnect(self):
+		self._disconnect2()
 
 	def timeLeft(self):
 		status = self.client.status()
@@ -304,34 +335,13 @@ class Jukebox(object):
 		playlist = self.client.playlist()
 		return max(len(playlist) - 1, 0)
 
-	def delme(self):
-		from fookebox.model import meta
-
-		import datetime
-		e = Event()
-		e.name = 'Event 1'
-		e.time = datetime.datetime.now()
-		e.type = 'FOOKEBOX'
-		meta.Session.save(e)
-
-		event_q = meta.Session.query(Event)
-		events = event_q.all()
-		event = events[0]
-		return event.name
-
 	def getCurrentEvent(self):
-		event = Event()
-		event.name = 'Foobar Jukebox'
-		event.type = 0
+		event = Event.getCurrent()
 		event.jukebox = self
 		return event
 
 	def getNextEvent(self):
-		event = Event()
-		event.name = 'The Freak'
-		event.type = 1
-		import datetime
-		event.time = datetime.datetime.now()
+		event = Event.getNext()
 		return event
 
 	def isEnabled(self):
