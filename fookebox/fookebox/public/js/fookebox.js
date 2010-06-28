@@ -424,3 +424,63 @@ function saveNewProgramItem(form)
 		form.reset();
 	});
 }
+
+function moveEvent(data)
+{
+	ajax_post('schedule/move', data, function(transport)
+	{
+		window.location.reload();
+	});
+}
+
+function moveDown(event)
+{
+	var data = $H({
+		'id': event,
+		'direction': 'down'
+	});
+	moveEvent(data);
+}
+
+function moveUp(event)
+{
+	var data = $H({
+		'id': event,
+		'direction': 'up'
+	});
+	moveEvent(data);
+}
+
+function setCurrentEvent(event)
+{
+	var data = $H({
+		'id': event
+	});
+
+	ajax_post('schedule/current', data, function(transport)
+	{
+		window.location.reload();
+	});
+}
+
+function deleteEvent(event)
+{
+	if (!confirm('Delete this event?')) {
+		return;
+	}
+
+	var data = $H({
+		'id': event
+	});
+
+	ajax_post('schedule/delete', data, function(transport)
+	{
+		window.location.reload();
+	});
+}
+
+function editEvent(event)
+{
+	var tr = $('event-' + event);
+	alert(tr);
+}
