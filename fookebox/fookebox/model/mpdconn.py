@@ -102,6 +102,10 @@ class MPDWorker(object):
 		self.atime = datetime.now()
 		self.free = True
 
+	def __del__(self):
+		self.mpd.close()
+		self.mpd.disconnect()
+
 	def __str__(self):
 		return "MPDWorker %d (last used: %s)" % (self.num, self.atime)
 
@@ -140,16 +144,16 @@ class MPDPool(object):
 
 		try:
 			worker = MPDWorker(len(self._workers))
+			log.debug("Created new worker %s" % worker)
+			worker.grab()
+			self._workers.append(worker)
+			self.lock.release()
+			return worker
+
 		except Exception:
 			self.lock.release()
 			log.fatal('Could not connect to MPD')
 			raise
-
-		log.debug("Created new worker %s" % worker)
-		worker.grab()
-		self._workers.append(worker)
-		self.lock.release()
-		return worker
 
 	def _cleanup(self):
 		now = datetime.now()

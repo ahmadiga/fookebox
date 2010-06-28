@@ -6,5 +6,6 @@
 <script type="text/javascript">
 <!--
 	setTimeout('updateDisabledJukebox()', 1000);
+	var base_url='${base_url}';
 -->
 </script>

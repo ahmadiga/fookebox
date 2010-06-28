@@ -7,7 +7,7 @@ from pylons.controllers.util import abort
 from fookebox.lib.base import BaseController, render
 from fookebox.model import meta
 from fookebox.model.jukebox import Jukebox
-from fookebox.model.schedule import Event
+from fookebox.model.schedule import Event, EVENT_TYPE_JUKEBOX
 
 log = logging.getLogger(__name__)
 
@@ -34,8 +34,7 @@ class ProgramController(BaseController):
 		event = jukebox.getCurrentEvent()
 		currentEvent = {}
 
-		# TODO: constant
-		if event.type == 0:
+		if event.type == EVENT_TYPE_JUKEBOX:
 			currentSong = jukebox.getCurrentSong()
 			currentEvent['type'] = event.type
 			currentEvent['title'] = event.name
