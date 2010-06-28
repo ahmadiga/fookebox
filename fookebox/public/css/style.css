@@ -250,6 +250,22 @@ a:focus {
 	overflow: auto;
 }
 
+#searchResultList {
+	list-style-type: none;
+	padding-left: 0
+}
+
+li.searchResultItem {
+	overflow: auto;
+	width: 99%;
+	background: #222222;
+	margin: 2px;
+}
+
+ul.trackList {
+	padding-bottom: 10px;
+}
+
 #searchResult h3 {
 	padding-left: 16px;
 }
@@ -264,6 +280,12 @@ a:focus {
 
 #searchResult li.album {
 	list-style-image: url(../img/folder.png);
+}
+
+#searchResult img.coverArt {
+	float: right;
+	clear: both;
+	margin: 10px;
 }
 
 #searchResult h2 {
@@ -376,4 +398,34 @@ li.seperator {
 	top: 0px;
 	right: 0px;
 	font-size: x-small;
+}
+
+table.schedule {
+	margin: 0 auto;
+	border-collapse: collapse;
+}
+
+table.schedule td {
+	padding: 5px 10px;
+}
+
+table.schedule tr.drop {
+	background-color: blue;
+}
+
+.currentEvent {
+	background-color: green;
+}
+
+#disabled-main {
+	text-align: center;
+	padding-top: 150px;
+}
+
+#disabled-title {
+	font-size: 150pt;
+}
+
+#disabled-text {
+	font-size: 30pt;
 }

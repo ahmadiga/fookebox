@@ -2,12 +2,12 @@
 % if len(albums) < 1:
 	Nothing found
 % endif
-<ul style="list-style-type: none; padding-left: 0">
+<ul id="searchResultList">
 % for album in albums:
-	<li style="overflow: auto; width: 99%; background: #222222; margin: 2px">
+	<li class="searchResultItem">
 % if config.get('album_cover_path'):
 %	if album.hasCover():
-		<img src="cover/${album.getCoverURI()}" width="200" style="float: right; clear: both; margin: 10px" alt="" />
+		<img src="cover/${album.getCoverURI()}" width="200" class="coverArt" alt="" />
 % 	endif
 % endif
 		<h3 class="album">
@@ -30,7 +30,7 @@
 				</a>
 % endif
 		</h3>
-		<ul style="padding-bottom: 10px">
+		<ul class="trackList">
 % for track in album.tracks:
 			<li class="track"><a href="#" onclick="javascript:queueFile('${track.b64}'); return false">${"%02d" % track.track} - ${track.artist} - ${track.title}</a></li>
 % endfor
