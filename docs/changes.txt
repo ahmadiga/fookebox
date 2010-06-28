@@ -1,0 +1,67 @@
+#summary ChangeLog for fookebox
+#labels Featured,Phase-Deploy
+
+== 0.5.0 (xx xxx 2010) ==
+
+ * Re-implemented fookebox in Python (using Pylons)
+
+== 0.4.3 (21 Jun 2010) ==
+
+ * Fixed a possible race-condition where a song would get played twice in a row
+ * Synchronized javascript with upcoming 0.5 release
+ * Artist, genre names and cover paths are now base64 encoded
+
+== 0.4.2 (24 May 2010) ==
+
+ * Database rebuild was broken, fixed
+ * Fixed typo in README
+
+== 0.4.1 (23 Mar 2010) ==
+
+ * Thanks to Gavin Cameron for his contributions
+ * Can now pick the auto-queued songs from a predefined playlist
+ * Some internal code cleanup
+ * Changed license to GPLv3
+ * Set the default time zone to UTC to get PHP to shut up (Gavin)
+ * Replaced calls to split (deprecated) with explode (Gavin)
+ * Added support for cover art for compilations (Gavin again, also: see README)
+ * Added the ability to auto queue songs before the playlist is empty
+
+== 0.4.0 (4 Feb 2010) ==
+
+ * Fixed queuing of full albums
+ * Added support for cover art
+ * Minor CSS changes
+ * Some internal code cleanup
+ * We now need at least PHP 5.1.0
+ * Updated smarty to version 2.6.26
+ * Updated prototype to version 1.6.1
+ * Updated scriptaculous to version 1.8.3
+
+== 0.3.0 (11 May 2009) ==
+
+ * Dropped php4 compatibility
+ * Albums in search results are now automatically expanded
+ * Added support for forward/back buttons
+ * Fixed filename/any search
+ * Updated smarty
+ * Code cleanup
+
+== 0.2.0 (1 Dec 2008) ==
+
+ * Added the ability to auto-queue songs when the playlist gets empty
+ * Fixed some issues when running fookebox in a sub directory
+ * Switched to using prototype for JSON data transport
+ * Updated smarty, scriptaculous and prototype to their latest versions
+
+== 0.1.1 (12 Jun 2008) ==
+
+ * Made the right part scrollable without scrolling the whole window
+ * Made sure all clients are informed on playlist updates
+ * Updated smarty to version 2.6.19
+ * Updated the JavaScript JSON library
+ * Minor documentation updates
+
+== 0.1.0 (11 Jun 2008) ==
+
+ * Initial public release
