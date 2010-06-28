@@ -1,7 +1,7 @@
 % for event in events:
 		<tr id="event-${event.id}"
 % if event == current:
-			style="background-color: green"
+			class="currentEvent"
 % endif
 		>
 			<td>

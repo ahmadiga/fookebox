@@ -1,10 +1,10 @@
 <%inherit file="base.tpl"/>
-<div style="text-align: center; padding-top: 150px">
-	<div style="font-size: 150pt">${config.get('site_name')}</div>
-	<div style="font-size: 30pt">enjoy our live artist</div>
+<div id="disabled-main">
+	<div id="disabled-title">${config.get('site_name')}</div>
+	<div id="disabled-text">enjoy our live artist</div>
 </div>
 <script type="text/javascript">
 <!--
-	setTimeout ('updateDisabledJukebox()', 1000);
+	setTimeout('updateDisabledJukebox()', 1000);
 -->
 </script>
