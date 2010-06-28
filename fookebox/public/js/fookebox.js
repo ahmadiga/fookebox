@@ -392,7 +392,10 @@ function updateDisabledJukebox()
 		var jukebox = data.jukebox;
 
 		if (jukebox)
-			window.location = '/' // TODO: real path
+		{
+			// base_url must have been defined in the template
+			window.location = base_url;
+		}
 	});
 }
 

@@ -5,7 +5,7 @@ import logging
 from pylons import config, app_globals as g
 
 from mpdconn import *
-from schedule import Event
+from schedule import Event, EVENT_TYPE_JUKEBOX
 from albumart import Album
 
 log = logging.getLogger(__name__)
@@ -17,9 +17,6 @@ class Jukebox(object):
 	def __init__(self, mpd=None):
 		self._connect(mpd)
 
-	def __del__(self):
-		self._disconnect()
-
 	def _connect(self, to=None):
 		if not to == None:
 			self.client = to
@@ -30,7 +27,7 @@ class Jukebox(object):
 
 		self.client = g.mpd.getWorker()
 
-	def _disconnect(self):
+	def close(self):
 		self.client.release()
 
 	def timeLeft(self):
@@ -114,8 +111,11 @@ class Jukebox(object):
 			if int(current['pos']) > 0:
 				self.remove(0)
 
-	def search(self, where, what):
-		data = self.client.search(where, what)
+	def search(self, where, what, forceSearch = False):
+		if config.get('find_over_search') and not forceSearch:
+			data = self.client.find(where, what)
+		else:
+			data = self.client.search(where, what)
 
 		albums = {}
 
@@ -180,7 +180,7 @@ class Jukebox(object):
 
 	def isEnabled(self):
 		event = self.getCurrentEvent()
-		return event.type == 0
+		return event.type == EVENT_TYPE_JUKEBOX
 
 	def remove(self, id):
 		log.info("Removing playlist item #%d" % id)

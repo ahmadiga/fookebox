@@ -60,7 +60,7 @@ app_instance_uuid = ${app_instance_uuid}
 # allow users to queue a full album with one click
 #enable_queue_album = true
 
-# be anal about artist/album names (see README) TODO
+# be anal about artist/album names (see README)
 #find_over_search = false
 
 # directory with cover art

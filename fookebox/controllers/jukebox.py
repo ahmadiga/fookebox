@@ -22,6 +22,8 @@ class JukeboxController(BaseController):
 		artists = jukebox.getArtists()
 		genres = jukebox.getGenres()
 
+		jukebox.close()
+
 		return render('/client.tpl', extra_vars={
 			'genres': genres,
 			'artists': artists,
@@ -44,8 +46,7 @@ class JukeboxController(BaseController):
 		data = {}
 
 		if song:
-			#TODO: enable
-			#log.debug("STATUS: Playing %s" % song)
+			log.debug("STATUS: Playing %s" % song)
 			songPos = int(song['timePassed'])
 
 			if 'time' in song:
@@ -73,6 +74,8 @@ class JukeboxController(BaseController):
 		data['queueLength'] = queueLength
 		data['jukebox'] = jukebox.isEnabled()
 
+		jukebox.close()
+
 		response.headers['content-type'] = 'application/json'
 		return simplejson.dumps(data)
 
@@ -80,6 +83,8 @@ class JukeboxController(BaseController):
 		jukebox = Jukebox()
 		output = []
 		items = jukebox.getPlaylist()
+
+		jukebox.close()
 
 		for item in items[1:]:
 			track = Track()
@@ -126,6 +131,7 @@ class JukeboxController(BaseController):
 			abort(400, 'No file specified')
 
 		jukebox.queue(file)
+		jukebox.close()
 
 	def queue(self):
 		if request.method == 'GET':
@@ -135,10 +141,13 @@ class JukeboxController(BaseController):
 			log.debug("QUEUE: POST")
 			return self._addToQueue()
 
-	def _search(self, where, what):
+	def _search(self, where, what, forceSearch = False):
 		log.debug("SEARCH: '%s' in '%s'" % (what, where))
+
 		jukebox = Jukebox()
-		albums = jukebox.search(where, what)
+		albums = jukebox.search(where, what, forceSearch)
+		jukebox.close()
+
 		log.debug("SEARCH: found %d album(s)" % len(albums))
 
 		return render('/search.tpl', extra_vars={
@@ -181,7 +190,9 @@ class JukeboxController(BaseController):
 			log.error(sys.exc_info())
 			abort(400, 'Malformed JSON data')
 
-		return self._search(where, what)
+		forceSearch = 'forceSearch' in post and post['forceSearch']
+
+		return self._search(where, what, forceSearch)
 
 	def remove(self):
 		if not config.get('enable_song_removal'):
@@ -202,6 +213,7 @@ class JukeboxController(BaseController):
 
 		jukebox = Jukebox()
 		jukebox.remove(id)
+		jukebox.close()
 
 	def control(self):
 		if not config.get('enable_controls'):
@@ -237,6 +249,7 @@ class JukeboxController(BaseController):
 			abort(400, 'Invalid command')
 
 		commands[action]()
+		jukebox.close()
 
 	def cover(self, artist, album):
 		try:
@@ -263,4 +276,5 @@ class JukeboxController(BaseController):
 	def disabled(self):
 		return render('/disabled.tpl', extra_vars={
 			'config': config,
+			'base_url': request.url.replace('disabled', ''),
 		})

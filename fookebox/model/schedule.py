@@ -15,6 +15,10 @@ t_event = sa.Table("Events", meta.metadata,
 	sa.Column("time", sa.types.Time, nullable=False),
 )
 
+EVENT_TYPE_JUKEBOX = 0
+EVENT_TYPE_BAND = 1
+EVENT_TYPE_DJ = 2
+
 class Event(object):
 	def __str__(self):
 		return "[type %s] %s @ %s (index=%d)" % (
@@ -50,7 +54,7 @@ class Event(object):
 		if event == None:
 			event = Event()
 			event.name = 'fookebox jukebox'
-			event.type = 0
+			event.type = EVENT_TYPE_JUKEBOX
 			event.index = 0
 
 		return event
