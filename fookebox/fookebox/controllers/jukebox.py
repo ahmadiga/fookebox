@@ -9,7 +9,9 @@ from pylons import config
 from pylons.controllers.util import abort, redirect
 
 from fookebox.lib.base import BaseController, render
-from fookebox.model.jukebox import Jukebox, Track, Album
+from fookebox.model.jukebox import Jukebox
+from fookebox.model.mpdconn import Track
+from fookebox.model.albumart import Album
 
 log = logging.getLogger(__name__)
 
@@ -42,7 +44,8 @@ class JukeboxController(BaseController):
 		data = {}
 
 		if song:
-			log.debug("STATUS: Playing %s" % song)
+			#TODO: enable
+			#log.debug("STATUS: Playing %s" % song)
 			songPos = int(song['timePassed'])
 
 			if 'time' in song:

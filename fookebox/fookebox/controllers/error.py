@@ -9,6 +9,8 @@ from webhelpers.html.builder import literal
 
 from fookebox.lib.base import BaseController
 
+log = logging.getLogger(__name__)
+
 class ErrorController(BaseController):
 
     """Generates error documents as and when they are required.
@@ -32,8 +34,7 @@ class ErrorController(BaseController):
 	if accept == 'application/json' and error:
 		content = error.detail
 	elif accept == 'application/json':
-		pass
-		#content = "ERROR"
+		content = "ERROR"
 
         page = error_document_template % \
             dict(prefix=request.environ.get('SCRIPT_NAME', ''),

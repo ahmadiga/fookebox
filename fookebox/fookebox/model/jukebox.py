@@ -1,140 +1,14 @@
-import re
-import os
 import sys
-import mpd
-import base64
 import random
 import logging
-from threading import BoundedSemaphore
 
-from pylons import config
-from pylons import app_globals as g
+from pylons import config, app_globals as g
 
+from mpdconn import *
 from schedule import Event
+from albumart import Album
 
 log = logging.getLogger(__name__)
-
-class Lock(object):
-
-	class __impl:
-
-		def __init__(self):
-			self.semaphore = BoundedSemaphore(value=1)
-
-		def acquire(self):
-			return self.semaphore.acquire(False)
-
-		def release(self):
-			return self.semaphore.release()
-
-	__instance = None
-
-	def __init__(self):
-		if Lock.__instance is None:
-			Lock.__instance = Lock.__impl()
-
-		self.__dict__['_Lock__instance'] = Lock.__instance
-
-	def __getattr__(self, attr):
-		return getattr(self.__instance, attr)
-
-class Album(object):
-
-	def __init__(self, artist, albumName, disc=None):
-		self.artist = str(artist)
-
-		if albumName == None:
-			self.name = ''
-		else:
-			self.name = str(albumName)
-
-		self.disc = disc
-		self.tracks = []
-
-	def add(self, track):
-		self.tracks.append(track)
-
-	def hasCover(self):
-		return self.getCover() != None
-
-	def getCover(self):
-		pattern = re.compile('[\/:<>\?*|]')
-
-		if self.name == None:
-			album = ''
-		else:
-			album = pattern.sub('_', self.name)
-
-		if self.artist == None:
-			artist = ''
-		else:
-			artist = pattern.sub('_', self.artist)
-
-		path = '%s/%s-%s.jpg' % (config.get('album_cover_path'),
-				artist, album)
-
-		if not os.path.exists(path):
-			path = '%s/%s-%s.jpg' % (config.get('album_cover_path'),
-					config.get('compliations_name'), album)
-
-			if not os.path.exists(path):
-				return None
-
-		return path
-
-	def getCoverURI(self):
-		return "%s/%s" % (base64.urlsafe_b64encode(self.artist),
-				base64.urlsafe_b64encode(self.name))
-
-class Genre(object):
-
-	def __init__(self, name):
-		self.name = name
-		self.base64 = base64.urlsafe_b64encode(name)
-
-class Artist(object):
-
-	def __init__(self, name):
-		self.name = name
-		self.base64 = base64.urlsafe_b64encode(name)
-
-class Track(object):
-	artist = 'Unknown artist'
-	title = 'Unnamed track'
-	album = None
-	track = 0
-	file = ''
-	b64 = ''
-	disc = 0
-	queuePosition = 0
-
-	def load(self, song):
-		if 'artist' in song:
-			self.artist = song['artist']
-		if 'title' in song:
-			self.title = song['title']
-		if 'file' in song:
-			self.file = song['file']
-			self.b64 = base64.urlsafe_b64encode(self.file)
-		if 'track' in song:
-			# possible formats:
-			#  - '12'
-			#  - '12/21'
-			#  - ['12', '21']
-			t = song['track']
-			if '/' in t:
-				tnum = t.split('/')[0]
-				self.track = int(tnum)
-			elif isinstance(t, list):
-				self.track = int(t[0])
-			else:
-				self.track = int(t)
-		if 'disc' in song:
-			self.disc = song['disc']
-		if 'album' in song:
-			self.album = str(song['album'])
-		if 'pos' in song:
-			self.queuePosition = int(song['pos'])
 
 class Jukebox(object):
 	client = None
@@ -146,58 +20,18 @@ class Jukebox(object):
 	def __del__(self):
 		self._disconnect()
 
-	def _connect2(self, to=None):
-		log.debug("Connecting to mpd")
-
-		if not to == None:
-			self.client = to
-			return
-
-		host = config.get('mpd_host')
-		port = config.get('mpd_port')
-		password = config.get('mpd_pass')
-
-		self.client = mpd.MPDClient()
-		self.client.connect(host, port)
-
-		if password:
-			self.client.password(password)
-
-	def _disconnect2(self):
-		log.debug("Disconnecting from mpd")
-		self.client.close()
-		self.client.disconnect()
-
-	def _connect3(self, to=None):
-		log.debug("Connecting to mpd")
-
+	def _connect(self, to=None):
 		if not to == None:
 			self.client = to
 			return
 
 		if g.mpd == None:
-			host = config.get('mpd_host')
-			port = config.get('mpd_port')
-			password = config.get('mpd_pass')
+			g.mpd = MPDPool()
 
-			client = mpd.MPDClient()
-			client.connect(host, port)
-
-			if password:
-				client.password(password)
-
-			g.mpd = client
-
-		self.client = g.mpd
-
-	def _disconnect3(self):
-		pass
-
-	def _connect(self, to=None):
-		self._connect2(to)
+		self.client = g.mpd.getWorker()
 
 	def _disconnect(self):
-		self._disconnect2()
+		self.client.release()
 
 	def timeLeft(self):
 		status = self.client.status()
