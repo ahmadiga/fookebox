@@ -74,10 +74,8 @@ currently playing and the next song but in case you're using fookebox at some
 kind of party, this front end will allow you to inform your users about any
 other events that might be coming up (eg. a live band or a DJ).
 
-!! TODO !!
-An example of how to define such a program can be found in
-config/status.conf.php which should be pretty self-explanatory.
-!! TODO !!
+To enter your event's schedule, point your web browser to
+yourfookeboxurl/schedule.
 
 == Additional notes ==
 
