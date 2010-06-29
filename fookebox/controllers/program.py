@@ -33,11 +33,11 @@ class ProgramController(BaseController):
 
 		event = jukebox.getCurrentEvent()
 		currentEvent = {}
+		currentEvent['type'] = event.type
+		currentEvent['title'] = event.name
 
 		if event.type == EVENT_TYPE_JUKEBOX:
 			currentSong = jukebox.getCurrentSong()
-			currentEvent['type'] = event.type
-			currentEvent['title'] = event.name
 
 			track = {}
 			if 'artist' not in currentSong:
@@ -55,9 +55,6 @@ class ProgramController(BaseController):
 				track['artist'] = playlist[1]['artist']
 				track['title'] = playlist[1]['title']
 				currentEvent['tracks'].append(track)
-		else:
-			currentEvent['type'] = event.type
-			currentEvent['title'] = event.name
 
 		events = {}
 		events['current'] = currentEvent
@@ -75,6 +72,7 @@ class ProgramController(BaseController):
 			'time': now.strftime(format),
 		}
 
+		jukebox.close()
 		response.headers['content-type'] = 'application/json'
 		return simplejson.dumps(data)
 
