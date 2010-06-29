@@ -78,7 +78,6 @@ class Event(object):
 
 	@staticmethod
 	def add(name, type, time):
-		event_q = meta.Session.query(Event)
 		event = Event()
 		event.name = name
 		event.type = type

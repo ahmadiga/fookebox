@@ -38,7 +38,9 @@ class JukeboxController(BaseController):
 		song = jukebox.getCurrentSong()
 		queueLength = jukebox.getQueueLength()
 
-		if (config.get('auto_queue') and queueLength == 0 and
+		if (config.get('auto_queue') and
+			queueLength == 0 and
+			jukebox.isEnabled() and
 			jukebox.timeLeft() <= config.get(
 				'auto_queue_time_left')):
 			jukebox.autoQueue()
