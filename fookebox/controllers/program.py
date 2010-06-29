@@ -17,6 +17,7 @@ class ProgramController(BaseController):
 		jukebox = Jukebox()
 		artists = jukebox.getArtists()
 		genres = jukebox.getGenres()
+		jukebox.close()
 
 		return render('/program.tpl')
 
