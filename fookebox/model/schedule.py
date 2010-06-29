@@ -82,7 +82,7 @@ class Event(object):
 		event.name = name
 		event.type = type
 		event.time = time
-		meta.Session.save(event)
+		meta.Session.add(event)
 		meta.Session.commit()
 
 		event.index = event.id

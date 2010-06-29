@@ -1,7 +1,7 @@
 import logging
 import simplejson
 
-from datetime import datetime
+from datetime import time, datetime
 from pylons import request, response, config, app_globals as g
 from pylons.controllers.util import abort
 from fookebox.lib.base import BaseController, render
@@ -84,16 +84,15 @@ class ProgramController(BaseController):
 			type = int(request.params['type'])
 			hour = request.params['hour']
 			minute = request.params['minute']
-			time = datetime.strptime("%s:%s" % (hour, minute),
+			dateTime = datetime.strptime("%s:%s" % (hour, minute),
 					"%H:%M")
 			if 'id' in request.params:
 				id = request.params['id']
-				Event.update(id, name, type, time)
+				Event.update(id, name, type, dateTime.time())
 			else:
-				Event.add(name, type, time)
+				Event.add(name, type, dateTime.time())
 
 		event_q = meta.Session.query(Event)
-		#vents = event_q.all()
 
 		vars = {
 			'events': Event.all(),
