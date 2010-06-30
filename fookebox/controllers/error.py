@@ -35,6 +35,7 @@ class ErrorController(BaseController):
 		content = error.detail
 	elif accept == 'application/json':
 		content = "ERROR"
+		#log.error(resp.body)
 
         page = error_document_template % \
             dict(prefix=request.environ.get('SCRIPT_NAME', ''),

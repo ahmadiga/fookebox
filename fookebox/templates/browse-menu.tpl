@@ -1,9 +1,9 @@
 <div id="browse-menu">
 	<ul id="selectType">
-		<li id="artistTab" class="active"><a href="#" onclick="javascript:setTab('artist'); return false">Artists</a></li>
-		<li id="genreTab" class="inactive"><a href="#" onclick="javascript:setTab('genre'); return false">Genres</a></li>
+		<li id="artistTab" class="active"><a href="#" onclick="javascript:setTab('artist'); return false">${_('Artists')}</a></li>
+		<li id="genreTab" class="inactive"><a href="#" onclick="javascript:setTab('genre'); return false">${_('Genres')}</a></li>
 % if config.get('show_search_tab'):
-		<li id="searchTab" class="inactive"><a href="#" onclick="javascript:setTab ('search'); return false">Search</a></li>
+		<li id="searchTab" class="inactive"><a href="#" onclick="javascript:setTab ('search'); return false">${_('Search')}</a></li>
 % endif
 	</ul>
 	<div id="artistList">
@@ -45,11 +45,11 @@
 	<ul id="searchList" style="display: none">
 		<form name="searchform" action="">
 			<select name="searchType">
-				<option selected value="artist">Artist</option>
-				<option value="album">Album</option>
-				<option value="title">Title</option>
-				<option value="filename">Filename</option>
-				<option value="any">Any</option>
+				<option selected value="artist">${_('Artist')}</option>
+				<option value="album">${_('Album')}</option>
+				<option value="title">${_('Title')}</option>
+				<option value="filename">${_('Filename')}</option>
+				<option value="any">${_('Any')}</option>
 			</select>
 			<input type="text" name="searchTerm" />
 			<input type="submit" value="Search!" onclick="javascript:search(); return false">

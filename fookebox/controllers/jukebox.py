@@ -7,6 +7,7 @@ import simplejson
 from pylons import request, response, session, tmpl_context as c, url
 from pylons import config
 from pylons.controllers.util import abort, redirect
+from pylons.i18n.translation import _, ungettext
 
 from fookebox.lib.base import BaseController, render
 from fookebox.model.jukebox import Jukebox
@@ -14,6 +15,8 @@ from fookebox.model.mpdconn import Track
 from fookebox.model.albumart import Album
 
 log = logging.getLogger(__name__)
+
+from pylons.i18n.translation import _
 
 class JukeboxController(BaseController):
 
@@ -113,7 +116,7 @@ class JukeboxController(BaseController):
 
 		if jukebox.getQueueLength() >= config.get('max_queue_length'):
 			log.error('QUEUE: Full, aborting')
-			abort(409, 'The queue is full')
+			abort(409, _('The queue is full'))
 
 		if 'file' not in post:
 			log.error('QUEUE: No file specified in JSON data')
@@ -199,7 +202,7 @@ class JukeboxController(BaseController):
 	def remove(self):
 		if not config.get('enable_song_removal'):
 			log.error("REMOVE: Disabled")
-			abort(400, 'Song removal disabled')
+			abort(400, _('Song removal disabled'))
 
 		try:
 			post = simplejson.load(request.environ['wsgi.input'])
@@ -220,7 +223,7 @@ class JukeboxController(BaseController):
 	def control(self):
 		if not config.get('enable_controls'):
 			log.error('CONTROL: Disabled')
-			abort(400, 'Controls disabled')
+			abort(400, _('Controls disabled'))
 
 		try:
 			post = simplejson.load(request.environ['wsgi.input'])
