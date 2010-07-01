@@ -56,10 +56,6 @@ class ProgramController(BaseController):
 			if len(playlist) > 1:
 				track = Track()
 				track.load(playlist[1])
-				#track['artist'] = song.artist
-				#playlist[1]['artist']
-				#track['title'] = song.title
-				#playlist[1]['title']
 
 				currentEvent['tracks'].append({
 					'artist': track.artist,
