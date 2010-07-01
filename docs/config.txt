@@ -91,14 +91,16 @@ set max_playlist_length to 4).
 
 Fookebox can display cover art for your music. In order to do that, set
 album_cover_path to a directory that contains your covers, named according to
-rockbox' file naming conventions (see http://www.rockbox.org/wiki/AlbumArt for
-details).
+one of these conventions:
+
+ * rhythmbox: "Artist - Album.jpg", replace slashes (/) with underscores (_)
+ * rockbox: "Artist-Album.jpg", replace all of '\/:<>?*|' with underscores (_)
 
 In case no cover art is found for an album, fookebox tries to be smart and
 assumes this is a compilation. The 'compliations_name' ('Various Artists' by
 default) determines what artist name is used for compilations. So if you want
 to provide a cover for a compilation called 'My Best Music', the corresponding
-cover art file would be called 'Various Artists-My Best Music.jpg'.
+rockbox cover art file would be called 'Various Artists-My Best Music.jpg'.
 
 Note that your covers need to be JPEG files and they will get scaled to
 a width of 100 pixels.
