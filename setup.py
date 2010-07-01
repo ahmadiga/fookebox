@@ -40,4 +40,18 @@ mpd control frontend or as anything in between.""",
 	[paste.app_install]
 	main = pylons.util:PylonsInstaller
 	""",
+	classifiers=[
+		'Classifier: Development Status :: 5 - Production/Stable',
+		'Classifier: Environment :: Web Environment',
+		'Classifier: Framework :: Pylons',
+		'Classifier: Intended Audience :: End Users/Desktop',
+		'Classifier: License :: DFSG approved',
+		'Classifier: License :: OSI Approved :: GNU General Public License (GPL)',
+		'Classifier: Natural Language :: English',
+		'Classifier: Natural Language :: German',
+		'Classifier: Operating System :: OS Independent',
+		'Classifier: Programming Language :: Python',
+		'Classifier: Topic :: Multimedia',
+		'Classifier: Topic :: Multimedia :: Sound/Audio',
+	],
 )

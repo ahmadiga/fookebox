@@ -1,6 +1,10 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
+== 0.5.1 (xx xxx xxxx) ==
+
+ * Added classifiers to setup.py
+
 == 0.5.0 (01 Jul 2010) ==
 
  * Re-implemented fookebox in Python (using Pylons)
