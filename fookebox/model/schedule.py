@@ -39,7 +39,7 @@ class Event(object):
 	@staticmethod
 	def all():
 		event_q = meta.Session.query(Event)
-		return event_q.order_by([Event.index.asc()]).all()
+		return event_q.order_by(Event.index.asc()).all()
 
 	@staticmethod
 	def get(id):
@@ -64,7 +64,7 @@ class Event(object):
 		event_q = meta.Session.query(Event)
 		current = Event.getCurrent()
 		events = event_q.filter(Event.index > current.index)
-		return events.order_by([Event.index.asc()]).first()
+		return events.order_by(Event.index.asc()).first()
 
 	@staticmethod
 	def delete(id):
@@ -105,7 +105,7 @@ class Event(object):
 		event = event_q.get(id)
 
 		prev = event_q.filter(Event.index < event.index).order_by(
-			[Event.index.desc()]).first()
+			Event.index.desc()).first()
 
 		if prev != None:
 			tmp = prev.index
@@ -119,7 +119,7 @@ class Event(object):
 		event = event_q.get(id)
 
 		next = event_q.filter(Event.index > event.index).order_by(
-			[Event.index.asc()]).first()
+			Event.index.asc()).first()
 
 		if next != None:
 			tmp = next.index
