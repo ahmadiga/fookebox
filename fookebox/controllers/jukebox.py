@@ -24,7 +24,6 @@ class JukeboxController(BaseController):
 		jukebox = Jukebox()
 		artists = jukebox.getArtists()
 		genres = jukebox.getGenres()
-
 		jukebox.close()
 
 		return render('/client.tpl', extra_vars={
@@ -88,7 +87,6 @@ class JukeboxController(BaseController):
 		jukebox = Jukebox()
 		output = []
 		items = jukebox.getPlaylist()
-
 		jukebox.close()
 
 		for item in items[1:]:
@@ -112,12 +110,6 @@ class JukeboxController(BaseController):
 			log.error("QUEUE: Could not parse JSON data")
 			abort(400, 'Malformed JSON data')
 
-		jukebox = Jukebox()
-
-		if jukebox.getQueueLength() >= config.get('max_queue_length'):
-			log.error('QUEUE: Full, aborting')
-			abort(409, _('The queue is full'))
-
 		if 'file' not in post:
 			log.error('QUEUE: No file specified in JSON data')
 			abort(400, 'Malformed JSON data')
@@ -134,6 +126,13 @@ class JukeboxController(BaseController):
 		if file == '' or file == None:
 			log.error("QUEUE: No file specified")
 			abort(400, 'No file specified')
+
+		jukebox = Jukebox()
+
+		if jukebox.getQueueLength() >= config.get('max_queue_length'):
+			log.error('QUEUE: Full, aborting')
+			jukebox.close()
+			abort(409, _('The queue is full'))
 
 		jukebox.queue(file)
 		jukebox.close()
@@ -251,6 +250,7 @@ class JukeboxController(BaseController):
 
 		if action not in commands:
 			log.error('CONTROL: Invalid command')
+			jukebox.close()
 			abort(400, 'Invalid command')
 
 		commands[action]()
