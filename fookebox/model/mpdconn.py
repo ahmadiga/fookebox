@@ -47,9 +47,11 @@ class Artist(object):
 		self.base64 = base64.urlsafe_b64encode(name)
 
 class Track(object):
+	NO_ARTIST = 'Unknown artist'
+	NO_TITLE = 'Unnamed track'
 
-	artist = 'Unknown artist'
-	title = 'Unnamed track'
+	artist = NO_ARTIST
+	title = NO_TITLE
 	album = None
 	track = 0
 	file = ''

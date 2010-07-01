@@ -163,6 +163,8 @@ class Jukebox(object):
 			time = status['time'].split(':')[0]
 			current['timePassed'] = time
 
+		track = Track()
+		track.load(current)
 		return current
 
 	def getQueueLength(self):

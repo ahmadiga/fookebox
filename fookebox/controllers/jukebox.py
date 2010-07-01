@@ -37,7 +37,6 @@ class JukeboxController(BaseController):
 		jukebox = Jukebox()
 		jukebox.cleanQueue()
 
-		song = jukebox.getCurrentSong()
 		queueLength = jukebox.getQueueLength()
 
 		if (config.get('auto_queue') and
@@ -48,6 +47,7 @@ class JukeboxController(BaseController):
 			jukebox.autoQueue()
 
 		data = {}
+		song = jukebox.getCurrentSong()
 
 		if song:
 			log.debug("STATUS: Playing %s" % song)

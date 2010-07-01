@@ -7,6 +7,7 @@ from pylons.controllers.util import abort
 from fookebox.lib.base import BaseController, render
 from fookebox.model import meta
 from fookebox.model.jukebox import Jukebox
+from fookebox.model.mpdconn import Track
 from fookebox.model.schedule import Event, EVENT_TYPE_JUKEBOX
 
 log = logging.getLogger(__name__)
@@ -38,24 +39,32 @@ class ProgramController(BaseController):
 		currentEvent['title'] = event.name
 
 		if event.type == EVENT_TYPE_JUKEBOX:
-			currentSong = jukebox.getCurrentSong()
+			track = Track()
+			track.load(jukebox.getCurrentSong())
 
-			track = {}
-			if 'artist' not in currentSong:
-				currentSong['artist'] = ''
-			if 'title' not in currentSong:
-				currentSong['title'] = ''
+			if (track.artist == Track.NO_ARTIST and
+						track.title == Track.NO_TITLE):
+				track.artist = ''
+				track.title = ''
 
-			track['artist'] = currentSong['artist']
-			track['title'] = currentSong['title']
-			currentEvent['tracks'] = [ track ]
+			currentEvent['tracks'] = [{
+				'artist': track.artist,
+				'title': track.title,
+			}]
 
 			playlist = jukebox.getPlaylist()
 			if len(playlist) > 1:
-				track = {}
-				track['artist'] = playlist[1]['artist']
-				track['title'] = playlist[1]['title']
-				currentEvent['tracks'].append(track)
+				track = Track()
+				track.load(playlist[1])
+				#track['artist'] = song.artist
+				#playlist[1]['artist']
+				#track['title'] = song.title
+				#playlist[1]['title']
+
+				currentEvent['tracks'].append({
+					'artist': track.artist,
+					'title': track.title,
+				})
 
 		events = {}
 		events['current'] = currentEvent
