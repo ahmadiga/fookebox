@@ -4,6 +4,7 @@
 == 0.5.1 (xx xxx xxxx) ==
 
  * Added classifiers to setup.py
+ * fookebox' version information is now read from the package meta data
 
 == 0.5.0 (01 Jul 2010) ==
 

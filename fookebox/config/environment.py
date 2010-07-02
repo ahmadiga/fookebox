@@ -49,7 +49,8 @@ def load_environment(global_conf, app_conf):
 		input_encoding='utf-8', default_filters=['escape'],
 		imports=['from webhelpers.html import escape'])
 
-	config['version'] = '0.5.0-PRE'
+	import pkg_resources
+	config['version'] = pkg_resources.get_distribution("fookebox").version
 
 	# CONFIGURATION OPTIONS HERE (note: all config options will override
 	# any Pylons config options)
