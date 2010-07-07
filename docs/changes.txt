@@ -1,6 +1,12 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
+== 0.5.1 (07 Jul 2010) ==
+
+ * Catch some more exceptions and properly close all connections if they occur
+ * Added classifiers to setup.py
+ * fookebox' version information is now read from the package meta data
+
 == 0.5.0 (01 Jul 2010) ==
 
  * Re-implemented fookebox in Python (using Pylons)

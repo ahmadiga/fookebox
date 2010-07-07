@@ -170,6 +170,7 @@ class MPDPool(object):
 			return worker
 
 		except Exception:
+			worker.release()
 			self.lock.release()
 			log.fatal('Could not connect to MPD')
 			raise

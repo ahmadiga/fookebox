@@ -54,17 +54,33 @@ class JukeboxController(BaseController):
 		jukebox = Jukebox()
 		jukebox.cleanQueue()
 
-		queueLength = jukebox.getQueueLength()
+		try:
+			queueLength = jukebox.getQueueLength()
+			enabled = jukebox.isEnabled()
+			timeLeft = jukebox.timeLeft()
+		except:
+			jukebox.close()
+			raise
 
-		if (config.get('auto_queue') and
-			queueLength == 0 and
-			jukebox.isEnabled() and
-			jukebox.timeLeft() <= config.get(
-				'auto_queue_time_left')):
-			jukebox.autoQueue()
+		if (config.get('auto_queue') and queueLength == 0 and enabled
+			and timeLeft <= config.get('auto_queue_time_left')):
+			try:
+				jukebox.autoQueue()
+			except:
+				jukebox.close()
+				raise
 
-		data = {}
-		song = jukebox.getCurrentSong()
+		try:
+			song = jukebox.getCurrentSong()
+		except:
+			raise
+		finally:
+			jukebox.close()
+
+		data = {
+			'queueLength': queueLength,
+			'jukebox': enabled
+		}
 
 		if song:
 			log.debug("STATUS: Playing %s" % song)
@@ -92,10 +108,6 @@ class JukeboxController(BaseController):
 			data['timeTotal'] = total
 
 		log.debug("STATUS: Queue length: %d" % queueLength)
-		data['queueLength'] = queueLength
-		data['jukebox'] = jukebox.isEnabled()
-
-		jukebox.close()
 
 		response.headers['content-type'] = 'application/json'
 		return simplejson.dumps(data)
