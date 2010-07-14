@@ -120,13 +120,12 @@ class Jukebox(object):
 
 		lock.release()
 
-	# This can be removed once python-mpd supports the 'consume' command
-	# (see http://www.musicpd.org/doc/protocol/ch02s02.html)
 	def cleanQueue(self):
-		current = self.client.currentsong()
-		if current and 'pos' in current:
-			if int(current['pos']) > 0:
-				self.remove(0)
+		if not self.client.canConsume():
+			current = self.client.currentsong()
+			if current and 'pos' in current:
+				if int(current['pos']) > 0:
+					self.remove(0)
 
 	def search(self, where, what, forceSearch = False):
 		if config.get('find_over_search') and not forceSearch:

@@ -17,9 +17,9 @@
 
 import re
 import os
-import mpd
 import base64
 import logging
+from mpd import MPDClient
 from datetime import datetime
 from threading import BoundedSemaphore
 
@@ -104,6 +104,15 @@ class Track(object):
 		if 'pos' in song:
 			self.queuePosition = int(song['pos'])
 
+class FookeboxMPDClient(MPDClient):
+
+	def consume(self):
+		self._docommand('consume', [1], self._getnone)
+
+	def canConsume(self):
+		# the 'consume' commad was introduced in mpd 0.15
+		return self.mpd_version >= "0.15"
+
 class MPDWorker(object):
 
 	def __init__(self, num):
@@ -112,8 +121,12 @@ class MPDWorker(object):
 		port = config.get('mpd_port')
 		password = config.get('mpd_pass')
 
-		self.mpd = mpd.MPDClient()
+		self.mpd = FookeboxMPDClient()
 		self.mpd.connect(host, port)
+
+		# enable consume on mpd in the first worker
+		if num == 0 and self.mpd.canConsume:
+			self.mpd.consume()
 
 		if password:
 			self.mpd.password(password)
@@ -170,7 +183,7 @@ class MPDPool(object):
 			return worker
 
 		except Exception:
-			worker.release()
+			#worker.release()
 			self.lock.release()
 			log.fatal('Could not connect to MPD')
 			raise
