@@ -23,7 +23,8 @@ from mpd import MPDClient
 from datetime import datetime
 from threading import BoundedSemaphore
 
-from pylons import config
+from pylons import config, app_globals as g
+from fookebox.model.albumart import AlbumArt
 
 log = logging.getLogger(__name__)
 
@@ -63,6 +64,51 @@ class Artist(object):
 		self.name = name
 		self.base64 = base64.urlsafe_b64encode(name)
 
+class Album(object):
+
+	def __init__(self, artist, albumName, disc=None):
+		if albumName == None:
+			self.name = ''
+		else:
+			self.name = str(albumName)
+
+		if artist == None:
+			self.artist = ''
+		else:
+			self.artist = str(artist)
+
+		self.disc = disc
+		self.tracks = []
+
+	def add(self, track):
+		self.tracks.append(track)
+
+	def load(self):
+		client = g.mpd.getWorker()
+
+		# sometimes we get lists as album names
+		if self.name.startswith("['"):
+			# TODO
+			self.name = 'The Lord Of The Rings'
+
+		data = client.find(
+			'Artist', self.artist,
+			'Album', self.name)
+		client.release()
+
+		for file in data:
+			track = Track()
+			track.load(file)
+			self.add(track)
+
+	def hasCover(self):
+		art = AlbumArt(self)
+		return art.get() != None
+
+	def getCoverURI(self):
+		return "%s/%s" % (base64.urlsafe_b64encode(self.artist),
+				base64.urlsafe_b64encode(self.name))
+
 class Track(object):
 	NO_ARTIST = 'Unknown artist'
 	NO_TITLE = 'Unnamed track'
@@ -75,6 +121,7 @@ class Track(object):
 	b64 = ''
 	disc = 0
 	queuePosition = 0
+	time = 0
 
 	def load(self, song):
 		if 'artist' in song:
@@ -100,9 +147,18 @@ class Track(object):
 		if 'disc' in song:
 			self.disc = song['disc']
 		if 'album' in song:
-			self.album = str(song['album'])
+			album = song['album']
+
+			# if the album name is a list, only consider the first
+			# part (not nice, but should work for now)
+			if isinstance(album, list):
+				album = album[0]
+
+			self.album = str(album)
 		if 'pos' in song:
 			self.queuePosition = int(song['pos'])
+		if 'time' in song:
+			self.time = int(song['time'])
 
 class FookeboxMPDClient(MPDClient):
 

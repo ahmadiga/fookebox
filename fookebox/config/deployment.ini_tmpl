@@ -67,6 +67,9 @@ app_instance_uuid = ${app_instance_uuid}
 # directory with cover art
 #album_cover_path = /home/stefan/.cache/rhythmbox/covers/
 
+# directory where the music can be found (used for in-directory cover art)
+#music_base_path = /var/lib/mpd/music/
+
 # what to use as artist name when looking for compilations' cover art?
 #compliations_name = Various Artists
 

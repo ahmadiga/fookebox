@@ -4,6 +4,7 @@
 == 0.5.2 (xx xxx 2010) ==
 
  * Use mpd's "consume" command if available (versions >= 0.15)
+ * Added support for in-directory cover art
 
 == 0.5.1 (07 Jul 2010) ==
 

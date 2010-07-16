@@ -56,8 +56,7 @@ class ProgramController(BaseController):
 		currentEvent['title'] = event.name
 
 		if event.type == EVENT_TYPE_JUKEBOX:
-			track = Track()
-			track.load(jukebox.getCurrentSong())
+			track = jukebox.getCurrentSong()
 
 			if (track.artist == Track.NO_ARTIST and
 						track.title == Track.NO_TITLE):

@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
 import sys
 import random
 import logging
@@ -23,7 +24,6 @@ from pylons import config, app_globals as g
 
 from mpdconn import *
 from schedule import Event, EVENT_TYPE_JUKEBOX
-from albumart import Album
 
 log = logging.getLogger(__name__)
 
@@ -174,14 +174,20 @@ class Jukebox(object):
 	def getCurrentSong(self):
 		current = self.client.currentsong()
 
-		if current:
-			status = self.client.status()
+		if current == None:
+			return None
+
+		status = self.client.status()
+		if 'time' in status:
 			time = status['time'].split(':')[0]
-			current['timePassed'] = time
+		else:
+			time = 0
 
 		track = Track()
 		track.load(current)
-		return current
+		track.timePassed = time
+
+		return track
 
 	def getQueueLength(self):
 		playlist = self.client.playlist()

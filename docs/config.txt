@@ -102,6 +102,15 @@ default) determines what artist name is used for compilations. So if you want
 to provide a cover for a compilation called 'My Best Music', the corresponding
 rockbox cover art file would be called 'Various Artists-My Best Music.jpg'.
 
+If you would like fookebox to look for cover art in the same directory where
+you store you music files, set 'music_base_path' accordingly. In order for this
+to work you will need to have the music/cover files on the same machine where
+fookebox is running (if that's not the case, consider mounting the music
+directory remotely, eg. using NFS). fookebox will use any JPEG file in that
+directory, giving priority to files named cover.jpg, album.jpg or front.jpg
+(.jpeg is acceptable too). File names are case-insensitive, so whether you
+name your cover art front.jpg or ALBum.jpeg doesn't matter.
+
 Note that your covers need to be JPEG files and they will get scaled to
 a width of 100 pixels.
 
