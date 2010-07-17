@@ -5,6 +5,7 @@
 
  * Use mpd's "consume" command if available (versions >= 0.15)
  * Added support for in-directory cover art
+ * Cover art can now be cached
 
 == 0.5.1 (07 Jul 2010) ==
 

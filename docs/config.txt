@@ -111,6 +111,12 @@ directory, giving priority to files named cover.jpg, album.jpg or front.jpg
 (.jpeg is acceptable too). File names are case-insensitive, so whether you
 name your cover art front.jpg or ALBum.jpeg doesn't matter.
 
+On systems where disk access is expensive and generally on slower hardware you
+might want to enable 'cache_cover_art'. This causes fookebox to remember the
+result of its search for an album's cover art for 5 minutes. The only way to
+clear the cache (i.e. make fookebox forget the cached information) is to
+restart fookebox (as in, restart apache or whatever web server you are using).
+
 Note that your covers need to be JPEG files and they will get scaled to
 a width of 100 pixels.
 
