@@ -52,6 +52,7 @@ You can tweak the following fookebox-specific settings:
  * site_name: A name for your site (eg. 'my home')
  * max_queue_length: The maximum queue length (see below for details)
  * auto_queue: Whether to play random songs when the queue gets empty (see below)
+ * auto_queue_genre: Genre to pick auto-queued songs from
  * auto_queue_playlist: Playlist to play when idle (see below)
  * auto_queue_random: (see below)
  * show_search_tab: Enable/disable 'search' tab (eg. for mouse-only jukeboxes)
@@ -60,6 +61,8 @@ You can tweak the following fookebox-specific settings:
  * enable_queue_album: Enables/disables the ability to queue whole albums
  * find_over_search: Whether to use mpd's 'find' or 'search' (see below)
  * album_cover_path: Path that contains album cover art (see below)
+ * music_base_path: Path that contains your music (see below)
+ * cache_cover_art: Whether to cache cover art (disabled by default)
 
 
 == Secondary frontend ==
@@ -139,3 +142,6 @@ predefined set of songs to be played instead, use 'auto_queue_playlist' to
 specify an mpd playlist. If you want the song selection to be random but
 limited to a set of songs, define a playlist as explained before and set
 'auto_queue_random' to true.
+
+You can also 'auto_queue_genre' in order to limit auto-playing to a specific
+genre.

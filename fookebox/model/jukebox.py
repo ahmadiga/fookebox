@@ -70,7 +70,15 @@ class Jukebox(object):
 		self.client.play()
 
 	def _autoQueueRandom(self):
-		songs = self.client.listall()
+		genre = config.get('auto_queue_genre')
+
+		if genre:
+			songs = self.client.search('Genre', str(genre))
+		else:
+			songs = self.client.listall()
+
+		if len(songs) < 1:
+			return
 
 		file = []
 

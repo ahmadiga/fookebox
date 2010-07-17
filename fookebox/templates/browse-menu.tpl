@@ -38,7 +38,11 @@
 	</div>
 	<ul id="genreList" style="display: none">
 % for genre in genres:
+% if genre.name != '':
 		<li><a href="#" onclick="showGenre('${genre.base64}'); return false">${genre.name}</a></li>
+% else:
+		<li><a href="#" onclick="showGenre('${genre.base64}'); return false">${_('(none)')}</a></li>
+% endif
 % endfor
 	</ul>
 % if config.get('show_search_tab'):

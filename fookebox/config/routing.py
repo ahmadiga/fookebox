@@ -30,5 +30,7 @@ def make_map(config):
     map.connect('/{action}', controller='jukebox')
     map.connect('/cover/{artist}/{album}', controller='jukebox', action='cover')
     map.connect('/genre/{genreBase64}', controller='jukebox', action='genre')
+    map.connect('/genre/', controller='jukebox', action='genre')
     map.connect('/artist/{artistBase64}', controller='jukebox', action='artist')
+    map.connect('/artist/', controller='jukebox', action='artist')
     return map

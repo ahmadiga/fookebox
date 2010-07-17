@@ -160,6 +160,9 @@ class Track(object):
 		if 'time' in song:
 			self.time = int(song['time'])
 
+	def __str__(self):
+		return "%s - %s" % (self.artist, self.title)
+
 class FookeboxMPDClient(MPDClient):
 
 	def consume(self):

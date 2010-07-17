@@ -22,7 +22,7 @@ import logging
 import simplejson
 
 from pylons import request, response, session, tmpl_context as c, url
-from pylons import config
+from pylons import config, cache
 from pylons.controllers.util import abort, redirect
 from pylons.i18n.translation import _, ungettext
 
@@ -177,12 +177,15 @@ class JukeboxController(BaseController):
 
 		log.debug("SEARCH: found %d album(s)" % len(albums))
 
+		log.debug("SEARCH2")
+
 		return render('/search.tpl', extra_vars={
 			'what': what,
 			'albums': albums.values()
 		})
 
-	def genre(self, genreBase64):
+	def genre(self, genreBase64=''):
+		log.debug('GENRE')
 		try:
 			genre = genreBase64.decode('base64')
 		except:

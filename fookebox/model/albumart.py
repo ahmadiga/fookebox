@@ -23,7 +23,7 @@ import logging
 from datetime import datetime
 from threading import BoundedSemaphore
 
-from pylons import config
+from pylons import config, cache
 
 log = logging.getLogger(__name__)
 
@@ -93,6 +93,21 @@ class AlbumArt(object):
 		return os.path.join(dirname, bestmatch)
 
 	def get(self):
+
+		if config.get('cache_cover_art'):
+			cover_path_cache = cache.get_cache('cover_path')
+			song = "%s - %s" % (self.album.artist, self.album.name)
+			path = cover_path_cache.get_value(key=song,
+				createfunc=self._getCover, expiretime=300)
+
+			if path == None:
+				cover_path_cache.remove_value(song)
+		else:
+			path = self._getCover()
+
+		return path
+
+	def _getCover(self):
 		path = self._getRockboxPath()
 		if os.path.exists(path):
 			return path
