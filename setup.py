@@ -27,10 +27,10 @@ mpd control frontend or as anything in between.""",
 	test_suite='nose.collector',
 	package_data={'fookebox': ['i18n/*/LC_MESSAGES/*.mo']},
 	license='GPLv3',
-	#message_extractors={'fookebox': [
-	#	('**.py', 'python', None),
-	#	('templates/**.mako', 'mako', {'input_encoding': 'utf-8'}),
-	#	('public/**', 'ignore', None)]},
+	message_extractors={'fookebox': [
+		('**.py', 'python', None),
+		('templates/**.tpl', 'mako', {'input_encoding': 'utf-8'}),
+		('public/**', 'ignore', None)]},
 	zip_safe=False,
 	paster_plugins=['PasteScript', 'Pylons'],
 	entry_points="""

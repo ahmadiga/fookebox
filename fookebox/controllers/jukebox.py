@@ -50,7 +50,7 @@ class JukeboxController(BaseController):
 		})
 
 	def status(self):
-		log.debug("STATUS: Client updating")
+#		log.debug("STATUS: Client updating")
 		jukebox = Jukebox()
 		jukebox.cleanQueue()
 
@@ -83,7 +83,7 @@ class JukeboxController(BaseController):
 		}
 
 		if track:
-			log.debug("STATUS: Playing %s" % track)
+#			log.debug("STATUS: Playing %s" % track)
 			songPos = int(track.timePassed)
 			songTime = track.time
 
@@ -101,7 +101,7 @@ class JukeboxController(BaseController):
 			data['timePassed'] = position
 			data['timeTotal'] = total
 
-		log.debug("STATUS: Queue length: %d" % queueLength)
+#		log.debug("STATUS: Queue length: %d" % queueLength)
 
 		response.headers['content-type'] = 'application/json'
 		return simplejson.dumps(data)
@@ -279,7 +279,13 @@ class JukeboxController(BaseController):
 			jukebox.close()
 			abort(400, 'Invalid command')
 
-		commands[action]()
+		try:
+			commands[action]()
+		except:
+			jukebox.close()
+			log.error('Command %s failed' % action)
+			abort(500, _('Command failed'))
+
 		jukebox.close()
 
 	def cover(self, artist, album):

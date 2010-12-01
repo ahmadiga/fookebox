@@ -3,7 +3,7 @@
 	Nothing found
 % endif
 <ul id="searchResultList">
-% for album in albums:
+% for album in sorted(albums, key=lambda album: "%s %s" % (album.name, album.disc)):
 	<li class="searchResultItem">
 % if config.get('album_cover_path'):
 %	if album.hasCover():

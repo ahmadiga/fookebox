@@ -1,0 +1,17 @@
+This document is mostly for myself, in order to remember the i18n-related
+commands.
+
+Anyway.
+
+To update the translations, do:
+
+	python setup.py extract_messages
+	python setup.py update_catalog -l de
+	python setup.py compile_catalog
+
+To add a new translation, do:
+
+	python setup.py init_catalog -l es
+
+
+See http://wiki.pylonshq.com/display/pylonsdocs/Internationalization+and+Localization for more details.

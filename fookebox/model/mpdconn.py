@@ -86,11 +86,6 @@ class Album(object):
 	def load(self):
 		client = g.mpd.getWorker()
 
-		# sometimes we get lists as album names
-		if self.name.startswith("['"):
-			# TODO
-			self.name = 'The Lord Of The Rings'
-
 		data = client.find(
 			'Artist', self.artist,
 			'Album', self.name)
@@ -207,7 +202,7 @@ class MPDWorker(object):
 	def release(self):
 		self.atime = datetime.now()
 		self.free = True
-		log.debug("Worker %s released" % self)
+		#log.debug("Worker %s released" % self)
 
 	def __getattr__(self, attr):
 		self.atime = datetime.now()
@@ -225,6 +220,7 @@ class MPDPool(object):
 		self.lock.acquire()
 
 		log.debug("Pool contains %d workers" % len(self._workers))
+
 		for worker in self._workers:
 			if worker.free:
 				log.debug("Re-using worker %s" % worker)
@@ -232,6 +228,8 @@ class MPDPool(object):
 				self._cleanup()
 				self.lock.release()
 				return worker
+			else:
+				log.debug("Worker %s is busy" % worker)
 
 		try:
 			worker = MPDWorker(len(self._workers))
@@ -242,7 +240,6 @@ class MPDPool(object):
 			return worker
 
 		except Exception:
-			#worker.release()
 			self.lock.release()
 			log.fatal('Could not connect to MPD')
 			raise

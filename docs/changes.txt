@@ -7,6 +7,7 @@
  * Added support for in-directory cover art
  * Cover art can now be cached
  * Auto-queuing can now be limited to a specific genre
+ * Albums are now properly sorted on the search result page
 
 == 0.5.1 (07 Jul 2010) ==
 
