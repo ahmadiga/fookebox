@@ -8,6 +8,7 @@
  * Cover art can now be cached
  * Auto-queuing can now be limited to a specific genre
  * Albums are now properly sorted on the search result page
+ * The current track's time display should be updated much more smoothly now
 
 == 0.5.1 (07 Jul 2010) ==
 

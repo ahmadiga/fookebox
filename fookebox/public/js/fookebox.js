@@ -26,6 +26,9 @@ var messageTimeout;
 // length of our currently known queue
 var queueLength = -1;
 
+// time passed (current song)
+var timePassed = new Date(0, 0, 0);
+
 // the currently known url
 var currentURL = '';
 
@@ -33,7 +36,6 @@ var currentURL = '';
 var TYPE_JUKEBOX = 0;
 var TYPE_BAND = 1;
 var TYPE_DJ = 2;
-
 
 function ajax_get(url, onsucces) {
 	var time = new Date().getTime();
@@ -131,9 +133,26 @@ function setTab(name)
 	currentURL = window.location.href;
 }
 
+function updateTrackTime()
+{
+	var seconds = timePassed.getSeconds();
+	var minutes = timePassed.getMinutes();
+
+	if (seconds < 10)
+		seconds = "0" + seconds;
+	if (minutes < 10)
+		minutes = "0" + minutes;
+
+	$('timePassed').update(minutes + ":" + seconds);
+}
+
 function updateStatus()
 {
 	setTimeout("updateStatus()", 1000);
+
+	// update time
+	timePassed.setSeconds(timePassed.getSeconds() + 1);
+	updateTrackTime();
 
 	ajax_get('status', function(transport)
 	{
@@ -159,7 +178,28 @@ function updateStatus()
 			$('track').update(track);
 		if (timeTotal != $('timeTotal').innerHTML)
 			$('timeTotal').update(timeTotal);
-		$('timePassed').update(data.timePassed);
+
+		// sync our client-side track time with the one from the
+		// server. update the seconds only if we differ by more than
+		// one second (force-update the display in that case).
+		//
+		// this should fix the 'jumpy' track time display
+		var parts = data.timePassed.split(':');
+		if (parts.length == 2)
+		{
+			var minutes = parts[0];
+			var seconds = parts[1];
+
+			var diff = seconds - timePassed.getSeconds();
+
+			timePassed.setMinutes(minutes);
+
+			if (diff > 1 || diff < -1)
+			{
+				timePassed.setSeconds(seconds);
+				updateTrackTime();
+			}
+		}
 
 		var img = $('nowPlayingCover');
 		if (hasCover)
