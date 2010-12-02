@@ -1,7 +1,7 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
-== 0.5.2 (xx xxx 2010) ==
+== 0.5.2 (02 Dec 2010) ==
 
  * Use mpd's "consume" command if available (versions >= 0.15)
  * Added support for in-directory cover art
