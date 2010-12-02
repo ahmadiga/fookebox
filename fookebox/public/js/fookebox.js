@@ -1,5 +1,5 @@
 /*
- * fookebox 0.5.0, http://fookebox.googlecode.com/
+ * fookebox, http://fookebox.googlecode.com/
  *
  * Copyright (C) 2007-2010 Stefan Ott. All rights reserved.
  *
