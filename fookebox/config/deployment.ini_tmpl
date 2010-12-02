@@ -39,6 +39,9 @@ app_instance_uuid = ${app_instance_uuid}
 # automatically queue a random song when the playlist gets empty
 #auto_queue = true
 
+# genre to use for auto_queue
+#auto_queue_genre = Comedy
+
 # do auto-queuing before the playlist is empty [seconds] (0 to disable)
 #auto_queue_time_left = 1
 
@@ -67,8 +70,14 @@ app_instance_uuid = ${app_instance_uuid}
 # directory with cover art
 #album_cover_path = /home/stefan/.cache/rhythmbox/covers/
 
+# directory where the music can be found (used for in-directory cover art)
+#music_base_path = /var/lib/mpd/music/
+
 # what to use as artist name when looking for compilations' cover art?
 #compliations_name = Various Artists
+
+# if you would like cover art to be cached, set this to true
+#cache_cover_art = false
 
 
 # If you'd like to fine-tune the individual locations of the cache data dirs

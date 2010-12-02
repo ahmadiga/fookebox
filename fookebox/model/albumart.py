@@ -23,58 +23,91 @@ import logging
 from datetime import datetime
 from threading import BoundedSemaphore
 
-from pylons import config
+from pylons import config, cache
 
 log = logging.getLogger(__name__)
 
-class Album(object):
-
-	def __init__(self, artist, albumName, disc=None):
-		if albumName == None:
-			self.name = ''
-		else:
-			self.name = str(albumName)
-
-		if artist == None:
-			self.artist = ''
-		else:
-			self.artist = str(artist)
-
-		self.disc = disc
-		self.tracks = []
-
-	def add(self, track):
-		self.tracks.append(track)
-
-	def hasCover(self):
-		return self.getCover() != None
+class AlbumArt(object):
+	def __init__(self, album):
+		self.album = album
 
 	def _getRockboxPath(self, compilation=False):
 		pattern = re.compile('[\/:<>\?*|]')
-		album = pattern.sub('_', self.name)
+		album = pattern.sub('_', self.album.name)
 
 		if compilation:
 			artist = pattern.sub('_', config.get(
 				'compliations_name'))
 		else:
-			artist = pattern.sub('_', self.artist)
+			artist = pattern.sub('_', self.album.artist)
 
 		return "%s/%s-%s.jpg" % (config.get('album_cover_path'),
 				artist, album)
 
 	def _getRhythmboxPath(self, compilation=False):
-		album = self.name.replace('/', '-')
+		album = self.album.name.replace('/', '-')
 
 		if compilation:
 			artist = config.get('compliations_name').replace(
 					'/', '-')
 		else:
-			artist = self.artist.replace('/', '-')
+			artist = self.album.artist.replace('/', '-')
 
 		return "%s/%s - %s.jpg" % (config.get('album_cover_path'),
 				artist, album)
 
-	def getCover(self):
+	def _getInDirCover(self):
+		basepath = config.get('music_base_path')
+
+		if basepath == None:
+			return None
+
+		if len(self.album.tracks) > 0:
+			track = self.album.tracks[0]
+		else:
+			self.album.load()
+			if len(self.album.tracks) < 1:
+				return None
+
+			track = self.album.tracks[0]
+
+		fullpath = os.path.join(basepath, track.file)
+		dirname = os.path.dirname(fullpath)
+
+		def best_image(x, y):
+			pattern = '(cover|album|front)'
+
+			if re.match(pattern, x, re.I):
+				return x
+			else:
+				return y
+
+		dir = os.listdir(dirname)
+		dir = filter(lambda x: x.endswith(
+			('jpg', 'JPG', 'jpeg', 'JPEG')), dir)
+
+		if len(dir) < 1:
+			return None
+
+		bestmatch = reduce(best_image, dir)
+		return os.path.join(dirname, bestmatch)
+
+	def get(self):
+
+		if config.get('cache_cover_art'):
+			cover_path_cache = cache.get_cache('cover_path')
+			song = "%s - %s" % (self.album.artist, self.album.name)
+			path = cover_path_cache.get_value(key=song,
+				createfunc=self._getCover, expiretime=300)
+
+			if path == None:
+				cover_path_cache.remove_value(song)
+		else:
+			path = self._getCover()
+
+		return path
+
+	def _getCover(self):
 		path = self._getRockboxPath()
 		if os.path.exists(path):
 			return path
@@ -91,8 +124,7 @@ class Album(object):
 		if os.path.exists(path):
 			return path
 
-		return None
+		cover = self._getInDirCover()
 
-	def getCoverURI(self):
-		return "%s/%s" % (base64.urlsafe_b64encode(self.artist),
-				base64.urlsafe_b64encode(self.name))
+		return cover
+

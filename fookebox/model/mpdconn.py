@@ -17,13 +17,14 @@
 
 import re
 import os
-import mpd
 import base64
 import logging
+from mpd import MPDClient
 from datetime import datetime
 from threading import BoundedSemaphore
 
-from pylons import config
+from pylons import config, app_globals as g
+from fookebox.model.albumart import AlbumArt
 
 log = logging.getLogger(__name__)
 
@@ -63,6 +64,46 @@ class Artist(object):
 		self.name = name
 		self.base64 = base64.urlsafe_b64encode(name)
 
+class Album(object):
+
+	def __init__(self, artist, albumName, disc=None):
+		if albumName == None:
+			self.name = ''
+		else:
+			self.name = str(albumName)
+
+		if artist == None:
+			self.artist = ''
+		else:
+			self.artist = str(artist)
+
+		self.disc = disc
+		self.tracks = []
+
+	def add(self, track):
+		self.tracks.append(track)
+
+	def load(self):
+		client = g.mpd.getWorker()
+
+		data = client.find(
+			'Artist', self.artist,
+			'Album', self.name)
+		client.release()
+
+		for file in data:
+			track = Track()
+			track.load(file)
+			self.add(track)
+
+	def hasCover(self):
+		art = AlbumArt(self)
+		return art.get() != None
+
+	def getCoverURI(self):
+		return "%s/%s" % (base64.urlsafe_b64encode(self.artist),
+				base64.urlsafe_b64encode(self.name))
+
 class Track(object):
 	NO_ARTIST = 'Unknown artist'
 	NO_TITLE = 'Unnamed track'
@@ -75,6 +116,7 @@ class Track(object):
 	b64 = ''
 	disc = 0
 	queuePosition = 0
+	time = 0
 
 	def load(self, song):
 		if 'artist' in song:
@@ -100,9 +142,30 @@ class Track(object):
 		if 'disc' in song:
 			self.disc = song['disc']
 		if 'album' in song:
-			self.album = str(song['album'])
+			album = song['album']
+
+			# if the album name is a list, only consider the first
+			# part (not nice, but should work for now)
+			if isinstance(album, list):
+				album = album[0]
+
+			self.album = str(album)
 		if 'pos' in song:
 			self.queuePosition = int(song['pos'])
+		if 'time' in song:
+			self.time = int(song['time'])
+
+	def __str__(self):
+		return "%s - %s" % (self.artist, self.title)
+
+class FookeboxMPDClient(MPDClient):
+
+	def consume(self):
+		self._docommand('consume', [1], self._getnone)
+
+	def canConsume(self):
+		# the 'consume' commad was introduced in mpd 0.15
+		return self.mpd_version >= "0.15"
 
 class MPDWorker(object):
 
@@ -112,8 +175,12 @@ class MPDWorker(object):
 		port = config.get('mpd_port')
 		password = config.get('mpd_pass')
 
-		self.mpd = mpd.MPDClient()
+		self.mpd = FookeboxMPDClient()
 		self.mpd.connect(host, port)
+
+		# enable consume on mpd in the first worker
+		if num == 0 and self.mpd.canConsume:
+			self.mpd.consume()
 
 		if password:
 			self.mpd.password(password)
@@ -135,7 +202,7 @@ class MPDWorker(object):
 	def release(self):
 		self.atime = datetime.now()
 		self.free = True
-		log.debug("Worker %s released" % self)
+		#log.debug("Worker %s released" % self)
 
 	def __getattr__(self, attr):
 		self.atime = datetime.now()
@@ -153,6 +220,7 @@ class MPDPool(object):
 		self.lock.acquire()
 
 		log.debug("Pool contains %d workers" % len(self._workers))
+
 		for worker in self._workers:
 			if worker.free:
 				log.debug("Re-using worker %s" % worker)
@@ -160,6 +228,8 @@ class MPDPool(object):
 				self._cleanup()
 				self.lock.release()
 				return worker
+			else:
+				log.debug("Worker %s is busy" % worker)
 
 		try:
 			worker = MPDWorker(len(self._workers))
@@ -170,7 +240,6 @@ class MPDPool(object):
 			return worker
 
 		except Exception:
-			worker.release()
 			self.lock.release()
 			log.fatal('Could not connect to MPD')
 			raise

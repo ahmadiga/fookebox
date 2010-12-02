@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: fookebox 0.5.0\n"
 "Report-Msgid-Bugs-To: stefan@ott.net\n"
 "POT-Creation-Date: 2010-06-30 06:22+0200\n"
-"PO-Revision-Date: 2010-06-30 07:00+0200\n"
+"PO-Revision-Date: 2010-12-01 02:15+0100\n"
 "Last-Translator: Stefan Ott <stefan@ott.net>\n"
 "Language-Team: de <stefan@ott.net>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -17,29 +17,37 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: fookebox/controllers/jukebox.py:124 fookebox/controllers/jukebox.py:125
+#: fookebox/controllers/jukebox.py:158
 msgid "The queue is full"
 msgstr "Die Queue ist voll"
 
-#: fookebox/controllers/jukebox.py:211
+#: fookebox/controllers/jukebox.py:230
 msgid "Song removal disabled"
-msgstr ""
+msgstr "Das Entfernen von Songs wurde deaktiviert"
 
-#: fookebox/controllers/jukebox.py:232
+#: fookebox/controllers/jukebox.py:251
 msgid "Controls disabled"
-msgstr ""
+msgstr "Steuerelemente wurden deaktiviert"
 
-#: fookebox/templates/browse-menu.tpl:7
+#: fookebox/controllers/jukebox.py:287
+msgid "Command failed"
+msgstr "Fehlgeschlagen"
+
+#: fookebox/templates/browse-menu.tpl:3
 msgid "Artists"
 msgstr "Künstler"
 
-#: fookebox/templates/browse-menu.tpl:8
+#: fookebox/templates/browse-menu.tpl:4
 msgid "Genres"
-msgstr ""
+msgstr "Genres"
 
-#: fookebox/templates/browse-menu.tpl:10
+#: fookebox/templates/browse-menu.tpl:6
 msgid "Search"
 msgstr "Suche"
+
+#: fookebox/templates/browse-menu.tpl:44
+msgid "(none)"
+msgstr "(kein)"
 
 #: fookebox/templates/browse-menu.tpl:52
 msgid "Artist"
@@ -47,7 +55,7 @@ msgstr "Künstler"
 
 #: fookebox/templates/browse-menu.tpl:53
 msgid "Album"
-msgstr ""
+msgstr "Album"
 
 #: fookebox/templates/browse-menu.tpl:54
 msgid "Title"
@@ -63,7 +71,7 @@ msgstr "Beliebig"
 
 #: fookebox/templates/playing.tpl:2
 msgid "Now playing"
-msgstr "Aktuelles Lied"
+msgstr "Aktueller Song"
 
 #: fookebox/templates/playing.tpl:9
 msgid "back"
@@ -71,7 +79,7 @@ msgstr "zurück"
 
 #: fookebox/templates/playing.tpl:10
 msgid "pause"
-msgstr ""
+msgstr "pause"
 
 #: fookebox/templates/playing.tpl:11
 msgid "play"
@@ -95,7 +103,7 @@ msgstr "datenbank aktualisieren"
 
 #: fookebox/templates/playlist.tpl:2
 msgid "Queue"
-msgstr ""
+msgstr "Warteschlange"
 
 #: fookebox/templates/program.tpl:3
 msgid "now playing"

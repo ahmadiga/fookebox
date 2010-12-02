@@ -22,14 +22,14 @@ import logging
 import simplejson
 
 from pylons import request, response, session, tmpl_context as c, url
-from pylons import config
+from pylons import config, cache
 from pylons.controllers.util import abort, redirect
 from pylons.i18n.translation import _, ungettext
 
 from fookebox.lib.base import BaseController, render
 from fookebox.model.jukebox import Jukebox
-from fookebox.model.mpdconn import Track
-from fookebox.model.albumart import Album
+from fookebox.model.mpdconn import Track, Album
+from fookebox.model.albumart import AlbumArt
 
 log = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ class JukeboxController(BaseController):
 		})
 
 	def status(self):
-		log.debug("STATUS: Client updating")
+#		log.debug("STATUS: Client updating")
 		jukebox = Jukebox()
 		jukebox.cleanQueue()
 
@@ -71,7 +71,7 @@ class JukeboxController(BaseController):
 				raise
 
 		try:
-			song = jukebox.getCurrentSong()
+			track = jukebox.getCurrentSong()
 		except:
 			raise
 		finally:
@@ -82,22 +82,16 @@ class JukeboxController(BaseController):
 			'jukebox': enabled
 		}
 
-		if song:
-			log.debug("STATUS: Playing %s" % song)
-			songPos = int(song['timePassed'])
-
-			if 'time' in song:
-				songTime = int(song['time'])
-			else:
-				songTime = 0
+		if track:
+#			log.debug("STATUS: Playing %s" % track)
+			songPos = int(track.timePassed)
+			songTime = track.time
 
 			total = "%02d:%02d" % (songTime / 60, songTime % 60)
 			position = "%02d:%02d" % (songPos / 60, songPos % 60)
 
-			track = Track()
-			track.load(song)
-
 			album = Album(track.artist, track.album)
+			album.add(track)
 
 			data['artist'] = track.artist
 			data['track'] = track.title
@@ -107,7 +101,7 @@ class JukeboxController(BaseController):
 			data['timePassed'] = position
 			data['timeTotal'] = total
 
-		log.debug("STATUS: Queue length: %d" % queueLength)
+#		log.debug("STATUS: Queue length: %d" % queueLength)
 
 		response.headers['content-type'] = 'application/json'
 		return simplejson.dumps(data)
@@ -183,12 +177,15 @@ class JukeboxController(BaseController):
 
 		log.debug("SEARCH: found %d album(s)" % len(albums))
 
+		log.debug("SEARCH2")
+
 		return render('/search.tpl', extra_vars={
 			'what': what,
 			'albums': albums.values()
 		})
 
-	def genre(self, genreBase64):
+	def genre(self, genreBase64=''):
+		log.debug('GENRE')
 		try:
 			genre = genreBase64.decode('base64')
 		except:
@@ -282,7 +279,13 @@ class JukeboxController(BaseController):
 			jukebox.close()
 			abort(400, 'Invalid command')
 
-		commands[action]()
+		try:
+			commands[action]()
+		except:
+			jukebox.close()
+			log.error('Command %s failed' % action)
+			abort(500, _('Command failed'))
+
 		jukebox.close()
 
 	def cover(self, artist, album):
@@ -294,7 +297,8 @@ class JukeboxController(BaseController):
 			abort(400, 'Malformed base64 encoding')
 
 		album = Album(artist, album)
-		path = album.getCover()
+		art = AlbumArt(album)
+		path = art.get()
 
 		if path == None:
 			log.error("COVER: missing for %s/%s" % (artist, album))

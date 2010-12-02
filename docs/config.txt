@@ -52,6 +52,7 @@ You can tweak the following fookebox-specific settings:
  * site_name: A name for your site (eg. 'my home')
  * max_queue_length: The maximum queue length (see below for details)
  * auto_queue: Whether to play random songs when the queue gets empty (see below)
+ * auto_queue_genre: Genre to pick auto-queued songs from
  * auto_queue_playlist: Playlist to play when idle (see below)
  * auto_queue_random: (see below)
  * show_search_tab: Enable/disable 'search' tab (eg. for mouse-only jukeboxes)
@@ -60,6 +61,8 @@ You can tweak the following fookebox-specific settings:
  * enable_queue_album: Enables/disables the ability to queue whole albums
  * find_over_search: Whether to use mpd's 'find' or 'search' (see below)
  * album_cover_path: Path that contains album cover art (see below)
+ * music_base_path: Path that contains your music (see below)
+ * cache_cover_art: Whether to cache cover art (disabled by default)
 
 
 == Secondary frontend ==
@@ -102,6 +105,21 @@ default) determines what artist name is used for compilations. So if you want
 to provide a cover for a compilation called 'My Best Music', the corresponding
 rockbox cover art file would be called 'Various Artists-My Best Music.jpg'.
 
+If you would like fookebox to look for cover art in the same directory where
+you store you music files, set 'music_base_path' accordingly. In order for this
+to work you will need to have the music/cover files on the same machine where
+fookebox is running (if that's not the case, consider mounting the music
+directory remotely, eg. using NFS). fookebox will use any JPEG file in that
+directory, giving priority to files named cover.jpg, album.jpg or front.jpg
+(.jpeg is acceptable too). File names are case-insensitive, so whether you
+name your cover art front.jpg or ALBum.jpeg doesn't matter.
+
+On systems where disk access is expensive and generally on slower hardware you
+might want to enable 'cache_cover_art'. This causes fookebox to remember the
+result of its search for an album's cover art for 5 minutes. The only way to
+clear the cache (i.e. make fookebox forget the cached information) is to
+restart fookebox (as in, restart apache or whatever web server you are using).
+
 Note that your covers need to be JPEG files and they will get scaled to
 a width of 100 pixels.
 
@@ -124,3 +142,6 @@ predefined set of songs to be played instead, use 'auto_queue_playlist' to
 specify an mpd playlist. If you want the song selection to be random but
 limited to a set of songs, define a playlist as explained before and set
 'auto_queue_random' to true.
+
+You can also 'auto_queue_genre' in order to limit auto-playing to a specific
+genre.
