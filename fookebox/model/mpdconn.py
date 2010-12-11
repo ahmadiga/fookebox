@@ -67,6 +67,8 @@ class Artist(object):
 class Album(object):
 
 	def __init__(self, artist, albumName, disc=None):
+		self.isCompilation = False
+
 		if albumName == None:
 			self.name = ''
 		else:
@@ -81,6 +83,9 @@ class Album(object):
 		self.tracks = []
 
 	def add(self, track):
+		if track.artist != self.artist:
+			self.isCompilation = True
+
 		self.tracks.append(track)
 
 	def load(self):

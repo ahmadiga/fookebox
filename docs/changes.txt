@@ -4,6 +4,7 @@
 == 0.5.3 (xx xxx xxxx) ==
 
  * Show a proper error message when the connection to MPD fails
+ * Show artists in search result pages again
 
 == 0.5.2 (02 Dec 2010) ==
 
