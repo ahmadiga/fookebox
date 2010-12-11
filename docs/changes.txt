@@ -1,6 +1,10 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
+== 0.5.3 (xx xxx xxxx) ==
+
+ * Show a proper error message when the connection to MPD fails
+
 == 0.5.2 (02 Dec 2010) ==
 
  * Use mpd's "consume" command if available (versions >= 0.15)

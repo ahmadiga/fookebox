@@ -33,12 +33,19 @@ from fookebox.model.albumart import AlbumArt
 
 log = logging.getLogger(__name__)
 
+import socket
 from pylons.i18n.translation import _
 
 class JukeboxController(BaseController):
 
 	def index(self):
-		jukebox = Jukebox()
+		try:
+			jukebox = Jukebox()
+		except socket.error:
+			return render('/error.tpl', extra_vars={
+				'error': 'Connection to MPD failed'
+				})
+
 		artists = jukebox.getArtists()
 		genres = jukebox.getGenres()
 		jukebox.close()
