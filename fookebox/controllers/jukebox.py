@@ -17,6 +17,7 @@
 
 import sys
 import mpd
+import errno
 import base64
 import logging
 import simplejson
@@ -31,6 +32,7 @@ from fookebox.model.jukebox import Jukebox
 from fookebox.model.mpdconn import Track, Album
 from fookebox.model.albumart import AlbumArt
 
+logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)
 
 import socket
@@ -186,10 +188,20 @@ class JukeboxController(BaseController):
 
 		log.debug("SEARCH2")
 
-		return render('/search.tpl', extra_vars={
-			'what': what,
-			'albums': albums.values()
-		})
+		try:
+			return render('/search.tpl', extra_vars={
+				'what': what,
+				'albums': albums.values()
+			})
+		except IOError:
+			e = sys.exc_value
+
+			msg = "%s: %s" % (e.strerror, e.filename)
+			shortmsg = "%s: %s" % (e.strerror,
+					e.filename.split('/')[-1])
+
+			log.error(msg)
+			abort(500, shortmsg)
 
 	def genre(self, genreBase64=''):
 		log.debug('GENRE')
@@ -308,7 +320,8 @@ class JukeboxController(BaseController):
 		path = art.get()
 
 		if path == None:
-			log.error("COVER: missing for %s/%s" % (artist, album))
+			log.error("COVER: missing for %s/%s" % (artist,
+				album.name))
 			abort(404, 'No cover found for this album')
 
 		file = open(path, 'r')
