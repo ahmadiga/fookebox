@@ -211,7 +211,6 @@ function updateStatus()
 		else
 		{
 			img.hide();
-			img.src = '';
 		}
 
 		if (serverQueue != queueLength)
