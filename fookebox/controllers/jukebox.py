@@ -186,8 +186,6 @@ class JukeboxController(BaseController):
 
 		log.debug("SEARCH: found %d album(s)" % len(albums))
 
-		log.debug("SEARCH2")
-
 		try:
 			return render('/search.tpl', extra_vars={
 				'what': what,
