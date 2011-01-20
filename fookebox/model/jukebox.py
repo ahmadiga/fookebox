@@ -39,10 +39,8 @@ class Jukebox(object):
 			self.client = to
 			return
 
-		if g.mpd == None:
-			g.mpd = MPDPool()
-
-		self.client = g.mpd.getWorker()
+		mpd = MPD.get()
+		self.client = mpd.getWorker()
 
 	def close(self):
 		self.client.release()

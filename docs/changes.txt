@@ -6,6 +6,8 @@
  * Show a proper error message when the connection to MPD fails
  * Show artists in search result pages again
  * Reduced the number of HTTP requests when the current song has no cover art
+ * Generally reduced the number of requests to mpd
+ * Fixed an issue that could cause errors when modwsgi reloaded the application
 
 == 0.5.2 (02 Dec 2010) ==
 

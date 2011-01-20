@@ -18,5 +18,5 @@
 	</ol>
 </div>
 <div>
-	<img id="nowPlayingCover" src="" width="200" alt="" style="display: none" />
+	<img id="nowPlayingCover" src="img/nocover.png" width="200" alt="" style="display: none" />
 </div>

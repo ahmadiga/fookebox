@@ -89,7 +89,8 @@ class Album(object):
 		self.tracks.append(track)
 
 	def load(self):
-		client = g.mpd.getWorker()
+		mpd = MPD.get()
+		client = mpd.getWorker()
 
 		data = client.find(
 			'Artist', self.artist,
@@ -108,6 +109,27 @@ class Album(object):
 	def getCoverURI(self):
 		return "%s/%s" % (base64.urlsafe_b64encode(self.artist),
 				base64.urlsafe_b64encode(self.name))
+
+	def getPath(self):
+		basepath = config.get('music_base_path')
+
+		if basepath == None:
+			return None
+
+		if len(self.tracks) > 0:
+			track = self.tracks[0]
+		else:
+			self.load()
+			if len(self.tracks) < 1:
+				return None
+
+			track = self.tracks[0]
+
+		fullpath = os.path.join(basepath, track.file)
+		return os.path.dirname(fullpath)
+
+	def key(self):
+		return "%s-%s" % (self.artist, self.name)
 
 class Track(object):
 	NO_ARTIST = 'Unknown artist'
@@ -258,3 +280,11 @@ class MPDPool(object):
 					log.debug("Removing idle worker %s" %
 							worker)
 					self._workers.remove(worker)
+
+class MPD(object):
+	@staticmethod
+	def get():
+		if g.mpd == None:
+			g.mpd = MPDPool()
+
+		return g.mpd
