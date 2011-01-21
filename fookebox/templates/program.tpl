@@ -19,8 +19,3 @@
 	<br /><span class="time">@<span id="nextTime"></span></span>
 </div>
 <div id="clock"></div>
-<script type="text/javascript">
-<!--
-	//setTimeout('refreshProgram()', 1000);
--->
-</script>

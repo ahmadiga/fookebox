@@ -41,7 +41,7 @@ var AjaxView = Class.create(
 		{
 			method: 'post',
 			requestHeaders: { 'Accept': 'application/json' },
-			postBody: data.toJSON(),
+			postBody: Object.toJSON(data),
 			contentType: 'application/json',
 			onSuccess: onsuccess,
 			onFailure: this.transportError.bind(this),

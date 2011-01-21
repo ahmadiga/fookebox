@@ -9,6 +9,7 @@
  * Generally reduced the number of requests to mpd
  * Fixed an issue that could cause errors when modwsgi reloaded the application
  * Rewrote/reorganized most of the javascript code
+ * Updated the included libraries to scriptaculous 1.9.0 / prototype 1.7
 
 == 0.5.2 (02 Dec 2010) ==
 
