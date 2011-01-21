@@ -62,6 +62,29 @@ var TrackView = Class.create(AjaxView,
 
 		this.time = new Date(0, 0, 0);
 	},
+	attach: function(jukebox)
+	{
+		this.artistView = $('artist');
+		this.trackView = $('track');
+		this.timeView = $('timeTotal');
+		this.timePassedView = $('timePassed');
+
+		function addControl(key) {
+			$('control-' + key).onclick = function() {
+				jukebox.control(key); return false
+			};
+		}
+
+		if ($('control')) {
+			addControl('prev');
+			addControl('pause');
+			addControl('play');
+			addControl('next');
+			addControl('voldown');
+			addControl('volup');
+			addControl('rebuild');
+		}
+	},
 	updateTime: function()
 	{
 		var seconds = this.time.getSeconds();
@@ -72,7 +95,7 @@ var TrackView = Class.create(AjaxView,
 		if (minutes < 10)
 			minutes = "0" + minutes;
 
-		$('timePassed').update(minutes + ":" + seconds);
+		this.timePassedView.update(minutes + ":" + seconds);
 	},
 	tick: function()
 	{
@@ -110,12 +133,12 @@ var TrackView = Class.create(AjaxView,
 		this.track = track;
 		this.timeTotal = timeTotal;
 
-		if (this.artist != $('artist').innerHTML)
-			$('artist').update(this.artist);
-		if (this.track != $('track').innerHTML)
-			$('track').update(this.track);
-		if (this.timeTotal != $('timeTotal').innerHTML)
-			$('timeTotal').update(this.timeTotal);
+		if (this.artist != this.artistView.innerHTML)
+			this.artistView.update(this.artist);
+		if (this.track != this.trackView.innerHTML)
+			this.trackView.update(this.track);
+		if (this.timeTotal != this.timeView.innerHTML)
+			this.timeView.update(this.timeTotal);
 	},
 });
 
@@ -150,6 +173,10 @@ var JukeboxView = Class.create(AjaxView,
 		this.trackView = new TrackView();
 		this.coverView = new CoverView();
 		this.musicView = new MusicView();
+	},
+	attach: function()
+	{
+		this.trackView.attach(this);
 	},
 	disable: function()
 	{
@@ -299,6 +326,7 @@ var CurrentPage = Class.create(
 document.observe("dom:loaded", function()
 {
 	jukebox = new JukeboxView();
+	jukebox.attach();
 	jukebox.sync();
 
 	page = new CurrentPage();
