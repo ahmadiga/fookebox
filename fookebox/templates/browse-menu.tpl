@@ -27,7 +27,11 @@
 				<a href="#" name="${char}" onclick="jukebox.showArtist('${artist.base64}'); return false">${artist.name}</a>
 %	else:
 			<li>
+%		if len(artist.name) > 0:
 				<a href="#" onclick="jukebox.showArtist('${artist.base64}'); return false">${artist.name}</a>
+%		else:
+				<a href="#" onclick="jukebox.showArtist(''); return false">${_('(none)')}</a>
+%		endif
 %	endif
 			</li>
 %	if len(artist.name) > 0:

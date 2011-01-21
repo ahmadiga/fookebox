@@ -216,7 +216,7 @@ class JukeboxController(BaseController):
 
 		return self._search('genre', genre)
 
-	def artist(self, artistBase64):
+	def artist(self, artistBase64=''):
 		try:
 			artist = artistBase64.decode('base64')
 		except:

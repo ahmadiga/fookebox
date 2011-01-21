@@ -55,6 +55,7 @@ var AjaxView = Class.create(
 			response = 'Something bad happened';
 
 		new Message(response).show();
+		this.hideProgressbar();
 	},
 	showProgressbar: function()
 	{
@@ -78,7 +79,9 @@ var Message = Class.create(
 	show: function()
 	{
 		if ($('messageText').timeout)
-			$('messageText').timeout.clear();
+		{
+			clearTimeout($('messageText').timeout);
+		}
 
 		$('messageText').update(this.text);
 		$('messageText').timeout = setTimeout(this.hide, 3000);
