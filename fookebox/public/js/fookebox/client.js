@@ -235,73 +235,72 @@ var JukeboxView = Class.create(AjaxView,
 	},
 });
 
+var CurrentPage = Class.create(
+{
+	initialize: function()
+	{
+		this.tab = 'artist';
+		this.url = '';
+	},
+	watch: function()
+	{
+		this.url = window.location.href;
+		this.apply();
+		this.update();
+	},
+	update: function()
+	{
+		setTimeout(this.update.bind(this), 400);
+
+		var url = window.location.href;
+
+		if (url != this.url)
+		{
+			this.url = url;
+			this.apply();
+		}
+	},
+	apply: function()
+	{
+		url = unescape(this.url);
+
+		if (url.indexOf("#") > -1)
+		{
+			var parts = url.split('#');
+			var params = parts[1].split('=');
+			var key = params[0];
+			var value = parts[1].substring(key.length + 1);
+
+			if (key == 'artist')
+				jukebox.showArtist(value);
+			else if (key == 'genre')
+				jukebox.showGenre(value);
+			else if (key == 'tab')
+				this.setTab(value);
+		}
+	},
+	setTab: function(name)
+	{
+		if (name == this.tab) return;
+
+		$(name + 'List').show();
+		$(this.tab + 'List').hide();
+
+		$(name + 'Tab').classname = 'active';
+		$(this.tab + 'Tab').classname = 'inactive';
+
+		this.tab = name;
+
+		window.location = "#tab=" + name;
+		this.url = window.location.href;
+	}
+});
+
 document.observe("dom:loaded", function()
 {
 	jukebox = new JukeboxView();
-	console.log("Loaded JukeboxView: " + jukebox);
 	jukebox.sync();
 
-	parseLocation();
+	page = new CurrentPage();
+	page.watch();
 });
-
-/* trash */
-
-// the currently open tab
-var currentTab = 'artist';
-
-// the currently known url
-var currentURL = '';
-
-function applyURL(url)
-{
-	url = unescape(url);
-	currentURL = url;
-
-	if (url.indexOf("#") > -1)
-	{
-		var parts = url.split('#');
-		var params = parts[1].split('=');
-		var key = params[0];
-		var value = parts[1].substring(key.length + 1);
-
-		if (key == 'artist')
-			jukebox.showArtist(value);
-		else if (key == 'genre')
-			jukebox.showGenre(value);
-		else if (key == 'tab')
-			setTab(value);
-	}
-}
-
-function parseLocation()
-{
-	var url = window.location.href;
-	applyURL(url);
-	setTimeout("updateURL()", 400);
-}
-
-function updateURL()
-{
-	var url = window.location.href;
-
-	if (url != currentURL)
-		applyURL(url);
-
-	setTimeout("updateURL()", 400);
-}
-
-function setTab(name)
-{
-	if (name == currentTab) return;
-
-	$(name + 'List').show();
-	$(currentTab + 'List').hide();
-
-	$(name + 'Tab').className = 'active';
-	$(currentTab + 'Tab').className = 'inactive';
-
-	currentTab = name;
-
-	window.location = "#tab=" + name;
-	currentURL = window.location.href;
-}

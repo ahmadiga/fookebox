@@ -1,9 +1,9 @@
 <div id="browse-menu">
 	<ul id="selectType">
-		<li id="artistTab" class="active"><a href="#" onclick="setTab('artist'); return false">${_('Artists')}</a></li>
-		<li id="genreTab" class="inactive"><a href="#" onclick="setTab('genre'); return false">${_('Genres')}</a></li>
+		<li id="artistTab" class="active"><a href="#" onclick="page.setTab('artist'); return false">${_('Artists')}</a></li>
+		<li id="genreTab" class="inactive"><a href="#" onclick="page.setTab('genre'); return false">${_('Genres')}</a></li>
 % if config.get('show_search_tab'):
-		<li id="searchTab" class="inactive"><a href="#" onclick="setTab ('search'); return false">${_('Search')}</a></li>
+		<li id="searchTab" class="inactive"><a href="#" onclick="page.setTab ('search'); return false">${_('Search')}</a></li>
 % endif
 	</ul>
 	<div id="artistList">
