@@ -8,6 +8,7 @@
  * Reduced the number of HTTP requests when the current song has no cover art
  * Generally reduced the number of requests to mpd
  * Fixed an issue that could cause errors when modwsgi reloaded the application
+ * Rewrote/reorganized most of the javascript code
 
 == 0.5.2 (02 Dec 2010) ==
 

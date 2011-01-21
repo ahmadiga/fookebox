@@ -1,4 +1,9 @@
 <%inherit file="base.tpl"/>
+
+<%def name="headers()">
+	<script type="text/javascript" src="js/fookebox/schedule.js"></script>
+</%def>
+
 <div id="message" style="display: none">
 	<div class="corner tl"></div>
 	<div class="corner tr"></div>

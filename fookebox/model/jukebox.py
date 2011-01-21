@@ -114,15 +114,11 @@ class Jukebox(object):
 		if not lock.acquire():
 			return
 
-		try:
-			playlist = config.get('auto_queue_playlist')
-			if playlist == None:
-				self._autoQueueRandom()
-			else:
-				self._autoQueuePlaylist(playlist)
-
-		except Exception:
-			log.error(sys.exc_info())
+		playlist = config.get('auto_queue_playlist')
+		if playlist == None:
+			self._autoQueueRandom()
+		else:
+			self._autoQueuePlaylist(playlist)
 
 		lock.release()
 

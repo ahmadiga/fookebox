@@ -267,8 +267,8 @@ class MPDPool(object):
 			return worker
 
 		except Exception:
-			self.lock.release()
 			log.fatal('Could not connect to MPD')
+			self.lock.release()
 			raise
 
 	def _cleanup(self):

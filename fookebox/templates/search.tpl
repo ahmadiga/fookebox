@@ -14,7 +14,7 @@
 % if config.get('enable_queue_album'):
 			<a href="#" onclick="
 % for track in album.tracks:
-				queueFile('${track.b64}');
+				jukebox.queue('${track.b64}');
 % endfor
 				return false
 			">
@@ -34,7 +34,7 @@
 		</h3>
 		<ul class="trackList">
 % for track in album.tracks:
-			<li class="track"><a href="#" onclick="javascript:queueFile('${track.b64}'); return false">${"%02d" % track.track} - ${track.artist} - ${track.title}</a></li>
+			<li class="track"><a href="#" onclick="jukebox.queue('${track.b64}'); return false">${"%02d" % track.track} - ${track.artist} - ${track.title}</a></li>
 % endfor
 		</ul>
 	</li>

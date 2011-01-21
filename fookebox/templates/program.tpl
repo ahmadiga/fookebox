@@ -1,4 +1,9 @@
 <%inherit file="base.tpl"/>
+
+<%def name="headers()">
+	<script type="text/javascript" src="js/fookebox/program.js"></script>
+</%def>
+
 <div id="now">
 	<span class="label">${_('now playing')}</span><br />
 	<span id="currentTitle"><img src="img/progress.gif" alt="" /></span>
@@ -16,6 +21,6 @@
 <div id="clock"></div>
 <script type="text/javascript">
 <!--
-	setTimeout('refreshProgram()', 1000);
+	//setTimeout('refreshProgram()', 1000);
 -->
 </script>

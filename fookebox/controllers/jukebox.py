@@ -44,6 +44,7 @@ class JukeboxController(BaseController):
 		try:
 			jukebox = Jukebox()
 		except socket.error:
+			log.error("Error on /index")
 			return render('/error.tpl', extra_vars={
 				'error': 'Connection to MPD failed'
 				})
@@ -68,6 +69,7 @@ class JukeboxController(BaseController):
 			enabled = jukebox.isEnabled()
 			timeLeft = jukebox.timeLeft()
 		except:
+			log.error("Could not read status")
 			jukebox.close()
 			raise
 
@@ -76,12 +78,14 @@ class JukeboxController(BaseController):
 			try:
 				jukebox.autoQueue()
 			except:
+				log.error("Auto-queue failed")
 				jukebox.close()
 				raise
 
 		try:
 			track = jukebox.getCurrentSong()
 		except:
+			log.error("Could not get the current song")
 			raise
 		finally:
 			jukebox.close()
@@ -299,8 +303,8 @@ class JukeboxController(BaseController):
 		try:
 			commands[action]()
 		except:
-			jukebox.close()
 			log.error('Command %s failed' % action)
+			jukebox.close()
 			abort(500, _('Command failed'))
 
 		jukebox.close()
