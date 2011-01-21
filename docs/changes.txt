@@ -1,7 +1,7 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
-== 0.5.3 (xx xxx xxxx) ==
+== 0.6.0 (xx xxx xxxx) ==
 
  * Show a proper error message when the connection to MPD fails
  * Show artists in search result pages again
@@ -10,6 +10,7 @@
  * Fixed an issue that could cause errors when modwsgi reloaded the application
  * Rewrote/reorganized most of the javascript code
  * Updated the included libraries to scriptaculous 1.9.0 / prototype 1.7
+ * Updated example config files for apache
 
 == 0.5.2 (02 Dec 2010) ==
 
