@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
 	name='fookebox',
-	version='0.5.3',
+	version='0.6.0',
 	description='A jukebox-style web-frontend to mpd',
 	long_description="""fookebox is a jukebox-style web-frontend to mpd.
 
