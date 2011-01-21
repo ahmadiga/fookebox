@@ -19,31 +19,44 @@
 
 var QueueView = Class.create(AjaxView,
 {
-	initialize: function()
+	initialize: function(jukebox)
 	{
+		this.jukebox = jukebox;
 		this.queueLength = -1;
+		this.queueView = $('playlist');
 	},
 	sync: function()
 	{
 		this.get('queue', this.update.bind(this));
+	},
+	attachTo: function(item, index)
+	{
+		var a = item.select('a');
+
+		if (a.length > 0) {
+			a[0].onclick = function() {
+				this.jukebox.unqueue(index + 1);
+				return false;
+			}.bind(this);
+		}
 	},
 	update: function(transport)
 	{
 		var queue = transport.responseJSON;
 		this.queueLength = queue.length;
 
-		var div = $('playlist');
-		var lis = div.select('li');
+		var lis = this.queueView.select('li');
 
 		lis.each(function(li, index) {
 			var item = queue[index];
 
 			if (item) {
 				li.update(item);
+				this.attachTo(li, index);
 			} else {
 				li.update('<span class="freeSlot">-- empty --</span>');
 			}
-		});
+		}.bind(this));
 	},
 	setLength: function(length)
 	{
@@ -169,7 +182,7 @@ var JukeboxView = Class.create(AjaxView,
 {
 	initialize: function()
 	{
-		this.queueView = new QueueView();
+		this.queueView = new QueueView(this);
 		this.trackView = new TrackView();
 		this.coverView = new CoverView();
 		this.musicView = new MusicView();
