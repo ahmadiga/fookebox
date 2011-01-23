@@ -83,7 +83,10 @@ class Album(object):
 		self.tracks = []
 
 	def add(self, track):
-		if track.artist != self.artist:
+		if track.artist != self.artist and not (
+			track.artist.startswith(self.artist) or
+			self.artist.startswith(track.artist)):
+
 			self.isCompilation = True
 
 		self.tracks.append(track)

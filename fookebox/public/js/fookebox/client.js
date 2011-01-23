@@ -19,9 +19,8 @@
 
 var QueueView = Class.create(AjaxView,
 {
-	initialize: function(jukebox)
+	initialize: function()
 	{
-		this.jukebox = jukebox;
 		this.queueLength = -1;
 		this.queueView = $('playlist');
 	},
@@ -35,7 +34,7 @@ var QueueView = Class.create(AjaxView,
 
 		if (a.length > 0) {
 			a[0].onclick = function() {
-				this.jukebox.unqueue(index + 1);
+				this.unqueue(index + 1);
 				return false;
 			}.bind(this);
 		}
@@ -62,6 +61,11 @@ var QueueView = Class.create(AjaxView,
 	{
 		if (length != this.queueLength)
 			this.sync();
+	},
+	unqueue: function(id)
+	{
+		var data = $H({'id': id});
+		this.post('remove', data, this.sync.bind(this));
 	},
 });
 
@@ -171,9 +175,107 @@ var CoverView = Class.create(AjaxView,
 
 var MusicView = Class.create(AjaxView,
 {
+	initialize: function(jukebox)
+	{
+		this.jukebox = jukebox;
+	},
+	attach: function()
+	{
+		$$('.artistLink').each(function(link) {
+			link.onclick = function() {
+				var target = event.target;
+				var artist = target.id.substring(7, target.id.length);
+				this.showArtist(artist);
+				return false;
+			}.bind(this);
+		}.bind(this));
+
+		$$('.genreLink').each(function(link) {
+			link.onclick = function() {
+				var target = event.target;
+				var genre = target.id.substring(6, target.id.length);
+				this.showGenre(genre);
+				return false;
+			}.bind(this);
+		}.bind(this));
+
+		$('searchForm').onsubmit = function(event) {
+			var form = event.target;
+			this.search(form);
+			return false;
+		}.bind(this);
+	},
+	showArtist: function(artist)
+	{
+		this.showProgressbar();
+
+		// TODO: the page control should actually do this
+		window.location = "#artist=" + artist;
+		this.jukebox.page.url = window.location.href;
+
+		this.get('artist/' + artist, this.showSearchResult.bind(this));
+	},
+	showGenre: function(genre)
+	{
+		this.showProgressbar();
+
+		// TODO: the page control should actually do this
+		window.location = "#genre=" + genre;
+		this.jukebox.page.url = window.location.href;
+
+		this.get('genre/' + genre, this.showSearchResult.bind(this));
+	},
+	search: function(form)
+	{
+		this.showProgressbar();
+
+		var type = $F(form.searchType);
+		var term = $F(form.searchTerm);
+
+		var data = $H({
+			'where': type,
+			'what':  term,
+			'forceSearch': true
+		});
+
+		this.post('search', data, this.showSearchResult.bind(this));
+	},
+	augmentResult: function(album)
+	{
+		var tracks;
+
+		album.select('ul.trackList li a').each(function(track) {
+			track.onclick = function(event) {
+				var target = event.target;
+				var track = target.id.substring(6, target.id.length);
+				this.jukebox.queue(track);
+				return false;
+			}.bind(this);
+		}.bind(this));
+
+		tracks = album.select('ul.trackList li a').map(function(item)
+		{
+			return item.id.substring(6, item.id.length);
+		});
+
+		// queue all tracks on click if the a tag is present in h3
+		album.select('h3 a').each(function(link) {
+			link.onclick = function(event) {
+				tracks.each(function(track) {
+					this.jukebox.queue(track);
+				}.bind(this));
+				return false;
+			}.bind(this);
+		}.bind(this));
+	},
+	augmentResults: function()
+	{
+		$$('.searchResultItem').each(this.augmentResult.bind(this));
+	},
 	showSearchResult: function(transport)
 	{
 		$('searchResult').update(transport.responseText);
+		this.augmentResults();
 		this.hideProgressbar();
 	},
 });
@@ -182,14 +284,17 @@ var JukeboxView = Class.create(AjaxView,
 {
 	initialize: function()
 	{
-		this.queueView = new QueueView(this);
+		this.queueView = new QueueView();
 		this.trackView = new TrackView();
 		this.coverView = new CoverView();
-		this.musicView = new MusicView();
+		this.musicView = new MusicView(this);
+		this.page = new PageControl(this);
+		this.page.watch();
 	},
 	attach: function()
 	{
 		this.trackView.attach(this);
+		this.musicView.attach();
 	},
 	disable: function()
 	{
@@ -231,62 +336,51 @@ var JukeboxView = Class.create(AjaxView,
 		this.post('queue', data,
 			this.queueView.sync.bind(this.queueView));
 	},
-	unqueue: function(id)
-	{
-		var data = $H({'id': id});
-		this.post('remove', data,
-			this.queueView.sync.bind(this.queueView));
-	},
 	showArtist: function(artist)
 	{
-		this.showProgressbar();
-
-		window.location = "#artist=" + artist;
-		currentURL = window.location.href;
-
-		this.get('artist/' + artist,
-			this.musicView.showSearchResult.bind(this.musicView));
+		// TODO: remove this
+		this.musicView.showArtist(artist);
 	},
 	showGenre: function(genre)
 	{
-		this.showProgressbar();
-
-		window.location = "#genre=" + genre;
-		currentURL = window.location.href;
-
-		this.get('genre/' + genre,
-			this.musicView.showSearchResult.bind(this.musicView));
-	},
-	search: function(form)
-	{
-		this.showProgressbar();
-
-		var type = $F(form.searchType);
-		var term = $F(form.searchTerm);
-
-		var data = $H({
-			'where': type,
-			'what':  term,
-			'forceSearch': true
-		});
-
-		this.post('search', data,
-			this.musicView.showSearchResult.bind(this.musicView));
+		// TODO: remove this
+		this.musicView.showGenre(genre);
 	},
 });
 
-var CurrentPage = Class.create(
+var PageControl = Class.create(
 {
-	initialize: function()
+	initialize: function(jukebox)
 	{
 		this.tab = 'artist';
 		this.url = '';
+		this.jukebox = jukebox;
 	},
 	watch: function()
 	{
 		this.url = window.location.href;
 		this.apply();
 		this.update();
+
+		this.attachToTab('artist');
+		this.attachToTab('genre');
+		this.attachToTab('search');
+	},
+	attachToTab: function(tab)
+	{
+		var li = $(tab + 'Tab');
+
+		if (!li)
+			return;
+
+		var a = li.select('a');
+
+		if (a.length > 0) {
+			a[0].onclick = function() {
+				this.setTab(tab);
+				return false;
+			}.bind(this);
+		}
 	},
 	update: function()
 	{
@@ -311,12 +405,15 @@ var CurrentPage = Class.create(
 			var key = params[0];
 			var value = parts[1].substring(key.length + 1);
 
-			if (key == 'artist')
-				jukebox.showArtist(value);
-			else if (key == 'genre')
-				jukebox.showGenre(value);
-			else if (key == 'tab')
+			if (key == 'artist') {
+				this.setTab(key);
+				this.jukebox.showArtist(value);
+			} else if (key == 'genre') {
+				this.setTab(key);
+				this.jukebox.showGenre(value);
+			} else if (key == 'tab') {
 				this.setTab(value);
+			}
 		}
 	},
 	setTab: function(name)
@@ -326,8 +423,8 @@ var CurrentPage = Class.create(
 		$(name + 'List').show();
 		$(this.tab + 'List').hide();
 
-		$(name + 'Tab').classname = 'active';
-		$(this.tab + 'Tab').classname = 'inactive';
+		$(name + 'Tab').className = 'active';
+		$(this.tab + 'Tab').className = 'inactive';
 
 		this.tab = name;
 
@@ -338,10 +435,7 @@ var CurrentPage = Class.create(
 
 document.observe("dom:loaded", function()
 {
-	jukebox = new JukeboxView();
+	var jukebox = new JukeboxView();
 	jukebox.attach();
 	jukebox.sync();
-
-	page = new CurrentPage();
-	page.watch();
 });

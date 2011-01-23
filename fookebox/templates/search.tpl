@@ -12,12 +12,7 @@
 % endif
 		<h3 class="album">
 % if config.get('enable_queue_album'):
-			<a href="#" onclick="
-% for track in album.tracks:
-				jukebox.queue('${track.b64}');
-% endfor
-				return false
-			">
+			<a href="#">
 % endif
 % if album.isCompilation:
 	${_('Various Artists')}
@@ -34,7 +29,7 @@
 		</h3>
 		<ul class="trackList">
 % for track in album.tracks:
-			<li class="track"><a href="#" onclick="jukebox.queue('${track.b64}'); return false">${"%02d" % track.track} - ${track.artist} - ${track.title}</a></li>
+			<li class="track"><a href="#" id="track-${track.b64}">${"%02d" % track.track} - ${track.artist} - ${track.title}</a></li>
 % endfor
 		</ul>
 	</li>

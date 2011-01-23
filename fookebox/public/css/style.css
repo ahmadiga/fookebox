@@ -52,12 +52,12 @@ h1 {
 #selectType li {
 	border: 1px white solid;
 	display: inline;
-	padding: 1px 4px 1px 4px;
+	padding: 1px 4px 2px 4px;
 }
 
 #selectType li.active {
 	border-bottom: none;
-	padding-bottom: 2px;
+	padding-bottom: 3px;
 }
 
 #selectType li.inactive:hover {
