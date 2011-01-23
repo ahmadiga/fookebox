@@ -27,7 +27,6 @@ var ProgramView = Class.create(AjaxView,
 	sync: function()
 	{
 		setTimeout(this.sync.bind(this), 1000);
-		console.log('SYNC');
 		this.get('program/status', this.applyStatus.bind(this));
 	},
 	applyStatus: function(transport)

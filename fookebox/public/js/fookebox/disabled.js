@@ -45,6 +45,5 @@ var DisabledJukebox = Class.create(AjaxView,
 document.observe("dom:loaded", function()
 {
 	jukebox = new DisabledJukebox();
-	console.log("Loaded DisabledJukebox: " + jukebox);
 	jukebox.sync();
 });
