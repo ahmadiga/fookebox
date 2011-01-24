@@ -14,12 +14,7 @@
 % if config.get('enable_queue_album'):
 			<a href="#">
 % endif
-% if album.isCompilation:
-	${_('Various Artists')}
-% else:
-	${ album.artist }
-% endif
-				- ${album.name}
+${ album.artist } - ${album.name}
 % if album.disc != None:
 				(Disc ${album.disc})
 % endif
