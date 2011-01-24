@@ -7,6 +7,7 @@
  * Show artists in search result pages again
  * Tracks with artist featuring others no longer trigger compilation mode
  * Genre/artist links can now be opened in a new browser tab
+ * (Hopefully) fixed an encoding issue that would cause errors in search
  * Reduced the number of HTTP requests when the current song has no cover art
  * Generally reduced the number of requests to mpd
  * Fixed an issue that could cause errors when modwsgi reloaded the application

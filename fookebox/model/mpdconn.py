@@ -22,6 +22,7 @@ import logging
 from mpd import MPDClient
 from datetime import datetime
 from threading import BoundedSemaphore
+from pylons.i18n.translation import _, ungettext
 
 from pylons import config, app_globals as g
 from fookebox.model.albumart import AlbumArt
@@ -72,12 +73,12 @@ class Album(object):
 		if albumName == None:
 			self.name = ''
 		else:
-			self.name = str(albumName)
+			self.name = albumName
 
 		if artist == None:
 			self.artist = ''
 		else:
-			self.artist = str(artist)
+			self.artist = artist
 
 		self.disc = disc
 		self.tracks = []
@@ -88,6 +89,7 @@ class Album(object):
 			self.artist.startswith(track.artist)):
 
 			self.isCompilation = True
+			self.artist = _('Various Artists').encode('utf8')
 
 		self.tracks.append(track)
 

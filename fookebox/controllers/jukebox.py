@@ -234,7 +234,7 @@ class JukeboxController(BaseController):
 			abort(400, 'Malformed JSON data')
 
 		try:
-			what = post['what']
+			what = post['what'].encode('utf8')
 			where = post['where']
 		except KeyError:
 			log.error("SEARCH: Incomplete JSON data")
