@@ -42,7 +42,7 @@ class AlbumArt(object):
 			artist = pattern.sub('_', self.album.artist)
 
 		return "%s/%s-%s.jpg" % (config.get('album_cover_path'),
-				artist, album)
+				str(artist), str(album))
 
 	def _getRhythmboxPath(self, compilation=False):
 		album = self.album.name.replace('/', '-')
@@ -54,7 +54,7 @@ class AlbumArt(object):
 			artist = self.album.artist.replace('/', '-')
 
 		return "%s/%s - %s.jpg" % (config.get('album_cover_path'),
-				artist, album)
+				str(artist), str(album))
 
 	def _getInDirCover(self):
 		path_cache = cache.get_cache('album_path', type='memory')
@@ -84,7 +84,8 @@ class AlbumArt(object):
 	def get(self):
 		if config.get('cache_cover_art'):
 			cover_path_cache = cache.get_cache('cover_path')
-			song = "%s - %s" % (self.album.artist, self.album.name)
+			song = "%s - %s" % (str(self.album.artist),
+					str(self.album.name))
 			path = cover_path_cache.get_value(key=song,
 				createfunc=self._getCover, expiretime=300)
 
