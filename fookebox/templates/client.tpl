@@ -12,10 +12,12 @@
 	<div id="messageText"></div>
 </div>
 <h1 id="h1"><a href="/">${config.get('site_name')}</a></h1>
+% if not config.get('hide_credits'):
 <div id="meta">
 	<a href="http://fookebox.googlecode.com/">fookebox</a> ${config.get('version')}<br />
 	&copy; 2007-2011 <a href="http://www.ott.net/">Stefan Ott</a>
 </div>
+% endif
 <%include file="browse-menu.tpl"/>
 <div id="status">
 <%include file="status.tpl"/>

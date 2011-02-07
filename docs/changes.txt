@@ -5,6 +5,7 @@
 
  * Show a proper error message when the connection to MPD fails
  * Show artists in search result pages again
+ * Added an option to hide the credits
  * Tracks with artist featuring others no longer trigger compilation mode
  * Genre/artist links can now be opened in a new browser tab
  * (Hopefully) fixed an encoding issue that would cause errors in search
