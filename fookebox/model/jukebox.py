@@ -27,6 +27,9 @@ from schedule import Event, EVENT_TYPE_JUKEBOX
 
 log = logging.getLogger(__name__)
 
+class QueueFull(Exception):
+	pass
+
 class Jukebox(object):
 	client = None
 	lastAutoQueued = -1
@@ -57,6 +60,10 @@ class Jukebox(object):
 
 	def queue(self, file):
 		log.info("Queued %s" % file)
+
+		if self.getQueueLength() >= config.get('max_queue_length'):
+			raise QueueFull()
+
 		self.client.add(file)
 
 		# Prevent (or reduce the probability of) a race-condition where

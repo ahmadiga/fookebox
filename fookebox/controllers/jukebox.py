@@ -28,7 +28,7 @@ from pylons.controllers.util import abort, redirect
 from pylons.i18n.translation import _, ungettext
 
 from fookebox.lib.base import BaseController, render
-from fookebox.model.jukebox import Jukebox
+from fookebox.model.jukebox import Jukebox, QueueFull
 from fookebox.model.mpdconn import Track, Album
 from fookebox.model.albumart import AlbumArt
 
@@ -146,31 +146,37 @@ class JukeboxController(BaseController):
 			log.error("QUEUE: Could not parse JSON data")
 			abort(400, 'Malformed JSON data')
 
-		if 'file' not in post:
+		if 'files' not in post:
 			log.error('QUEUE: No file specified in JSON data')
 			abort(400, 'Malformed JSON data')
 
-		b64 = post['file']
+		files = post['files']
 
-		try:
-			file = base64.urlsafe_b64decode(b64)
-		except TypeError:
-			log.error("QUEUE: Failed to decode base64 data: %s" %
-					b64)
-			abort(400, 'Malformed base64 encoding')
-
-		if file == '' or file == None:
-			log.error("QUEUE: No file specified")
-			abort(400, 'No file specified')
+		if len(files) < 1:
+			log.error("QUEUE: No files specified")
+			abort(400, 'No files specified')
 
 		jukebox = Jukebox()
 
-		if jukebox.getQueueLength() >= config.get('max_queue_length'):
-			log.error('QUEUE: Full, aborting')
-			jukebox.close()
-			abort(409, _('The queue is full'))
+		for file_b64 in files:
+			try:
+				file = base64.urlsafe_b64decode(file_b64)
+			except TypeError:
+				jukebox.close()
+				log.error("QUEUE: Failed to decode base64 "
+					"data: %s" % file_b64)
+				abort(400, 'Malformed base64 encoding')
 
-		jukebox.queue(file)
+			if file == '' or file == None:
+				log.error("QUEUE: No file specified")
+
+			try:
+				jukebox.queue(file)
+			except QueueFull:
+				jukebox.close()
+				log.error('QUEUE: Full, aborting')
+				abort(409, _('The queue is full'))
+
 		jukebox.close()
 
 	def queue(self):

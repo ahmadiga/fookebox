@@ -261,9 +261,10 @@ var MusicView = Class.create(AjaxView,
 		// queue all tracks on click if the a tag is present in h3
 		album.select('h3 a').each(function(link) {
 			link.onclick = function(event) {
-				tracks.each(function(track) {
-					this.jukebox.queue(track);
-				}.bind(this));
+				this.jukebox.queueAll(tracks);
+//				tracks.each(function(track) {
+//					this.jukebox.queue(track);
+//				}.bind(this));
 				return false;
 			}.bind(this);
 		}.bind(this));
@@ -332,7 +333,11 @@ var JukeboxView = Class.create(AjaxView,
 	},
 	queue: function(file)
 	{
-		var data = $H({'file': file});
+		this.queueAll($A([file]));
+	},
+	queueAll: function(tracks)
+	{
+		var data = $H({'files': tracks});
 		this.post('queue', data,
 			this.queueView.sync.bind(this.queueView));
 	},
