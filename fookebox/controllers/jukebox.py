@@ -46,8 +46,16 @@ class JukeboxController(BaseController):
 		except socket.error:
 			log.error("Error on /index")
 			return render('/error.tpl', extra_vars={
-				'error': 'Connection to MPD failed'
-				})
+				'error': 'Connection to MPD failed'})
+		except mpd.CommandError:
+			log.error("Error on /index")
+			error = sys.exc_info()
+			return render('/error.tpl', extra_vars={
+				'error': error[1]})
+		except:
+			log.error("Error on /index")
+			return render('/error.tpl', extra_vars={
+				'error': sys.exc_info()})
 
 		artists = jukebox.getArtists()
 		genres = jukebox.getGenres()
