@@ -3,7 +3,7 @@
 	Nothing found
 % endif
 <ul id="searchResultList">
-% for album in sorted(albums, key=lambda album: "%s %s" % (album.name, album.disc)):
+% for album in sorted(albums, key=lambda album: "%s %s %s" % (album.artist, album.name, album.disc)):
 	<li class="searchResultItem">
 % if config.get('album_cover_path'):
 %	if album.hasCover():
@@ -11,18 +11,10 @@
 % 	endif
 % endif
 		<h3 class="album">
-% if where == 'genre':
-	${album.artist}
-% endif
 % if config.get('enable_queue_album'):
-			<a href="#" onclick="
-% for track in album.tracks:
-				queueFile('${track.b64}');
-% endfor
-				return false
-			">
+			<a href="#">
 % endif
-				${album.name}
+${ album.artist } - ${album.name}
 % if album.disc != None:
 				(Disc ${album.disc})
 % endif
@@ -32,7 +24,7 @@
 		</h3>
 		<ul class="trackList">
 % for track in album.tracks:
-			<li class="track"><a href="#" onclick="javascript:queueFile('${track.b64}'); return false">${"%02d" % track.track} - ${track.artist} - ${track.title}</a></li>
+			<li class="track"><a href="#" id="track-${track.b64}">${"%02d" % track.track} - ${track.artist} - ${track.title}</a></li>
 % endfor
 		</ul>
 	</li>

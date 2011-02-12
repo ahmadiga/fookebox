@@ -1,9 +1,9 @@
 <div id="browse-menu">
 	<ul id="selectType">
-		<li id="artistTab" class="active"><a href="#" onclick="javascript:setTab('artist'); return false">${_('Artists')}</a></li>
-		<li id="genreTab" class="inactive"><a href="#" onclick="javascript:setTab('genre'); return false">${_('Genres')}</a></li>
+		<li id="artistTab" class="active"><a href="#tab=artist">${_('Artists')}</a></li>
+		<li id="genreTab" class="inactive"><a href="#tab=genre">${_('Genres')}</a></li>
 % if config.get('show_search_tab'):
-		<li id="searchTab" class="inactive"><a href="#" onclick="javascript:setTab ('search'); return false">${_('Search')}</a></li>
+		<li id="searchTab" class="inactive"><a href="#tab=search">${_('Search')}</a></li>
 % endif
 	</ul>
 	<div id="artistList">
@@ -24,10 +24,14 @@
 %	endif
 %	if prev != char:
 			<li class="seperator">
-				<a href="#" name="${char}" onclick="showArtist('${artist.base64}'); return false">${artist.name}</a>
+				<a href="#artist=${artist.base64}" name="${char}" id="artist-${artist.base64}" class="artistLink">${artist.name}</a>
 %	else:
 			<li>
-				<a href="#" onclick="showArtist('${artist.base64}'); return false">${artist.name}</a>
+%		if len(artist.name) > 0:
+				<a href="#artist=${artist.base64}" id="artist-${artist.base64}" class="artistLink">${artist.name}</a>
+%		else:
+				<a href="#artist=${artist.base64}" id="artist-${artist.base64}" class="artistLink">${_('(none)')}</a>
+%		endif
 %	endif
 			</li>
 %	if len(artist.name) > 0:
@@ -39,15 +43,15 @@
 	<ul id="genreList" style="display: none">
 % for genre in genres:
 % if genre.name != '':
-		<li><a href="#" onclick="showGenre('${genre.base64}'); return false">${genre.name}</a></li>
+		<li><a href="#genre=${genre.base64}" id="genre-${genre.base64}" class="genreLink">${genre.name}</a></li>
 % else:
-		<li><a href="#" onclick="showGenre('${genre.base64}'); return false">${_('(none)')}</a></li>
+		<li><a href="#genre=${genre.base64}" id="genre-${genre.base64}" class="genreLink">${_('(none)')}</a></li>
 % endif
 % endfor
 	</ul>
 % if config.get('show_search_tab'):
 	<ul id="searchList" style="display: none">
-		<form name="searchform" action="">
+		<form id="searchForm" name="searchform" action="">
 			<select name="searchType">
 				<option selected value="artist">${_('Artist')}</option>
 				<option value="album">${_('Album')}</option>
@@ -56,7 +60,7 @@
 				<option value="any">${_('Any')}</option>
 			</select>
 			<input type="text" name="searchTerm" />
-			<input type="submit" value="Search!" onclick="javascript:search(); return false">
+			<input type="submit" value="Search!">
 		</form>
 	</ul>
 % endif

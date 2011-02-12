@@ -1,6 +1,6 @@
 # fookebox, http://fookebox.googlecode.com/
 #
-# Copyright (C) 2007-2010 Stefan Ott. All rights reserved.
+# Copyright (C) 2007-2011 Stefan Ott. All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import logging
 from mpd import MPDClient
 from datetime import datetime
 from threading import BoundedSemaphore
+from pylons.i18n.translation import _, ungettext
 
 from pylons import config, app_globals as g
 from fookebox.model.albumart import AlbumArt
@@ -67,24 +68,34 @@ class Artist(object):
 class Album(object):
 
 	def __init__(self, artist, albumName, disc=None):
+		self.isCompilation = False
+
 		if albumName == None:
 			self.name = ''
 		else:
-			self.name = str(albumName)
+			self.name = albumName
 
 		if artist == None:
 			self.artist = ''
 		else:
-			self.artist = str(artist)
+			self.artist = artist
 
 		self.disc = disc
 		self.tracks = []
 
 	def add(self, track):
+		if track.artist != self.artist and not (
+			track.artist.startswith(self.artist) or
+			self.artist.startswith(track.artist)):
+
+			self.isCompilation = True
+			self.artist = _('Various Artists').encode('utf8')
+
 		self.tracks.append(track)
 
 	def load(self):
-		client = g.mpd.getWorker()
+		mpd = MPD.get()
+		client = mpd.getWorker()
 
 		data = client.find(
 			'Artist', self.artist,
@@ -103,6 +114,27 @@ class Album(object):
 	def getCoverURI(self):
 		return "%s/%s" % (base64.urlsafe_b64encode(self.artist),
 				base64.urlsafe_b64encode(self.name))
+
+	def getPath(self):
+		basepath = config.get('music_base_path')
+
+		if basepath == None:
+			return None
+
+		if len(self.tracks) > 0:
+			track = self.tracks[0]
+		else:
+			self.load()
+			if len(self.tracks) < 1:
+				return None
+
+			track = self.tracks[0]
+
+		fullpath = os.path.join(basepath, track.file)
+		return os.path.dirname(fullpath)
+
+	def key(self):
+		return "%s-%s" % (self.artist, self.name)
 
 class Track(object):
 	NO_ARTIST = 'Unknown artist'
@@ -240,8 +272,8 @@ class MPDPool(object):
 			return worker
 
 		except Exception:
-			self.lock.release()
 			log.fatal('Could not connect to MPD')
+			self.lock.release()
 			raise
 
 	def _cleanup(self):
@@ -253,3 +285,11 @@ class MPDPool(object):
 					log.debug("Removing idle worker %s" %
 							worker)
 					self._workers.remove(worker)
+
+class MPD(object):
+	@staticmethod
+	def get():
+		if g.mpd == None:
+			g.mpd = MPDPool()
+
+		return g.mpd

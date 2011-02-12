@@ -1,6 +1,6 @@
 # fookebox, http://fookebox.googlecode.com/
 #
-# Copyright (C) 2007-2010 Stefan Ott. All rights reserved.
+# Copyright (C) 2007-2011 Stefan Ott. All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 import sys
 import mpd
+import errno
 import base64
 import logging
 import simplejson
@@ -27,18 +28,27 @@ from pylons.controllers.util import abort, redirect
 from pylons.i18n.translation import _, ungettext
 
 from fookebox.lib.base import BaseController, render
-from fookebox.model.jukebox import Jukebox
+from fookebox.model.jukebox import Jukebox, QueueFull
 from fookebox.model.mpdconn import Track, Album
 from fookebox.model.albumart import AlbumArt
 
+logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)
 
+import socket
 from pylons.i18n.translation import _
 
 class JukeboxController(BaseController):
 
 	def index(self):
-		jukebox = Jukebox()
+		try:
+			jukebox = Jukebox()
+		except socket.error:
+			log.error("Error on /index")
+			return render('/error.tpl', extra_vars={
+				'error': 'Connection to MPD failed'
+				})
+
 		artists = jukebox.getArtists()
 		genres = jukebox.getGenres()
 		jukebox.close()
@@ -59,6 +69,7 @@ class JukeboxController(BaseController):
 			enabled = jukebox.isEnabled()
 			timeLeft = jukebox.timeLeft()
 		except:
+			log.error("Could not read status")
 			jukebox.close()
 			raise
 
@@ -67,12 +78,14 @@ class JukeboxController(BaseController):
 			try:
 				jukebox.autoQueue()
 			except:
+				log.error("Auto-queue failed")
 				jukebox.close()
 				raise
 
 		try:
 			track = jukebox.getCurrentSong()
 		except:
+			log.error("Could not get the current song")
 			raise
 		finally:
 			jukebox.close()
@@ -133,31 +146,37 @@ class JukeboxController(BaseController):
 			log.error("QUEUE: Could not parse JSON data")
 			abort(400, 'Malformed JSON data')
 
-		if 'file' not in post:
+		if 'files' not in post:
 			log.error('QUEUE: No file specified in JSON data')
 			abort(400, 'Malformed JSON data')
 
-		b64 = post['file']
+		files = post['files']
 
-		try:
-			file = base64.urlsafe_b64decode(b64)
-		except TypeError:
-			log.error("QUEUE: Failed to decode base64 data: %s" %
-					b64)
-			abort(400, 'Malformed base64 encoding')
-
-		if file == '' or file == None:
-			log.error("QUEUE: No file specified")
-			abort(400, 'No file specified')
+		if len(files) < 1:
+			log.error("QUEUE: No files specified")
+			abort(400, 'No files specified')
 
 		jukebox = Jukebox()
 
-		if jukebox.getQueueLength() >= config.get('max_queue_length'):
-			log.error('QUEUE: Full, aborting')
-			jukebox.close()
-			abort(409, _('The queue is full'))
+		for file_b64 in files:
+			try:
+				file = base64.urlsafe_b64decode(file_b64)
+			except TypeError:
+				jukebox.close()
+				log.error("QUEUE: Failed to decode base64 "
+					"data: %s" % file_b64)
+				abort(400, 'Malformed base64 encoding')
 
-		jukebox.queue(file)
+			if file == '' or file == None:
+				log.error("QUEUE: No file specified")
+
+			try:
+				jukebox.queue(file)
+			except QueueFull:
+				jukebox.close()
+				log.error('QUEUE: Full, aborting')
+				abort(409, _('The queue is full'))
+
 		jukebox.close()
 
 	def queue(self):
@@ -177,12 +196,20 @@ class JukeboxController(BaseController):
 
 		log.debug("SEARCH: found %d album(s)" % len(albums))
 
-		log.debug("SEARCH2")
+		try:
+			return render('/search.tpl', extra_vars={
+				'what': what,
+				'albums': albums.values()
+			})
+		except IOError:
+			e = sys.exc_value
 
-		return render('/search.tpl', extra_vars={
-			'what': what,
-			'albums': albums.values()
-		})
+			msg = "%s: %s" % (e.strerror, e.filename)
+			shortmsg = "%s: %s" % (e.strerror,
+					e.filename.split('/')[-1])
+
+			log.error(msg)
+			abort(500, shortmsg)
 
 	def genre(self, genreBase64=''):
 		log.debug('GENRE')
@@ -195,7 +222,7 @@ class JukeboxController(BaseController):
 
 		return self._search('genre', genre)
 
-	def artist(self, artistBase64):
+	def artist(self, artistBase64=''):
 		try:
 			artist = artistBase64.decode('base64')
 		except:
@@ -213,7 +240,7 @@ class JukeboxController(BaseController):
 			abort(400, 'Malformed JSON data')
 
 		try:
-			what = post['what']
+			what = post['what'].encode('utf8')
 			where = post['where']
 		except KeyError:
 			log.error("SEARCH: Incomplete JSON data")
@@ -282,8 +309,8 @@ class JukeboxController(BaseController):
 		try:
 			commands[action]()
 		except:
-			jukebox.close()
 			log.error('Command %s failed' % action)
+			jukebox.close()
 			abort(500, _('Command failed'))
 
 		jukebox.close()
@@ -301,7 +328,8 @@ class JukeboxController(BaseController):
 		path = art.get()
 
 		if path == None:
-			log.error("COVER: missing for %s/%s" % (artist, album))
+			log.error("COVER: missing for %s/%s" % (artist,
+				album.name))
 			abort(404, 'No cover found for this album')
 
 		file = open(path, 'r')

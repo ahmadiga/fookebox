@@ -63,6 +63,7 @@ You can tweak the following fookebox-specific settings:
  * album_cover_path: Path that contains album cover art (see below)
  * music_base_path: Path that contains your music (see below)
  * cache_cover_art: Whether to cache cover art (disabled by default)
+ * hide_credits: Set to true if you want to hide the credits in the client view
 
 
 == Secondary frontend ==

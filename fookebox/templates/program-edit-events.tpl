@@ -44,13 +44,13 @@
 				<a href="schedule?edit=${event.id}"><img src="img/edit.png" alt="edit" title="Edit this event" /></a>
 % if event != current:
 % if event != events[len(events) - 1]:
-				<a href="#" onclick="moveDown('${event.id}'); return false"><img src="img/arrow_down.png" alt="down" title="Move this event down in the schedule" /></a>
+				<a href="#" onclick="prog.moveDown('${event.id}'); return false"><img src="img/arrow_down.png" alt="down" title="Move this event down in the schedule" /></a>
 % endif
 % if event != events[0]:
-<a href="#" onclick="moveUp('${event.id}'); return false"><img src="img/arrow_up.png" alt="up" title="Move this event up in the schedule" /></a>
+<a href="#" onclick="prog.moveUp('${event.id}'); return false"><img src="img/arrow_up.png" alt="up" title="Move this event up in the schedule" /></a>
 % endif
-				<a href="#" onclick="setCurrentEvent('${event.id}'); return false"><img src="img/setcurrentevent.png" alt="set current" title="Set as current event" /></a>
-				<a href="#" onclick="deleteEvent('${event.id}'); return false"><img src="img/delete.png" alt="delete" title="Delete this event" /></a>
+				<a href="#" onclick="prog.setCurrent('${event.id}'); return false"><img src="img/setcurrentevent.png" alt="set current" title="Set as current event" /></a>
+				<a href="#" onclick="prog.remove('${event.id}'); return false"><img src="img/delete.png" alt="delete" title="Delete this event" /></a>
 % endif
 			</td>
 % endif

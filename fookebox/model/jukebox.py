@@ -1,6 +1,6 @@
 # fookebox, http://fookebox.googlecode.com/
 #
-# Copyright (C) 2007-2010 Stefan Ott. All rights reserved.
+# Copyright (C) 2007-2011 Stefan Ott. All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@ from schedule import Event, EVENT_TYPE_JUKEBOX
 
 log = logging.getLogger(__name__)
 
+class QueueFull(Exception):
+	pass
+
 class Jukebox(object):
 	client = None
 	lastAutoQueued = -1
@@ -39,10 +42,8 @@ class Jukebox(object):
 			self.client = to
 			return
 
-		if g.mpd == None:
-			g.mpd = MPDPool()
-
-		self.client = g.mpd.getWorker()
+		mpd = MPD.get()
+		self.client = mpd.getWorker()
 
 	def close(self):
 		self.client.release()
@@ -59,6 +60,10 @@ class Jukebox(object):
 
 	def queue(self, file):
 		log.info("Queued %s" % file)
+
+		if self.getQueueLength() >= config.get('max_queue_length'):
+			raise QueueFull()
+
 		self.client.add(file)
 
 		# Prevent (or reduce the probability of) a race-condition where
@@ -116,15 +121,11 @@ class Jukebox(object):
 		if not lock.acquire():
 			return
 
-		try:
-			playlist = config.get('auto_queue_playlist')
-			if playlist == None:
-				self._autoQueueRandom()
-			else:
-				self._autoQueuePlaylist(playlist)
-
-		except Exception:
-			log.error(sys.exc_info())
+		playlist = config.get('auto_queue_playlist')
+		if playlist == None:
+			self._autoQueueRandom()
+		else:
+			self._autoQueuePlaylist(playlist)
 
 		lock.release()
 

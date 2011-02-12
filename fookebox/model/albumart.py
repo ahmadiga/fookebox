@@ -1,6 +1,6 @@
 # fookebox, http://fookebox.googlecode.com/
 #
-# Copyright (C) 2007-2010 Stefan Ott. All rights reserved.
+# Copyright (C) 2007-2011 Stefan Ott. All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class AlbumArt(object):
 			artist = pattern.sub('_', self.album.artist)
 
 		return "%s/%s-%s.jpg" % (config.get('album_cover_path'),
-				artist, album)
+				str(artist), str(album))
 
 	def _getRhythmboxPath(self, compilation=False):
 		album = self.album.name.replace('/', '-')
@@ -54,25 +54,14 @@ class AlbumArt(object):
 			artist = self.album.artist.replace('/', '-')
 
 		return "%s/%s - %s.jpg" % (config.get('album_cover_path'),
-				artist, album)
+				str(artist), str(album))
 
 	def _getInDirCover(self):
-		basepath = config.get('music_base_path')
+		path_cache = cache.get_cache('album_path', type='memory')
+		key = self.album.key()
 
-		if basepath == None:
-			return None
-
-		if len(self.album.tracks) > 0:
-			track = self.album.tracks[0]
-		else:
-			self.album.load()
-			if len(self.album.tracks) < 1:
-				return None
-
-			track = self.album.tracks[0]
-
-		fullpath = os.path.join(basepath, track.file)
-		dirname = os.path.dirname(fullpath)
+		dirname = path_cache.get_value(key=key,
+			createfunc=self.album.getPath, expiretime=60)
 
 		def best_image(x, y):
 			pattern = '(cover|album|front)'
@@ -93,10 +82,10 @@ class AlbumArt(object):
 		return os.path.join(dirname, bestmatch)
 
 	def get(self):
-
 		if config.get('cache_cover_art'):
 			cover_path_cache = cache.get_cache('cover_path')
-			song = "%s - %s" % (self.album.artist, self.album.name)
+			song = "%s - %s" % (str(self.album.artist),
+					str(self.album.name))
 			path = cover_path_cache.get_value(key=song,
 				createfunc=self._getCover, expiretime=300)
 
