@@ -1,7 +1,7 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
-== 0.6.0 (xx xxx xxxx) ==
+== 0.6.0 (12 Feb 2011) ==
 
  * Show a proper error message when the connection to MPD fails
  * Show artists in search result pages again
