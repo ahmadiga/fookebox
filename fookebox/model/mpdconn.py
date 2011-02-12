@@ -210,12 +210,12 @@ class MPDWorker(object):
 		self.mpd = FookeboxMPDClient()
 		self.mpd.connect(host, port)
 
+		if password:
+			self.mpd.password(password)
+
 		# enable consume on mpd in the first worker
 		if num == 0 and self.mpd.canConsume:
 			self.mpd.consume()
-
-		if password:
-			self.mpd.password(password)
 
 		self.atime = datetime.now()
 		self.free = True
