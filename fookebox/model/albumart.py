@@ -63,6 +63,9 @@ class AlbumArt(object):
 		dirname = path_cache.get_value(key=key,
 			createfunc=self.album.getPath, expiretime=60)
 
+		if dirname == None:
+			return None
+
 		def best_image(x, y):
 			pattern = '(cover|album|front)'
 
