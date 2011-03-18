@@ -13,6 +13,8 @@
  * Generally reduced the number of requests to mpd
  * Fixed an issue that could cause errors when modwsgi reloaded the application
  * Rewrote/reorganized most of the javascript code
+ * Added special CSS for mobile devices
+ * Fixed compatibility with python-mpd 0.3.0
  * Updated the included libraries to scriptaculous 1.9.0 / prototype 1.7
  * Updated example config files for apache
 

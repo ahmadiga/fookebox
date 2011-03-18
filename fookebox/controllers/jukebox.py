@@ -61,7 +61,22 @@ class JukeboxController(BaseController):
 		genres = jukebox.getGenres()
 		jukebox.close()
 
+		user_agent = request.environ.get('HTTP_USER_AGENT')
+
 		return render('/client.tpl', extra_vars={
+			'genres': genres,
+			'artists': artists,
+			'config': config,
+			'mobile': 'mobile' in user_agent.lower(),
+		})
+
+	def mobile(self):
+		jukebox = Jukebox()
+		artists = jukebox.getArtists()
+		genres = jukebox.getGenres()
+		jukebox.close()
+
+		return render('/client-mobile.tpl', extra_vars={
 			'genres': genres,
 			'artists': artists,
 			'config': config,
@@ -70,7 +85,7 @@ class JukeboxController(BaseController):
 	def status(self):
 #		log.debug("STATUS: Client updating")
 		jukebox = Jukebox()
-		jukebox.cleanQueue()
+#		jukebox.cleanQueue()
 
 		try:
 			queueLength = jukebox.getQueueLength()

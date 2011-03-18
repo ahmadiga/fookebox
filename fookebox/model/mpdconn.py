@@ -22,6 +22,7 @@ import logging
 from mpd import MPDClient
 from datetime import datetime
 from threading import BoundedSemaphore
+from pkg_resources import get_distribution, DistributionNotFound
 from pylons.i18n.translation import _, ungettext
 
 from pylons import config, app_globals as g
@@ -192,8 +193,8 @@ class Track(object):
 
 class FookeboxMPDClient(MPDClient):
 
-	def consume(self):
-		self._docommand('consume', [1], self._getnone)
+	def consume(self, do):
+		self._docommand('consume', [do], self._getnone)
 
 	def canConsume(self):
 		# the 'consume' commad was introduced in mpd 0.15
@@ -207,15 +208,23 @@ class MPDWorker(object):
 		port = config.get('mpd_port')
 		password = config.get('mpd_pass')
 
-		self.mpd = FookeboxMPDClient()
+		try:
+			pkg = get_distribution('python-mpd')
+			if pkg.version < '0.3.0':
+				self.mpd = FookeboxMPDClient()
+			else:
+				self.mpd = MPDClient()
+		except DistributionNotFound:
+			self.mpd = MPDClient()
+
 		self.mpd.connect(host, port)
 
 		if password:
 			self.mpd.password(password)
 
 		# enable consume on mpd in the first worker
-		if num == 0 and self.mpd.canConsume:
-			self.mpd.consume()
+		if num == 0:
+			self.mpd.consume(1)
 
 		self.atime = datetime.now()
 		self.free = True
