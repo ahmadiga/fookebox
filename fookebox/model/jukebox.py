@@ -129,13 +129,6 @@ class Jukebox(object):
 
 		lock.release()
 
-	def cleanQueue(self):
-		if not self.client.canConsume():
-			current = self.client.currentsong()
-			if current and 'pos' in current:
-				if int(current['pos']) > 0:
-					self.remove(0)
-
 	def search(self, where, what, forceSearch = False):
 		if config.get('find_over_search') and not forceSearch:
 			data = self.client.find(where, what)

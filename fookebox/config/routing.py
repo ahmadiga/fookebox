@@ -26,6 +26,7 @@ def make_map(config):
     map.connect('/program', controller='program', action='index')
     map.connect('/schedule/{action}', controller='program')
     map.connect('/schedule', controller='program', action='edit')
+    map.connect('/mobile', controller='jukebox', action='mobile')
     map.connect('/', controller='jukebox', action='index')
     map.connect('/{action}', controller='jukebox')
     map.connect('/cover/{artist}/{album}', controller='jukebox', action='cover')
