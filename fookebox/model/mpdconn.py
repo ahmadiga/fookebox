@@ -95,13 +95,17 @@ class Album(object):
 		self.tracks.append(track)
 
 	def load(self):
-		mpd = MPD.get()
-		client = mpd.getWorker()
+		try:
+			mpd = MPD.get()
+			client = mpd.getWorker()
 
-		data = client.find(
-			'Artist', self.artist,
-			'Album', self.name)
-		client.release()
+			data = client.find(
+				'Artist', self.artist.encode('utf8'),
+				'Album', self.name.encode('utf8'))
+			client.release()
+		except:
+			client.release()
+			raise
 
 		for file in data:
 			track = Track()
