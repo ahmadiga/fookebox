@@ -268,6 +268,15 @@ class MPDPool(object):
 				return worker
 			else:
 				log.debug("Worker %s is busy" % worker)
+				now = datetime.now()
+				diff = (now - worker.atime).seconds
+
+				# TODO: here we manipulate the collection that
+				# we are iterating over - probably a bad idea
+				if diff > 30:
+					log.warn("Terminating stale worker")
+					worker.release()
+					self._workers.remove(worker)
 
 		try:
 			worker = MPDWorker(len(self._workers))
