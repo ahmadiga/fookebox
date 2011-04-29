@@ -5,6 +5,7 @@
 
  * Cleaned up the configuration options regarding cover art
  * Show a proper error message when the connection to MPD fails
+ * Properly report errors during template rendering
  * Show artists in search result pages again
  * Added an option to hide the credits
  * Tracks with artist featuring others no longer trigger compilation mode

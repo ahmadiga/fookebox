@@ -41,21 +41,28 @@ from pylons.i18n.translation import _
 
 class JukeboxController(BaseController):
 
+	def __render(self, template, extra_vars):
+		try:
+			return render(template, extra_vars = extra_vars)
+		except IOError:
+			exctype, value = sys.exc_info()[:2]
+			abort(500, value)
+
 	def index(self):
 		try:
 			jukebox = Jukebox()
 		except socket.error:
 			log.error("Error on /index")
-			return render('/error.tpl', extra_vars={
+			return self.__render('/error.tpl', extra_vars={
 				'error': 'Connection to MPD failed'})
 		except mpd.CommandError:
 			log.error("Error on /index")
 			error = sys.exc_info()
-			return render('/error.tpl', extra_vars={
+			return self.__render('/error.tpl', extra_vars={
 				'error': error[1]})
 		except:
 			log.error("Error on /index")
-			return render('/error.tpl', extra_vars={
+			return self.__render('/error.tpl', extra_vars={
 				'error': sys.exc_info()})
 
 		artists = jukebox.getArtists()
@@ -64,7 +71,7 @@ class JukeboxController(BaseController):
 
 		user_agent = request.environ.get('HTTP_USER_AGENT')
 
-		return render('/client.tpl', extra_vars={
+		return self.__render('/client.tpl', extra_vars={
 			'genres': genres,
 			'artists': artists,
 			'config': config,
@@ -170,7 +177,7 @@ class JukeboxController(BaseController):
 		for item in items[1:]:
 			track = Track()
 			track.load(item)
-			output.append(render('/playlist-entry.tpl',
+			output.append(self.__render('/playlist-entry.tpl',
 				extra_vars={
 				'entry': track,
 				'config': config,
@@ -337,7 +344,7 @@ class JukeboxController(BaseController):
 		return data
 
 	def disabled(self):
-		return render('/disabled.tpl', extra_vars={
+		return self.__render('/disabled.tpl', extra_vars={
 			'config': config,
 			'base_url': request.url.replace('disabled', ''),
 		})
