@@ -193,10 +193,6 @@ class FookeboxMPDClient(MPDClient):
 	def consume(self, do):
 		self._docommand('consume', [do], self._getnone)
 
-	def canConsume(self):
-		# the 'consume' commad was introduced in mpd 0.15
-		return self.mpd_version >= "0.15"
-
 class MPDWorker(object):
 
 	def __init__(self, num):
