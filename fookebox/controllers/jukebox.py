@@ -316,7 +316,7 @@ class JukeboxController(BaseController):
 			log.error("COVER: Failed to decode base64 data")
 			abort(400, 'Malformed base64 encoding')
 
-		album = Album(artist, album)
+		album = Album(artist.decode('utf8'), album.decode('utf8'))
 		art = AlbumArt(album)
 		path = art.get()
 
