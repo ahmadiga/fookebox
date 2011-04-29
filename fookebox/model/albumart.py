@@ -24,6 +24,8 @@ from threading import BoundedSemaphore
 
 from pylons import config, cache
 
+from fookebox.lib.util import FileSystem as fs
+
 log = logging.getLogger(__name__)
 
 class AlbumArt(object):
@@ -41,7 +43,7 @@ class AlbumArt(object):
 			artist = pattern.sub('_', self.album.artist)
 
 		return "%s/%s-%s.jpg" % (config.get('album_cover_path'),
-				artist.encode('utf8'), album.encode('utf8'))
+				artist, album)
 
 	def _getRhythmboxPath(self, compilation=False):
 		album = self.album.name.replace('/', '-')
@@ -53,7 +55,7 @@ class AlbumArt(object):
 			artist = self.album.artist.replace('/', '-')
 
 		return "%s/%s - %s.jpg" % (config.get('album_cover_path'),
-				artist.encode('utf8'), album.encode('utf8'))
+				artist, album)
 
 	def _getInDirCover(self):
 		path_cache = cache.get_cache('album_path', type='memory')
@@ -73,12 +75,10 @@ class AlbumArt(object):
 			else:
 				return y
 
-		dirname = dirname.encode('utf8')
-
-		if not (os.path.exists(dirname) and os.path.isdir(dirname)):
+		if not (fs.exists(dirname) and fs.isdir(dirname)):
 			return None
 
-		dir = os.listdir(dirname)
+		dir = fs.listdir(dirname)
 		dir = filter(lambda x: x.endswith(
 			('jpg', 'JPG', 'jpeg', 'JPEG')), dir)
 
@@ -104,29 +104,27 @@ class AlbumArt(object):
 		return path
 
 	def _getCover(self):
-		cover = None
-
 		if not config.get('show_cover_art'):
 			return None
 
 		if config.get('album_cover_path'):
 			path = self._getRockboxPath()
-			if os.path.exists(path):
+			if fs.exists(path):
 				return path
 
 			path = self._getRockboxPath(True)
-			if os.path.exists(path):
+			if fs.exists(path):
 				return path
 
 			path = self._getRhythmboxPath()
-			if os.path.exists(path):
+			if fs.exists(path):
 				return path
 
 			path = self._getRhythmboxPath(True)
-			if os.path.exists(path):
+			if fs.exists(path):
 				return path
 
 		if config.get('music_base_path'):
-			cover = self._getInDirCover()
+			return self._getInDirCover()
 
-		return cover
+		return None

@@ -325,7 +325,7 @@ class JukeboxController(BaseController):
 				album.name))
 			abort(404, 'No cover found for this album')
 
-		file = open(path, 'r')
+		file = open(path.encode('utf8'), 'r')
 		data = file.read()
 		file.close()
 
