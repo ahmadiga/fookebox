@@ -17,7 +17,6 @@
 
 import re
 import os
-import mpd
 import base64
 import logging
 from datetime import datetime
@@ -42,7 +41,7 @@ class AlbumArt(object):
 			artist = pattern.sub('_', self.album.artist)
 
 		return "%s/%s-%s.jpg" % (config.get('album_cover_path'),
-				artist, album)
+				artist.encode('utf8'), album.encode('utf8'))
 
 	def _getRhythmboxPath(self, compilation=False):
 		album = self.album.name.replace('/', '-')
@@ -54,7 +53,7 @@ class AlbumArt(object):
 			artist = self.album.artist.replace('/', '-')
 
 		return "%s/%s - %s.jpg" % (config.get('album_cover_path'),
-				artist, album)
+				artist.encode('utf8'), album.encode('utf8'))
 
 	def _getInDirCover(self):
 		path_cache = cache.get_cache('album_path', type='memory')
@@ -73,6 +72,11 @@ class AlbumArt(object):
 				return x
 			else:
 				return y
+
+		dirname = dirname.encode('utf8')
+
+		if not (os.path.exists(dirname) and os.path.isdir(dirname)):
+			return None
 
 		dir = os.listdir(dirname)
 		dir = filter(lambda x: x.endswith(
