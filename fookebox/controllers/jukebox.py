@@ -175,7 +175,7 @@ class JukeboxController(BaseController):
 
 		return {'queue': items[1:]}
 
-	def _search(self, where, what, forceSearch = False):
+	def __search(self, where, what, forceSearch = False):
 		log.debug("SEARCH: '%s' in '%s'" % (what, where))
 
 		jukebox = Jukebox()
@@ -194,7 +194,7 @@ class JukeboxController(BaseController):
 				genreBase64)
 			abort(400, 'Malformed request data')
 
-		return self._search('genre', genre)
+		return self.__search('genre', genre)
 
 	@jsonify
 	def artist(self, artistBase64=''):
@@ -205,7 +205,7 @@ class JukeboxController(BaseController):
 				artistBase64)
 			abort(400, 'Malformed request data')
 
-		return self._search('artist', artist)
+		return self.__search('artist', artist)
 
 	@jsonify
 	def search(self):
@@ -225,7 +225,7 @@ class JukeboxController(BaseController):
 
 		forceSearch = 'forceSearch' in post and post['forceSearch']
 
-		return self._search(where, what, forceSearch)
+		return self.__search(where, what, forceSearch)
 
 	def remove(self):
 		if not config.get('enable_song_removal'):
