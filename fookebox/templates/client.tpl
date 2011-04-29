@@ -35,4 +35,8 @@
 		name="show_cover_art"
 		value="${config.get('show_cover_art')}"
 	/>
+	<input 	type="hidden"
+		name="enable_song_removal"
+		value="${config.get('enable_song_removal')}"
+	/>
 </form>

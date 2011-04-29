@@ -170,21 +170,10 @@ class JukeboxController(BaseController):
 	@jsonify
 	def queue(self):
 		jukebox = Jukebox()
-		output = []
 		items = jukebox.getPlaylist()
 		jukebox.close()
 
-		for item in items[1:]:
-			track = Track()
-			track.load(item)
-			output.append(self.__render('/playlist-entry.tpl',
-				extra_vars={
-				'entry': track,
-				'config': config,
-			}))
-
-		log.debug("QUEUE: Contains %d item(s)" % len(items[1:]))
-		return output
+		return {'queue': items[1:]}
 
 	def _search(self, where, what, forceSearch = False):
 		log.debug("SEARCH: '%s' in '%s'" % (what, where))
