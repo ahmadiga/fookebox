@@ -64,7 +64,8 @@ class Jukebox(object):
 		if self.getQueueLength() >= config.get('max_queue_length'):
 			raise QueueFull()
 
-		self.client.add(file)
+		# encode the file name with utf8 for mpd
+		self.client.add(file.encode('utf8'))
 
 		# Prevent (or reduce the probability of) a race-condition where
 		# the auto-queue functionality adds a new song *after* the last
@@ -131,31 +132,9 @@ class Jukebox(object):
 
 	def search(self, where, what, forceSearch = False):
 		if config.get('find_over_search') and not forceSearch:
-			data = self.client.find(where, what)
-		else:
-			data = self.client.search(where, what)
+			return self.client.find(where, what)
 
-		albums = {}
-
-		for song in data:
-			track = Track()
-			track.load(song)
-
-			if track.disc > 0:
-				album = "%s-%s" % (track.album, track.disc)
-			elif track.album != None:
-				album = track.album
-			else:
-				album = ''
-
-			if album not in albums:
-				albums[album] = Album(track.artist, track.album)
-				if track.disc > 0:
-					albums[album].disc = track.disc
-
-			albums[album].add(track)
-
-		return albums
+		return self.client.search(where, what)
 
 	def getPlaylist(self):
 		playlist = self.client.playlistinfo()
@@ -163,11 +142,11 @@ class Jukebox(object):
 
 	def getGenres(self):
 		genres = sorted(self.client.list('genre'))
-		return [Genre(genre) for genre in genres]
+		return [Genre(genre.decode('utf8')) for genre in genres]
 
 	def getArtists(self):
 		artists = sorted(self.client.list('artist'))
-		return [Artist(artist) for artist in artists]
+		return [Artist(artist.decode('utf8')) for artist in artists]
 
 	def isPlaying(self):
 		status = self.client.status()

@@ -24,6 +24,7 @@ import simplejson
 
 from pylons import request, response, session, tmpl_context as c, url
 from pylons import config, cache
+from pylons.decorators import jsonify, rest
 from pylons.controllers.util import abort, redirect
 from pylons.i18n.translation import _, ungettext
 
@@ -70,22 +71,9 @@ class JukeboxController(BaseController):
 			'mobile': 'mobile' in user_agent.lower(),
 		})
 
-	def mobile(self):
-		jukebox = Jukebox()
-		artists = jukebox.getArtists()
-		genres = jukebox.getGenres()
-		jukebox.close()
-
-		return render('/client-mobile.tpl', extra_vars={
-			'genres': genres,
-			'artists': artists,
-			'config': config,
-		})
-
+	@jsonify
 	def status(self):
-#		log.debug("STATUS: Client updating")
 		jukebox = Jukebox()
-#		jukebox.cleanQueue()
 
 		try:
 			queueLength = jukebox.getQueueLength()
@@ -119,7 +107,6 @@ class JukeboxController(BaseController):
 		}
 
 		if track:
-#			log.debug("STATUS: Playing %s" % track)
 			songPos = int(track.timePassed)
 			songTime = track.time
 
@@ -137,30 +124,7 @@ class JukeboxController(BaseController):
 			data['timePassed'] = position
 			data['timeTotal'] = total
 
-#		log.debug("STATUS: Queue length: %d" % queueLength)
-
-		response.headers['content-type'] = 'application/json'
-		return simplejson.dumps(data)
-
-	def _showQueue(self):
-		jukebox = Jukebox()
-		output = []
-		items = jukebox.getPlaylist()
-		jukebox.close()
-
-		for item in items[1:]:
-			track = Track()
-			track.load(item)
-			output.append(render('/playlist-entry.tpl',
-				extra_vars={
-				'entry': track,
-				'config': config,
-			}))
-
-		log.debug("QUEUE: Contains %d item(s)" % len(items[1:]))
-
-		response.headers['content-type'] = 'application/json'
-		return simplejson.dumps(output)
+		return data
 
 	def _addToQueue(self):
 		try:
@@ -181,17 +145,10 @@ class JukeboxController(BaseController):
 
 		jukebox = Jukebox()
 
-		for file_b64 in files:
-			try:
-				file = base64.urlsafe_b64decode(file_b64)
-			except TypeError:
-				jukebox.close()
-				log.error("QUEUE: Failed to decode base64 "
-					"data: %s" % file_b64)
-				abort(400, 'Malformed base64 encoding')
-
+		for file in files:
 			if file == '' or file == None:
 				log.error("QUEUE: No file specified")
+				continue
 
 			try:
 				jukebox.queue(file)
@@ -202,40 +159,38 @@ class JukeboxController(BaseController):
 
 		jukebox.close()
 
+	@rest.dispatch_on(POST='_addToQueue')
+	@jsonify
 	def queue(self):
-		if request.method == 'GET':
-			log.debug("QUEUE: GET")
-			return self._showQueue()
-		elif request.method == 'POST':
-			log.debug("QUEUE: POST")
-			return self._addToQueue()
+		jukebox = Jukebox()
+		output = []
+		items = jukebox.getPlaylist()
+		jukebox.close()
+
+		for item in items[1:]:
+			track = Track()
+			track.load(item)
+			output.append(render('/playlist-entry.tpl',
+				extra_vars={
+				'entry': track,
+				'config': config,
+			}))
+
+		log.debug("QUEUE: Contains %d item(s)" % len(items[1:]))
+		return output
 
 	def _search(self, where, what, forceSearch = False):
 		log.debug("SEARCH: '%s' in '%s'" % (what, where))
 
 		jukebox = Jukebox()
-		albums = jukebox.search(where, what, forceSearch)
+		tracks = jukebox.search(where, what, forceSearch)
 		jukebox.close()
 
-		log.debug("SEARCH: found %d album(s)" % len(albums))
+		log.debug("SEARCH: found %d track(s)" % len(tracks))
+		return {'meta': {'what': what }, 'tracks': tracks}
 
-		try:
-			return render('/search.tpl', extra_vars={
-				'what': what,
-				'albums': albums.values()
-			})
-		except IOError:
-			e = sys.exc_value
-
-			msg = "%s: %s" % (e.strerror, e.filename)
-			shortmsg = "%s: %s" % (e.strerror,
-					e.filename.split('/')[-1])
-
-			log.error(msg)
-			abort(500, shortmsg)
-
+	@jsonify
 	def genre(self, genreBase64=''):
-		log.debug('GENRE')
 		try:
 			genre = genreBase64.decode('base64')
 		except:
@@ -245,6 +200,7 @@ class JukeboxController(BaseController):
 
 		return self._search('genre', genre)
 
+	@jsonify
 	def artist(self, artistBase64=''):
 		try:
 			artist = artistBase64.decode('base64')
@@ -255,6 +211,7 @@ class JukeboxController(BaseController):
 
 		return self._search('artist', artist)
 
+	@jsonify
 	def search(self):
 		try:
 			post = simplejson.load(request.environ['wsgi.input'])
@@ -338,11 +295,28 @@ class JukeboxController(BaseController):
 
 		jukebox.close()
 
+	def findcover(self):
+		try:
+			post = simplejson.load(request.environ['wsgi.input'])
+		except simplejson.JSONDecodeError:
+			log.error("SEARCH: Failed to parse JSON data")
+			abort(400, 'Malformed JSON data')
+
+		artist = post.get('artist')
+		album = post.get('album')
+
+		album = Album(artist, album)
+		if album.hasCover():
+			return album.getCoverURI()
+
+		abort(404, 'No cover')
+
 	def cover(self, artist, album):
 		try:
-			artist = base64.urlsafe_b64decode(str(artist))
-			album = base64.urlsafe_b64decode(str(album))
+			artist = base64.urlsafe_b64decode(artist.encode('utf8'))
+			album = base64.urlsafe_b64decode(album.encode('utf8'))
 		except:
+			raise
 			log.error("COVER: Failed to decode base64 data")
 			abort(400, 'Malformed base64 encoding')
 

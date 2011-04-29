@@ -64,7 +64,7 @@ class Artist(object):
 
 	def __init__(self, name):
 		self.name = name
-		self.base64 = base64.urlsafe_b64encode(name)
+		self.base64 = base64.urlsafe_b64encode(name.encode('utf8'))
 
 class Album(object):
 
@@ -113,8 +113,9 @@ class Album(object):
 		return art.get() != None
 
 	def getCoverURI(self):
-		return "%s/%s" % (base64.urlsafe_b64encode(self.artist),
-				base64.urlsafe_b64encode(self.name))
+		artist = base64.urlsafe_b64encode(self.artist.encode('utf8'))
+		name = base64.urlsafe_b64encode(self.name.encode('utf8'))
+		return "%s/%s" % (artist, name)
 
 	def getPath(self):
 		basepath = config.get('music_base_path')
@@ -141,24 +142,31 @@ class Track(object):
 	NO_ARTIST = 'Unknown artist'
 	NO_TITLE = 'Unnamed track'
 
-	artist = NO_ARTIST
-	title = NO_TITLE
-	album = None
 	track = 0
-	file = ''
-	b64 = ''
-	disc = 0
-	queuePosition = 0
-	time = 0
 
 	def load(self, song):
-		if 'artist' in song:
-			self.artist = song['artist']
-		if 'title' in song:
-			self.title = song['title']
-		if 'file' in song:
-			self.file = song['file']
-			self.b64 = base64.urlsafe_b64encode(self.file)
+		def __set(key, default):
+			val = song.get(key, default)
+
+			if val is None:
+				return val
+
+			if isinstance(val, list):
+				val = val[0]
+
+			if isinstance(val, int):
+				return val
+			else:
+				return val.decode('utf8')
+
+		self.artist = __set('artist', Track.NO_ARTIST)
+		self.title = __set('title', Track.NO_TITLE)
+		self.file = __set('file', '')
+		self.disc = __set('disc', 0)
+		self.album = __set('album', None)
+		self.queuePosition = int(__set('pos', 0))
+		self.time = int(__set('time', 0))
+
 		if 'track' in song:
 			# possible formats:
 			#  - '12'
@@ -172,21 +180,6 @@ class Track(object):
 				self.track = int(t[0])
 			else:
 				self.track = int(t)
-		if 'disc' in song:
-			self.disc = song['disc']
-		if 'album' in song:
-			album = song['album']
-
-			# if the album name is a list, only consider the first
-			# part (not nice, but should work for now)
-			if isinstance(album, list):
-				album = album[0]
-
-			self.album = str(album)
-		if 'pos' in song:
-			self.queuePosition = int(song['pos'])
-		if 'time' in song:
-			self.time = int(song['time'])
 
 	def __str__(self):
 		return "%s - %s" % (self.artist, self.title)

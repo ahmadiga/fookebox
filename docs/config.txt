@@ -60,10 +60,12 @@ You can tweak the following fookebox-specific settings:
  * enable_song_removal: Whether to allow the user to remove songs in the queue
  * enable_queue_album: Enables/disables the ability to queue whole albums
  * find_over_search: Whether to use mpd's 'find' or 'search' (see below)
- * album_cover_path: Path that contains album cover art (see below)
  * music_base_path: Path that contains your music (see below)
- * cache_cover_art: Whether to cache cover art (disabled by default)
  * hide_credits: Set to true if you want to hide the credits in the client view
+ 
+ * show_cover_art: Whether to show cover art (enabled by default)
+ * cache_cover_art: Whether to cache cover art (disabled by default)
+ * album_cover_path: Path that contains album cover art (see below)
 
 
 == Secondary frontend ==
@@ -94,21 +96,27 @@ set max_playlist_length to 4).
 === Cover art ===
 
 Fookebox can display cover art for your music. In order to do that, set
-album_cover_path to a directory that contains your covers, named according to
-one of these conventions:
+show_cover_art to true.
 
- * rhythmbox: "Artist - Album.jpg", replace slashes (/) with underscores (_)
- * rockbox: "Artist-Album.jpg", replace all of '\/:<>?*|' with underscores (_)
+If enabled, the following mechanisms are used to find cover art:
+
+ * If set, search album_cover_path for files named
+   - "Artist-Album.jpg", replace all of '\/:<>?*|' with underscores (_)
+   - Retry as compilation (see below)
+   - "Artist - Album.jpg", replace slashes (/) with underscores (_)
+   - Retry as compilation (see below)
+ * If music_base_path is set, look for JPEG files in the directory where
+   the album's first track is located (see below)
 
 In case no cover art is found for an album, fookebox tries to be smart and
 assumes this is a compilation. The 'compliations_name' ('Various Artists' by
-default) determines what artist name is used for compilations. So if you want
-to provide a cover for a compilation called 'My Best Music', the corresponding
-rockbox cover art file would be called 'Various Artists-My Best Music.jpg'.
+default) option determines what artist name is used for compilations. If you
+want to provide a cover for a compilation called 'My Best Music', the
+corresponding file would be called 'Various Artists-My Best Music.jpg'.
 
 If you would like fookebox to look for cover art in the same directory where
 you store you music files, set 'music_base_path' accordingly. In order for this
-to work you will need to have the music/cover files on the same machine where
+to work, you will need to have the music/cover files on the same machine where
 fookebox is running (if that's not the case, consider mounting the music
 directory remotely, eg. using NFS). fookebox will use any JPEG file in that
 directory, giving priority to files named cover.jpg, album.jpg or front.jpg

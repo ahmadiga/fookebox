@@ -7,6 +7,8 @@ from pylons.error import handle_mako_error
 from paste.deploy.converters import asbool
 
 from sqlalchemy import engine_from_config
+from sqlalchemy.pool import NullPool
+
 from fookebox.model import init_model
 
 import fookebox.lib.app_globals as app_globals
@@ -38,7 +40,7 @@ def load_environment(global_conf, app_conf):
 	pylons.cache._push_object(config['pylons.app_globals'].cache)
 
 	# Create the database engine
-	engine = engine_from_config(config, 'sqlalchemy.')
+	engine = engine_from_config(config, 'sqlalchemy.', poolclass=NullPool)
 	init_model(engine)
 
 	# Create the Mako TemplateLookup, with the default auto-escaping
@@ -75,6 +77,7 @@ def load_environment(global_conf, app_conf):
 		'find_over_search': False,
 		'cache_cover_art': False,
 		'hide_credits': False,
+		'show_cover_art': True,
 	}
 
 	for key in default_strings:
