@@ -17,6 +17,7 @@
  * Fixed compatibility with python-mpd 0.3.0
  * Updated the included libraries to scriptaculous 1.9.0 / prototype 1.7
  * Updated example config files for apache
+ * Some API changes
 
 == 0.5.2 (02 Dec 2010) ==
 

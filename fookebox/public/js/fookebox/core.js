@@ -33,8 +33,11 @@ var AjaxView = Class.create(
 			onFailure: this.transportError.bind(this),
 		});
 	},
-	post: function(url, data, onsuccess)
+	post: function(url, data, onsuccess, onfailure)
 	{
+		if (!onfailure)
+			onfailure = this.transportError.bind(this);
+
 		var time = new Date().getTime();
 
 		new Ajax.Request(url + '?ms=' + time,
@@ -44,7 +47,7 @@ var AjaxView = Class.create(
 			postBody: Object.toJSON(data),
 			contentType: 'application/json',
 			onSuccess: onsuccess,
-			onFailure: this.transportError.bind(this),
+			onFailure: onfailure,
 		});
 	},
 	transportError: function(transport)

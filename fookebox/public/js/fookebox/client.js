@@ -240,45 +240,220 @@ var MusicView = Class.create(AjaxView,
 
 		this.post('search', data, this.showSearchResult.bind(this));
 	},
-	augmentResult: function(album)
-	{
-		var tracks;
-
-		album.select('ul.trackList li a').each(function(track) {
-			track.onclick = function(event) {
-				var target = event.target;
-				var track = target.id.substring(6, target.id.length);
-				this.jukebox.queue(track);
-				return false;
-			}.bind(this);
-		}.bind(this));
-
-		tracks = album.select('ul.trackList li a').map(function(item)
-		{
-			return item.id.substring(6, item.id.length);
-		});
-
-		// queue all tracks on click if the a tag is present in h3
-		album.select('h3 a').each(function(link) {
-			link.onclick = function(event) {
-				this.jukebox.queueAll(tracks);
-//				tracks.each(function(track) {
-//					this.jukebox.queue(track);
-//				}.bind(this));
-				return false;
-			}.bind(this);
-		}.bind(this));
-	},
-	augmentResults: function()
-	{
-		$$('.searchResultItem').each(this.augmentResult.bind(this));
-	},
 	showSearchResult: function(transport)
 	{
-		$('searchResult').update(transport.responseText);
-		this.augmentResults();
+		var result = new SearchResult(this.jukebox, transport);
+		result.show();
 		this.hideProgressbar();
+	}
+});
+
+var AlbumCover = Class.create(AjaxView,
+{
+	initialize: function(album, target)
+	{
+		this.album = album;
+		this.target = target;
 	},
+	load: function()
+	{
+		var data = $H({
+			'artist': this.album.artist,
+			'album': this.album.name
+		});
+
+		this.post('findcover', data, this.loaded.bind(this),
+							this.hide.bind(this));
+	},
+	loaded: function(transport)
+	{
+		this.target.src = 'cover/' + transport.responseText;
+	},
+	hide: function(transport)
+	{
+		this.target.style.display = 'None';
+	}
+});
+
+var SearchResult = Class.create(
+{
+	initialize: function(jukebox, transport)
+	{
+		this.jukebox = jukebox;
+
+		this.tracks = transport.responseJSON.tracks;
+		this.what = transport.responseJSON.meta.what;
+
+		if (!this.what || this.what.blank())
+			this.what = _('(none)');
+
+		this.albums = new Hash();
+
+		this.trackTemplate = new Template
+					('#{track} - #{artist} - #{title}');
+		this.albumTemplate = new Template
+					('#{artist} - #{name}');
+		this.albumDiscTemplate = new Template
+					('#{artist} - #{name} (Disc #{disc})');
+
+		this.parseAlbums();
+	},
+	parseAlbums: function()
+	{
+		this.tracks.each(function(track)
+		{
+			// Yes, this sucks: python-mpd enjoys returning arrays
+			// when multiple tags are present. We need to unpack
+			// them here.
+
+			if (Object.isArray(track.album))
+				track.album = track.album[0];
+			if (Object.isArray(track.artist))
+				track.artist = track.artist[0];
+			if (Object.isArray(track.title))
+				track.title = track.title[0];
+			if (Object.isArray(track.track))
+				track.track = track.track[0];
+
+			var key = track.album + "-" + track.disc;
+			var album = this.albums.get(key);
+
+			if (album == null)
+			{
+				album = new Album(track.artist, track.album,
+					track.disc);
+				this.albums.set(key, album);
+			}
+
+			album.add(track);
+		}, this);
+	},
+	showTrack: function(track)
+	{
+		var node = new Element('li', {'class': 'track'});
+		var link = new Element('a', {'href': '#'});
+
+		link.update(this.trackTemplate.evaluate(track));
+		link.onclick = function(event)
+		{
+			this.jukebox.queue(track);
+			return false;
+		}.bind(this);
+
+		node.appendChild(link);
+		return node;
+	},
+	showAlbum: function(album)
+	{
+		var node = new Element('li', {'class': 'searchResultItem'});
+		var header = new Element('h3', {'class': 'album'});
+		var tracks = new Element('ul', {'class': 'trackList'});
+		var coverArt = new Element('img', {'class': 'coverArt',
+			'width': 200});
+
+		if (this.jukebox.config.get('enable_queue_album'))
+		{
+			var link = new Element('a', {'href': '#'});
+
+			link.onclick = function(event)
+			{
+				this.jukebox.queueAlbum(album);
+				return false;
+			}.bind(this);
+
+			var template = album.disc ? this.albumDiscTemplate :
+							this.albumTemplate;
+
+			link.update(template.evaluate(album));
+			header.appendChild(link);
+		}
+		else
+		{
+			header.update(this.albumTemplate.evaluate(album));
+		}
+
+		album.getTracks().each(function(track)
+		{
+			tracks.appendChild(this.showTrack(track));
+		}, this);
+
+		new AlbumCover(album, coverArt).load();
+
+		node.appendChild(coverArt);
+		node.appendChild(header);
+		node.appendChild(tracks);
+		return node;
+	},
+	show: function(transport)
+	{
+		// TODO: this, right
+		$('searchResult').update('');
+
+		var header = new Element('h2').update(this.what);
+		var ul = new Element('ul', {'id': 'searchResultList'});
+
+		var sorted = this.albums.values().sortBy(function(s)
+		{
+			return s.artist + ' - ' + s.name;
+		});
+
+		sorted.each(function(album)
+		{
+			ul.appendChild(this.showAlbum(album));
+		}, this);
+
+		$('searchResult').appendChild(header);
+		$('searchResult').appendChild(ul);
+	},
+});
+
+var Album = Class.create(
+{
+	initialize: function(artist, name, disc)
+	{
+		this.artist = artist;
+		this.name = name;
+		this.disc = disc;
+		this.tracks = new Hash();
+
+		if (!this.artist || this.artist.blank())
+			this.artist = _('Unknown artist');
+		if (!this.name || this.name.blank())
+			this.name = _('Unnamed album');
+	},
+	add: function(track)
+	{
+		if (!track.track)
+			track.track = '00';
+		if (track.track.include('/'))
+			track.track = track.track.sub(/\/.*/, '');
+		if (track.track < 10 && track.track.length == 1)
+			track.track = '0' + track.track;
+
+		if (!track.artist || track.artist.blank())
+			track.artist = _('Unknown artist');
+		if (!track.title || track.title.blank())
+			track.title = _('Unnamed track');
+
+		if ((track.artist != this.artist) &&
+					!track.artist.startsWith(this.artist))
+		{
+			if (this.artist.startsWith(track.artist))
+				this.artist = track.artist;
+			else
+				this.artist = _('Various artists');
+		}
+
+		this.tracks.set(track.file, track);
+	},
+	getTracks: function()
+	{
+		return this.tracks.values().sortBy(function(s)
+		{
+			return s.track;
+		});
+
+	}
 });
 
 var JukeboxView = Class.create(AjaxView,
@@ -291,6 +466,10 @@ var JukeboxView = Class.create(AjaxView,
 		this.musicView = new MusicView(this);
 		this.page = new PageControl(this);
 		this.page.watch();
+
+		// TODO: read this from server ##RC##
+		this.config = new Hash();
+		this.config.set('enable_queue_album', true);
 	},
 	attach: function()
 	{
@@ -331,9 +510,13 @@ var JukeboxView = Class.create(AjaxView,
 		var data = $H({'action': action});
 		this.post('control', data, function(transport) {});
 	},
-	queue: function(file)
+	queue: function(track)
 	{
-		this.queueAll($A([file]));
+		this.queueAll($A([track.file]));
+	},
+	queueAlbum: function(album)
+	{
+		this.queueAll(album.getTracks().pluck('file'));
 	},
 	queueAll: function(tracks)
 	{

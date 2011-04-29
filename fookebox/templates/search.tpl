@@ -1,3 +1,4 @@
+<!-- TODO: DELETE THIS FILE -->
 <h2>${what}</h2>
 % if len(albums) < 1:
 	Nothing found
