@@ -3,6 +3,7 @@
 
 == 0.6.0 (12 Feb 2011) ==
 
+ * Cleaned up the configuration options regarding cover art
  * Show a proper error message when the connection to MPD fails
  * Show artists in search result pages again
  * Added an option to hide the credits

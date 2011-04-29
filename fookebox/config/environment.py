@@ -77,6 +77,7 @@ def load_environment(global_conf, app_conf):
 		'find_over_search': False,
 		'cache_cover_art': False,
 		'hide_credits': False,
+		'show_cover_art': True,
 	}
 
 	for key in default_strings:

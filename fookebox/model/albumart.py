@@ -100,23 +100,29 @@ class AlbumArt(object):
 		return path
 
 	def _getCover(self):
-		path = self._getRockboxPath()
-		if os.path.exists(path):
-			return path
+		cover = None
 
-		path = self._getRockboxPath(True)
-		if os.path.exists(path):
-			return path
+		if not config.get('show_cover_art'):
+			return None
 
-		path = self._getRhythmboxPath()
-		if os.path.exists(path):
-			return path
+		if config.get('album_cover_path'):
+			path = self._getRockboxPath()
+			if os.path.exists(path):
+				return path
 
-		path = self._getRhythmboxPath(True)
-		if os.path.exists(path):
-			return path
+			path = self._getRockboxPath(True)
+			if os.path.exists(path):
+				return path
 
-		cover = self._getInDirCover()
+			path = self._getRhythmboxPath()
+			if os.path.exists(path):
+				return path
+
+			path = self._getRhythmboxPath(True)
+			if os.path.exists(path):
+				return path
+
+		if config.get('music_base_path'):
+			cover = self._getInDirCover()
 
 		return cover
-

@@ -377,7 +377,8 @@ var SearchResult = Class.create(
 			tracks.appendChild(this.showTrack(track));
 		}, this);
 
-		new AlbumCover(album, coverArt).load();
+		if (this.jukebox.config.get('show_cover_art'))
+			new AlbumCover(album, coverArt).load();
 
 		node.appendChild(coverArt);
 		node.appendChild(header);
@@ -458,7 +459,7 @@ var Album = Class.create(
 
 var JukeboxView = Class.create(AjaxView,
 {
-	initialize: function()
+	initialize: function(config)
 	{
 		this.queueView = new QueueView();
 		this.trackView = new TrackView();
@@ -467,9 +468,24 @@ var JukeboxView = Class.create(AjaxView,
 		this.page = new PageControl(this);
 		this.page.watch();
 
-		// TODO: read this from server ##RC##
 		this.config = new Hash();
-		this.config.set('enable_queue_album', true);
+		this.loadconfig();
+
+		console.log(this.config);
+	},
+	loadconfig: function()
+	{
+		setbool = function(key, value)
+		{
+			if (Object.isUndefined(value))
+				this.config.set(key, false);
+			else
+				this.config.set(key, $F(value) == 'True');
+		}.bind(this);
+
+		var form = $('config');
+		setbool('enable_queue_album', form.enable_queue_album);
+		setbool('show_cover_art', form.show_cover_art);
 	},
 	attach: function()
 	{

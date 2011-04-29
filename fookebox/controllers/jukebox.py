@@ -71,18 +71,6 @@ class JukeboxController(BaseController):
 			'mobile': 'mobile' in user_agent.lower(),
 		})
 
-	#def mobile(self):
-	#	jukebox = Jukebox()
-	#	artists = jukebox.getArtists()
-	#	genres = jukebox.getGenres()
-	#	jukebox.close()
-
-	#	return render('/client-mobile.tpl', extra_vars={
-	#		'genres': genres,
-	#		'artists': artists,
-	#		'config': config,
-	#	})
-
 	@jsonify
 	def status(self):
 		jukebox = Jukebox()
@@ -322,7 +310,6 @@ class JukeboxController(BaseController):
 			return album.getCoverURI()
 
 		abort(404, 'No cover')
-		#return self.__getCover(Album(artist, album))
 
 	def cover(self, artist, album):
 		try:
