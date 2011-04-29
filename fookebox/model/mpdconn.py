@@ -65,7 +65,6 @@ class Artist(object):
 	def __init__(self, name):
 		self.name = name
 		self.base64 = base64.urlsafe_b64encode(name.encode('utf8'))
-		#self.base64 = base64.urlsafe_b64encode(name)
 
 class Album(object):
 
@@ -144,7 +143,6 @@ class Track(object):
 	NO_TITLE = 'Unnamed track'
 
 	track = 0
-	#b64 = ''
 
 	def load(self, song):
 		def __set(key, default):
@@ -168,8 +166,6 @@ class Track(object):
 		self.album = __set('album', None)
 		self.queuePosition = int(__set('pos', 0))
 		self.time = int(__set('time', 0))
-
-		#self.b64 = base64.urlsafe_b64encode(self.file.encode('utf8'))
 
 		if 'track' in song:
 			# possible formats:
