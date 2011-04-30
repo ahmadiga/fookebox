@@ -287,7 +287,8 @@ var AlbumCover = Class.create(AjaxView,
 	},
 	loaded: function(transport)
 	{
-		this.target.src = 'cover/' + transport.responseText;
+		var response = transport.responseJSON;
+		this.target.src = 'cover/' + response.uri;
 	},
 	hide: function(transport)
 	{

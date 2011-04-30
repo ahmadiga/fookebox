@@ -307,9 +307,8 @@ class JukeboxController(BaseController):
 
 		album = Album(artist, album)
 
-		#TODO: actually return JSON here
 		if album.hasCover():
-			return album.getCoverURI()
+			return {'uri': album.getCoverURI()}
 
 		abort(404, 'No cover')
 
