@@ -58,7 +58,7 @@ class Genre(object):
 
 	def __init__(self, name):
 		self.name = name
-		self.base64 = base64.urlsafe_b64encode(name)
+		self.base64 = base64.urlsafe_b64encode(name.encode('utf8'))
 
 class Artist(object):
 
@@ -90,7 +90,7 @@ class Album(object):
 			self.artist.startswith(track.artist)):
 
 			self.isCompilation = True
-			self.artist = _('Various Artists').encode('utf8')
+			self.artist = _('Various Artists').decode('utf8')
 
 		self.tracks.append(track)
 

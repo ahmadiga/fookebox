@@ -158,7 +158,7 @@ class JukeboxController(BaseController):
 				continue
 
 			try:
-				jukebox.queue(file)
+				jukebox.queue(file.encode('utf8'))
 			except QueueFull:
 				jukebox.close()
 				log.error('QUEUE: Full, aborting')
@@ -216,7 +216,7 @@ class JukeboxController(BaseController):
 			abort(400, 'Malformed JSON data')
 
 		try:
-			what = post['what'].encode('utf8')
+			what = post['what']
 			where = post['where']
 		except KeyError:
 			log.error("SEARCH: Incomplete JSON data")
@@ -225,7 +225,7 @@ class JukeboxController(BaseController):
 
 		forceSearch = 'forceSearch' in post and post['forceSearch']
 
-		return self.__search(where, what, forceSearch)
+		return self.__search(where, what.encode('utf8'), forceSearch)
 
 	def remove(self):
 		if not config.get('enable_song_removal'):
@@ -312,7 +312,6 @@ class JukeboxController(BaseController):
 			artist = base64.urlsafe_b64decode(artist.encode('utf8'))
 			album = base64.urlsafe_b64decode(album.encode('utf8'))
 		except:
-			raise
 			log.error("COVER: Failed to decode base64 data")
 			abort(400, 'Malformed base64 encoding')
 

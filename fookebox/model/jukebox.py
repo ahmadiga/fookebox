@@ -64,8 +64,7 @@ class Jukebox(object):
 		if self.getQueueLength() >= config.get('max_queue_length'):
 			raise QueueFull()
 
-		# encode the file name with utf8 for mpd
-		self.client.add(file.encode('utf8'))
+		self.client.add(file)
 
 		# Prevent (or reduce the probability of) a race-condition where
 		# the auto-queue functionality adds a new song *after* the last
