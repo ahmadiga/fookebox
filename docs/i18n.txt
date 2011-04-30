@@ -5,7 +5,7 @@ Anyway.
 
 To update the translations, do:
 
-	python setup.py extract_messages
+	python setup.py extract_messages (needs python-pybabel to be installed)
 	python setup.py update_catalog -l de
 	python setup.py compile_catalog
 

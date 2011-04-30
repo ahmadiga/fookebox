@@ -24,7 +24,7 @@ information on the secondary frontend (details: see below).
 
 In order to run fookebox you will need:
 
- * MPD
+ * MPD (at least version 0.15)
  * Some web server (eg. apache) with WSGI support
  * Pylons (http://pylonshq.com/)
 

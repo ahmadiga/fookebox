@@ -58,7 +58,7 @@ class Genre(object):
 
 	def __init__(self, name):
 		self.name = name
-		self.base64 = base64.urlsafe_b64encode(name)
+		self.base64 = base64.urlsafe_b64encode(name.encode('utf8'))
 
 class Artist(object):
 
@@ -90,18 +90,22 @@ class Album(object):
 			self.artist.startswith(track.artist)):
 
 			self.isCompilation = True
-			self.artist = _('Various Artists').encode('utf8')
+			self.artist = _('Various Artists').decode('utf8')
 
 		self.tracks.append(track)
 
 	def load(self):
-		mpd = MPD.get()
-		client = mpd.getWorker()
+		try:
+			mpd = MPD.get()
+			client = mpd.getWorker()
 
-		data = client.find(
-			'Artist', self.artist,
-			'Album', self.name)
-		client.release()
+			data = client.find(
+				'Artist', self.artist.encode('utf8'),
+				'Album', self.name.encode('utf8'))
+			client.release()
+		except:
+			client.release()
+			raise
 
 		for file in data:
 			track = Track()
@@ -189,10 +193,6 @@ class FookeboxMPDClient(MPDClient):
 	def consume(self, do):
 		self._docommand('consume', [do], self._getnone)
 
-	def canConsume(self):
-		# the 'consume' commad was introduced in mpd 0.15
-		return self.mpd_version >= "0.15"
-
 class MPDWorker(object):
 
 	def __init__(self, num):
@@ -264,6 +264,15 @@ class MPDPool(object):
 				return worker
 			else:
 				log.debug("Worker %s is busy" % worker)
+				now = datetime.now()
+				diff = (now - worker.atime).seconds
+
+				# TODO: here we manipulate the collection that
+				# we are iterating over - probably a bad idea
+				if diff > 30:
+					log.warn("Terminating stale worker")
+					worker.release()
+					self._workers.remove(worker)
 
 		try:
 			worker = MPDWorker(len(self._workers))

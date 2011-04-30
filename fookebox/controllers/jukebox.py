@@ -16,47 +16,56 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import mpd
-import errno
 import base64
+import socket
 import logging
 import simplejson
 
-from pylons import request, response, session, tmpl_context as c, url
-from pylons import config, cache
+from pylons import config, cache, request, response
 from pylons.decorators import jsonify, rest
-from pylons.controllers.util import abort, redirect
-from pylons.i18n.translation import _, ungettext
+from pylons.controllers.util import abort
+from pylons.i18n.translation import _
 
 from fookebox.lib.base import BaseController, render
 from fookebox.model.jukebox import Jukebox, QueueFull
-from fookebox.model.mpdconn import Track, Album
+from fookebox.model.mpdconn import Album
 from fookebox.model.albumart import AlbumArt
 
 logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)
 
-import socket
-from pylons.i18n.translation import _
-
 class JukeboxController(BaseController):
 
+	def __render(self, template, extra_vars):
+		try:
+			return render(template, extra_vars = extra_vars)
+		except IOError:
+			exctype, value = sys.exc_info()[:2]
+			abort(500, value)
+
+	def __search(self, where, what, forceSearch = False):
+		log.debug("SEARCH: '%s' in '%s'" % (what, where))
+
+		jukebox = Jukebox()
+		tracks = jukebox.search(where, what, forceSearch)
+		jukebox.close()
+
+		log.debug("SEARCH: found %d track(s)" % len(tracks))
+		return {'meta': {'what': what }, 'tracks': tracks}
+
+	@rest.restrict('GET')
 	def index(self):
 		try:
 			jukebox = Jukebox()
 		except socket.error:
 			log.error("Error on /index")
-			return render('/error.tpl', extra_vars={
+			return self.__render('/error.tpl', extra_vars={
 				'error': 'Connection to MPD failed'})
-		except mpd.CommandError:
-			log.error("Error on /index")
-			error = sys.exc_info()
-			return render('/error.tpl', extra_vars={
-				'error': error[1]})
 		except:
 			log.error("Error on /index")
-			return render('/error.tpl', extra_vars={
-				'error': sys.exc_info()})
+			exctype, value = sys.exc_info()[:2]
+			return self.__render('/error.tpl', extra_vars={
+				'error': value})
 
 		artists = jukebox.getArtists()
 		genres = jukebox.getGenres()
@@ -64,13 +73,14 @@ class JukeboxController(BaseController):
 
 		user_agent = request.environ.get('HTTP_USER_AGENT')
 
-		return render('/client.tpl', extra_vars={
+		return self.__render('/client.tpl', extra_vars={
 			'genres': genres,
 			'artists': artists,
 			'config': config,
 			'mobile': 'mobile' in user_agent.lower(),
 		})
 
+	@rest.restrict('GET')
 	@jsonify
 	def status(self):
 		jukebox = Jukebox()
@@ -82,7 +92,8 @@ class JukeboxController(BaseController):
 		except:
 			log.error("Could not read status")
 			jukebox.close()
-			raise
+			exctype, value = sys.exc_info()[:2]
+			abort(500, value)
 
 		if (config.get('auto_queue') and queueLength == 0 and enabled
 			and timeLeft <= config.get('auto_queue_time_left')):
@@ -96,8 +107,8 @@ class JukeboxController(BaseController):
 		try:
 			track = jukebox.getCurrentSong()
 		except:
-			log.error("Could not get the current song")
-			raise
+			log.error('Failed to get the current song')
+			abort(500, _('Failed to get the current song'))
 		finally:
 			jukebox.close()
 
@@ -126,69 +137,49 @@ class JukeboxController(BaseController):
 
 		return data
 
-	def _addToQueue(self):
+	@rest.restrict('POST')
+	def enqueue(self):
 		try:
-			post = simplejson.load(request.environ['wsgi.input'])
+			data = simplejson.load(request.environ['wsgi.input'])
 		except simplejson.JSONDecodeError:
-			log.error("QUEUE: Could not parse JSON data")
-			abort(400, 'Malformed JSON data')
+			log.error('ENQUEUE: Could not parse JSON data')
+			abort(400, _('Malformed JSON data'))
 
-		if 'files' not in post:
-			log.error('QUEUE: No file specified in JSON data')
-			abort(400, 'Malformed JSON data')
+		files = data.get('files')
 
-		files = post['files']
-
-		if len(files) < 1:
-			log.error("QUEUE: No files specified")
-			abort(400, 'No files specified')
+		if not (files and len(files) > 0):
+			log.error('ENQUEUE: No files specified')
+			abort(400, _('No files specified'))
 
 		jukebox = Jukebox()
 
 		for file in files:
-			if file == '' or file == None:
-				log.error("QUEUE: No file specified")
-				continue
+			if not file:
+				log.error('ENQUEUE: Skipping empty file')
+				abort(400, _('Missing file name'))
 
 			try:
-				jukebox.queue(file)
+				jukebox.queue(file.encode('utf8'))
 			except QueueFull:
 				jukebox.close()
-				log.error('QUEUE: Full, aborting')
+				log.error('ENQUEUE: Full, aborting')
 				abort(409, _('The queue is full'))
 
 		jukebox.close()
 
-	@rest.dispatch_on(POST='_addToQueue')
+		abort(204) # no content
+
+	@rest.dispatch_on(POST='enqueue')
+	@rest.restrict('GET')
 	@jsonify
 	def queue(self):
 		jukebox = Jukebox()
-		output = []
 		items = jukebox.getPlaylist()
 		jukebox.close()
 
-		for item in items[1:]:
-			track = Track()
-			track.load(item)
-			output.append(render('/playlist-entry.tpl',
-				extra_vars={
-				'entry': track,
-				'config': config,
-			}))
+		return {'queue': items[1:]}
 
-		log.debug("QUEUE: Contains %d item(s)" % len(items[1:]))
-		return output
-
-	def _search(self, where, what, forceSearch = False):
-		log.debug("SEARCH: '%s' in '%s'" % (what, where))
-
-		jukebox = Jukebox()
-		tracks = jukebox.search(where, what, forceSearch)
-		jukebox.close()
-
-		log.debug("SEARCH: found %d track(s)" % len(tracks))
-		return {'meta': {'what': what }, 'tracks': tracks}
-
+	@rest.restrict('GET')
 	@jsonify
 	def genre(self, genreBase64=''):
 		try:
@@ -196,10 +187,11 @@ class JukeboxController(BaseController):
 		except:
 			log.error("GENRE: Failed to decode base64 data: %s" %
 				genreBase64)
-			abort(400, 'Malformed request data')
+			abort(400, _('Malformed request'))
 
-		return self._search('genre', genre)
+		return self.__search('genre', genre)
 
+	@rest.restrict('GET')
 	@jsonify
 	def artist(self, artistBase64=''):
 		try:
@@ -207,67 +199,72 @@ class JukeboxController(BaseController):
 		except:
 			log.error("ARTIST: Failed to decode base64 data: %s" %
 				artistBase64)
-			abort(400, 'Malformed request data')
+			abort(400, _('Malformed request'))
 
-		return self._search('artist', artist)
+		return self.__search('artist', artist)
 
+	@rest.restrict('POST')
 	@jsonify
 	def search(self):
 		try:
-			post = simplejson.load(request.environ['wsgi.input'])
+			data = simplejson.load(request.environ['wsgi.input'])
 		except simplejson.JSONDecodeError:
 			log.error("SEARCH: Failed to parse JSON data")
-			abort(400, 'Malformed JSON data')
+			abort(400, _('Malformed JSON data'))
 
-		try:
-			what = post['what'].encode('utf8')
-			where = post['where']
-		except KeyError:
+		what = data.get('what')
+		where = data.get('where')
+
+		if not where:
 			log.error("SEARCH: Incomplete JSON data")
-			log.error(sys.exc_info())
-			abort(400, 'Malformed JSON data')
+			abort(400, _('Malformed request'))
 
-		forceSearch = 'forceSearch' in post and post['forceSearch']
+		forceSearch = 'forceSearch' in data and data['forceSearch']
 
-		return self._search(where, what, forceSearch)
+		return self.__search(where, what.encode('utf8'), forceSearch)
 
+	@rest.restrict('POST')
 	def remove(self):
 		if not config.get('enable_song_removal'):
 			log.error("REMOVE: Disabled")
-			abort(400, _('Song removal disabled'))
+			abort(403, _('Song removal disabled'))
 
 		try:
-			post = simplejson.load(request.environ['wsgi.input'])
+			data = simplejson.load(request.environ['wsgi.input'])
 		except simplejson.JSONDecodeError:
 			log.error('REMOVE: Failed to parse JSON data')
 			abort(400, 'Malformed JSON data')
 
-		if 'id' not in post:
-			log.error('REMOVE: No id specified in JSON data')
-			abort(400, 'Malformed JSON data')
+		id = data.get('id')
 
-		id = post['id']
+		if not id:
+			log.error('REMOVE: No id specified in JSON data')
+			abort(400, _('Malformed request'))
 
 		jukebox = Jukebox()
 		jukebox.remove(id)
 		jukebox.close()
 
+		abort(204) # no content
+
+	@rest.restrict('POST')
 	def control(self):
 		if not config.get('enable_controls'):
 			log.error('CONTROL: Disabled')
-			abort(400, _('Controls disabled'))
+			abort(403, _('Controls disabled'))
 
 		try:
-			post = simplejson.load(request.environ['wsgi.input'])
+			data = simplejson.load(request.environ['wsgi.input'])
 		except simplejson.JSONDecodeError:
 			log.error('CONTROL: Failed to parse JSON data')
 			abort(400, 'Malformed JSON data')
 
-		if 'action' not in post:
-			log.error('CONTROL: No action specified in JSON data')
-			abort(400, 'Malformed JSON data')
+		action = data.get('action')
 
-		action = post['action']
+		if not action:
+			log.error('CONTROL: No action specified in JSON data')
+			abort(400, _('Malformed request'))
+
 		log.debug('CONTROL: Action=%s' % action)
 
 		jukebox = Jukebox()
@@ -284,60 +281,65 @@ class JukeboxController(BaseController):
 		if action not in commands:
 			log.error('CONTROL: Invalid command')
 			jukebox.close()
-			abort(400, 'Invalid command')
+			abort(400, _('Invalid command'))
 
 		try:
 			commands[action]()
 		except:
 			log.error('Command %s failed' % action)
-			jukebox.close()
 			abort(500, _('Command failed'))
+		finally:
+			jukebox.close()
 
-		jukebox.close()
+		abort(204) # no content
 
+	@rest.restrict('POST')
+	@jsonify
 	def findcover(self):
 		try:
-			post = simplejson.load(request.environ['wsgi.input'])
+			data = simplejson.load(request.environ['wsgi.input'])
 		except simplejson.JSONDecodeError:
 			log.error("SEARCH: Failed to parse JSON data")
-			abort(400, 'Malformed JSON data')
+			abort(400, _('Malformed JSON data'))
 
-		artist = post.get('artist')
-		album = post.get('album')
+		artist = data.get('artist')
+		album = data.get('album')
 
 		album = Album(artist, album)
+
 		if album.hasCover():
-			return album.getCoverURI()
+			return {'uri': album.getCoverURI()}
 
 		abort(404, 'No cover')
 
+	@rest.restrict('GET')
 	def cover(self, artist, album):
 		try:
 			artist = base64.urlsafe_b64decode(artist.encode('utf8'))
 			album = base64.urlsafe_b64decode(album.encode('utf8'))
 		except:
-			raise
 			log.error("COVER: Failed to decode base64 data")
-			abort(400, 'Malformed base64 encoding')
+			abort(400, _('Malformed base64 encoding'))
 
-		album = Album(artist, album)
+		album = Album(artist.decode('utf8'), album.decode('utf8'))
 		art = AlbumArt(album)
 		path = art.get()
 
-		if path == None:
+		if not path:
 			log.error("COVER: missing for %s/%s" % (artist,
 				album.name))
-			abort(404, 'No cover found for this album')
+			abort(404, _('No cover found for this album'))
 
-		file = open(path, 'r')
+		file = open(path.encode('utf8'), 'r')
 		data = file.read()
 		file.close()
 
 		response.headers['content-type'] = 'image/jpeg'
 		return data
 
+	@rest.restrict('GET')
 	def disabled(self):
-		return render('/disabled.tpl', extra_vars={
+		return self.__render('/disabled.tpl', extra_vars={
 			'config': config,
 			'base_url': request.url.replace('disabled', ''),
 		})

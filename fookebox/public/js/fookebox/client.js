@@ -19,43 +19,63 @@
 
 var QueueView = Class.create(AjaxView,
 {
-	initialize: function()
+	initialize: function(songRemoval)
 	{
+		this.songRemoval = songRemoval;
 		this.queueLength = -1;
 		this.queueView = $('playlist');
+		this.template = new Template('#{artist} - #{title} ');
 	},
 	sync: function()
 	{
 		this.get('queue', this.update.bind(this));
 	},
-	attachTo: function(item, index)
-	{
-		var a = item.select('a');
-
-		if (a.length > 0) {
-			a[0].onclick = function() {
-				this.unqueue(index + 1);
-				return false;
-			}.bind(this);
-		}
-	},
 	update: function(transport)
 	{
-		var queue = transport.responseJSON;
+		var data = transport.responseJSON;
+		var queue = data.queue;
 		this.queueLength = queue.length;
 
-		var lis = this.queueView.select('li');
+		var playlist = this.queueView.select('li');
 
-		lis.each(function(li, index) {
+		playlist.each(function(li, index)
+		{
 			var item = queue[index];
 
 			if (item) {
-				li.update(item);
-				this.attachTo(li, index);
+				this.updateSlot(li, index, item);
 			} else {
-				li.update('<span class="freeSlot">-- empty --</span>');
+				li.update('<span class="freeSlot">-- ' +
+						_('empty') + ' --</span>');
 			}
 		}.bind(this));
+	},
+	updateSlot: function(element, position, track)
+	{
+		if (!track.artist || track.artist.blank())
+			track.artist = _('Unknown artist');
+		if (!track.title || track.title.blank())
+			track.title = _('Unnamed track');
+
+		element.update(this.template.evaluate(track));
+
+		if (this.songRemoval)
+		{
+			var link = new Element('a', {'href': '#'});
+			link.onclick = function()
+			{
+				this.unqueue(position + 1);
+				return false;
+			}.bind(this);
+
+			var img = new Element('img', {
+				'alt': 'x',
+				'src': 'img/delete.png',
+				'title': _('Remove from the queue'),
+			});
+			link.appendChild(img);
+			element.appendChild(link);
+		}
 	},
 	setLength: function(length)
 	{
@@ -267,7 +287,8 @@ var AlbumCover = Class.create(AjaxView,
 	},
 	loaded: function(transport)
 	{
-		this.target.src = 'cover/' + transport.responseText;
+		var response = transport.responseJSON;
+		this.target.src = 'cover/' + response.uri;
 	},
 	hide: function(transport)
 	{
@@ -461,17 +482,16 @@ var JukeboxView = Class.create(AjaxView,
 {
 	initialize: function(config)
 	{
-		this.queueView = new QueueView();
+		this.config = new Hash();
+		this.loadconfig();
+
+		this.queueView = new QueueView(
+				this.config.get('enable_song_removal'));
 		this.trackView = new TrackView();
 		this.coverView = new CoverView();
 		this.musicView = new MusicView(this);
 		this.page = new PageControl(this);
 		this.page.watch();
-
-		this.config = new Hash();
-		this.loadconfig();
-
-		console.log(this.config);
 	},
 	loadconfig: function()
 	{
@@ -486,6 +506,7 @@ var JukeboxView = Class.create(AjaxView,
 		var form = $('config');
 		setbool('enable_queue_album', form.enable_queue_album);
 		setbool('show_cover_art', form.show_cover_art);
+		setbool('enable_song_removal', form.enable_song_removal);
 	},
 	attach: function()
 	{
