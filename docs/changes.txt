@@ -1,6 +1,10 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
+== 0.6.1 (unreleased) ==
+
+ * Use python's json module instead of simplejson
+
 == 0.6.0 (30 Apr 2011) ==
 
  * Cleaned up the configuration options regarding cover art

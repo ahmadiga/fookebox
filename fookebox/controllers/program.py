@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import simplejson
+import json
 
 from datetime import time, datetime
 from pylons import request, response, config, app_globals as g
@@ -96,7 +96,7 @@ class ProgramController(BaseController):
 
 		jukebox.close()
 		response.headers['content-type'] = 'application/json'
-		return simplejson.dumps(data)
+		return json.dumps(data)
 
 	def edit(self):
 		if request.method == 'POST':
@@ -131,8 +131,8 @@ class ProgramController(BaseController):
 			abort(400, 'Nothing to see here')
 
 		try:
-			post = simplejson.load(request.environ['wsgi.input'])
-		except simplejson.JSONDecodeError:
+			post = json.load(request.environ['wsgi.input'])
+		except ValueError:
 			log.error("QUEUE: Could not parse JSON data")
 			abort(400, 'Malformed JSON data')
 
@@ -144,8 +144,8 @@ class ProgramController(BaseController):
 			abort(400, 'Nothing to see here')
 
 		try:
-			post = simplejson.load(request.environ['wsgi.input'])
-		except simplejson.JSONDecodeError:
+			post = json.load(request.environ['wsgi.input'])
+		except ValueError:
 			log.error("QUEUE: Could not parse JSON data")
 			abort(400, 'Malformed JSON data')
 
@@ -157,8 +157,8 @@ class ProgramController(BaseController):
 			abort(400, 'Nothing to see here')
 
 		try:
-			post = simplejson.load(request.environ['wsgi.input'])
-		except simplejson.JSONDecodeError:
+			post = json.load(request.environ['wsgi.input'])
+		except ValueError:
 			log.error("QUEUE: Could not parse JSON data")
 			abort(400, 'Malformed JSON data')
 
