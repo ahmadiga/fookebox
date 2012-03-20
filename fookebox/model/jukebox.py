@@ -200,6 +200,11 @@ class Jukebox(object):
 		self.client.previous()
 
 	def next(self):
+		# This is to prevent interruptions in the audio stream
+		# See http://code.google.com/p/fookebox/issues/detail?id=6
+		if self.getQueueLength() < 1 and config.get('auto_queue'):
+			self.autoQueue()
+
 		self.client.next()
 
 	def volumeDown(self):
