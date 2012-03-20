@@ -15,7 +15,7 @@
 % if not config.get('hide_credits'):
 <div id="meta">
 	<a href="http://fookebox.googlecode.com/">fookebox</a> ${config.get('version')}<br />
-	&copy; 2007-2011 <a href="http://www.ott.net/">Stefan Ott</a>
+	&copy; 2007-2012 <a href="http://www.ott.net/">Stefan Ott</a>
 </div>
 % endif
 <%include file="browse-menu.tpl"/>
