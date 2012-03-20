@@ -4,6 +4,7 @@
 == 0.6.1 (unreleased) ==
 
  * Use python's json module instead of simplejson
+ * Use mpd's "setvol" command instead of the deprecated "volume"
 
 == 0.6.0 (30 Apr 2011) ==
 

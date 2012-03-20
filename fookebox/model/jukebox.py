@@ -1,6 +1,6 @@
 # fookebox, http://fookebox.googlecode.com/
 #
-# Copyright (C) 2007-2011 Stefan Ott. All rights reserved.
+# Copyright (C) 2007-2012 Stefan Ott. All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -203,10 +203,14 @@ class Jukebox(object):
 		self.client.next()
 
 	def volumeDown(self):
-		self.client.volume(-5)
+		status = self.client.status()
+		volume = int(status.get('volume', 0))
+		self.client.setvol(max(volume - 5, 0))
 
 	def volumeUp(self):
-		self.client.volume(+5)
+		status = self.client.status()
+		volume = int(status.get('volume', 0))
+		self.client.setvol(min(volume + 5, 100))
 
 	def refreshDB(self):
 		self.client.update()
