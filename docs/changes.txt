@@ -4,7 +4,8 @@
 == 0.6.1 (unreleased) ==
 
  * Use python's json module instead of simplejson
- * Use mpd's "setvol" command instead of the deprecated "volume"
+ * Use mpd's "setvol" command instead of the deprecated "volume". Thanks to
+   Jan Hruban for reporting this and sending a patch.
  * Skipping the current song would lead to interruptions in the audio stream
    if it was the last entry in the playlist. Fixed this by auto-queuing before
    skipping tracks. Thanks to Artem Savkov for noticing this and providing a
