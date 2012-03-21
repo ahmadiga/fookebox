@@ -134,6 +134,7 @@ class JukeboxController(BaseController):
 			data['cover_uri'] = album.getCoverURI()
 			data['timePassed'] = position
 			data['timeTotal'] = total
+			data['playing'] = jukebox.isPlaying()
 
 		return data
 

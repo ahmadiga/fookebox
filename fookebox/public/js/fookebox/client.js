@@ -96,6 +96,7 @@ var TrackView = Class.create(AjaxView,
 		this.artist = "";
 		this.track = "";
 		this.timeTotal = "00:00";
+		this.playing = false;
 
 		this.time = new Date(0, 0, 0);
 	},
@@ -136,7 +137,8 @@ var TrackView = Class.create(AjaxView,
 	},
 	tick: function()
 	{
-		this.time.setSeconds(this.time.getSeconds() + 1);
+		if (this.playing)
+			this.time.setSeconds(this.time.getSeconds() + 1);
 		this.updateTime();
 	},
 	adjustTime: function(time)
@@ -164,11 +166,17 @@ var TrackView = Class.create(AjaxView,
 		}
 
 	},
-	update: function(artist, track, timeTotal)
+	update: function(artist, track, timeTotal, playing)
 	{
 		this.artist = artist;
 		this.track = track;
 		this.timeTotal = timeTotal;
+		this.playing = playing;
+
+		if (!this.playing)
+		{
+			Effect.Pulsate('timePassed', {pulses: 1, duration: 1});
+		}
 
 		if (this.artist != this.artistView.innerHTML)
 			this.artistView.update(this.artist);
@@ -528,7 +536,8 @@ var JukeboxView = Class.create(AjaxView,
 			return
 		}
 
-		this.trackView.update(data.artist, data.track, data.timeTotal);
+		this.trackView.update(data.artist, data.track, data.timeTotal,
+								data.playing);
 		this.trackView.adjustTime(data.timePassed);
 		this.coverView.setCover(data.has_cover, data.cover_uri);
 		this.queueView.setLength(data.queueLength);

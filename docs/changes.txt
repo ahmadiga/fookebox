@@ -10,6 +10,7 @@
    if it was the last entry in the playlist. Fixed this by auto-queuing before
    skipping tracks. Thanks to Artem Savkov for noticing this and providing a
    patch.
+ * Pulsate the time display when playback is paused.
 
 == 0.6.0 (30 Apr 2011) ==
 
