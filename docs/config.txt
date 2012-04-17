@@ -33,7 +33,9 @@ In order to run fookebox you will need:
 
 === web server ===
 
-Use the provided apache.conf and fookebox.wsgi to load fookebox.
+You can use the provided apache-wsgi.conf and fookebox.wsgi to run fookebox
+through apache's mod_wsgi or apache-fcgi.conf and fookebox.fcgi if you prefer
+mod_fcgi with python's flup module.
 
 === fookebox ===
 
