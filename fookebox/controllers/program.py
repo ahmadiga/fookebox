@@ -1,6 +1,6 @@
 # fookebox, http://fookebox.googlecode.com/
 #
-# Copyright (C) 2007-2011 Stefan Ott. All rights reserved.
+# Copyright (C) 2007-2012 Stefan Ott. All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,11 +16,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-import simplejson
+import json
 
 from datetime import time, datetime
+
 from pylons import request, response, config, app_globals as g
 from pylons.controllers.util import abort
+from pylons.decorators import jsonify, rest
+
 from fookebox.lib.base import BaseController, render
 from fookebox.model import meta
 from fookebox.model.jukebox import Jukebox
@@ -31,6 +34,7 @@ log = logging.getLogger(__name__)
 
 class ProgramController(BaseController):
 
+	@rest.restrict('GET')
 	def index(self):
 		jukebox = Jukebox()
 		artists = jukebox.getArtists()
@@ -39,6 +43,8 @@ class ProgramController(BaseController):
 
 		return render('/program.tpl')
 
+	@rest.restrict('GET')
+	@jsonify
 	def status(self):
 		jukebox = Jukebox()
 		event = jukebox.getCurrentEvent()
@@ -51,9 +57,11 @@ class ProgramController(BaseController):
 			format = "%H:%M"
 
 		event = jukebox.getCurrentEvent()
-		currentEvent = {}
-		currentEvent['type'] = event.type
-		currentEvent['title'] = event.name
+
+		currentEvent = {
+			'type': event.type,
+			'title': event.name
+		}
 
 		if event.type == EVENT_TYPE_JUKEBOX:
 			track = jukebox.getCurrentSong()
@@ -78,94 +86,99 @@ class ProgramController(BaseController):
 					'title': track.title,
 				})
 
-		events = {}
-		events['current'] = currentEvent
+		events = {'current': currentEvent}
 
 		next = jukebox.getNextEvent()
-		if next != None:
+		jukebox.close()
+
+		if next:
 			events['next'] = {
 				'type': next.type,
 				'title': next.name,
 				'time': next.time.strftime("%H:%M")
 			}
 
-		data = {
+		return {
 			'events': events,
 			'time': now.strftime(format),
 		}
 
-		jukebox.close()
-		response.headers['content-type'] = 'application/json'
-		return simplejson.dumps(data)
+	@rest.restrict('POST')
+	def _edit_post(self):
+		name = request.params['name']
+		type = int(request.params['type'])
+		hour = request.params['hour']
+		minute = request.params['minute']
+		dateTime = datetime.strptime("%s:%s" % (hour, minute),
+				"%H:%M")
+		if 'id' in request.params:
+			id = request.params['id']
+			Event.update(id, name, type, dateTime.time())
+		else:
+			Event.add(name, type, dateTime.time())
 
+		return render('/program-edit.tpl',
+		{
+			'events': Event.all(),
+			'current': Event.getCurrent()
+		})
+
+
+	@rest.dispatch_on(POST='_edit_post')
+	@rest.restrict('GET')
 	def edit(self):
-		if request.method == 'POST':
-			name = request.params['name']
-			type = int(request.params['type'])
-			hour = request.params['hour']
-			minute = request.params['minute']
-			dateTime = datetime.strptime("%s:%s" % (hour, minute),
-					"%H:%M")
-			if 'id' in request.params:
-				id = request.params['id']
-				Event.update(id, name, type, dateTime.time())
-			else:
-				Event.add(name, type, dateTime.time())
+		#if request.method == 'POST':
+		#	pass
 
 		event_q = meta.Session.query(Event)
 
-		vars = {
+		return render('/program-edit.tpl',
+		{
 			'events': Event.all(),
-			'current': Event.getCurrent()
-		}
+			'current': Event.getCurrent(),
+			'edit': int(request.params.get('edit', 0))
+		})
 
-		params = request.params
-		if 'edit' in params:
-			vars['edit'] = int(params['edit'])
-
-		return render('/program-edit.tpl', vars)
-
-
+	@rest.restrict('POST')
 	def current(self):
-		if request.method != 'POST':
-			abort(400, 'Nothing to see here')
-
 		try:
-			post = simplejson.load(request.environ['wsgi.input'])
-		except simplejson.JSONDecodeError:
+			post = json.load(request.environ['wsgi.input'])
+		except ValueError:
 			log.error("QUEUE: Could not parse JSON data")
 			abort(400, 'Malformed JSON data')
 
-		id = post['id']
+		id = post.get('id')
 		g.eventID = int(id)
 
-	def delete(self):
-		if request.method != 'POST':
-			abort(400, 'Nothing to see here')
+		abort(204) # no content
 
+	@rest.restrict('POST')
+	def delete(self):
 		try:
-			post = simplejson.load(request.environ['wsgi.input'])
-		except simplejson.JSONDecodeError:
+			post = json.load(request.environ['wsgi.input'])
+		except ValueError:
 			log.error("QUEUE: Could not parse JSON data")
 			abort(400, 'Malformed JSON data')
 
-		id = post['id']
+		id = post.get('id')
 		Event.delete(int(id))
 
-	def move(self):
-		if request.method != 'POST':
-			abort(400, 'Nothing to see here')
+		abort(204) # no content
 
+	@rest.restrict('POST')
+	def move(self):
 		try:
-			post = simplejson.load(request.environ['wsgi.input'])
-		except simplejson.JSONDecodeError:
+			post = json.load(request.environ['wsgi.input'])
+		except ValueError:
 			log.error("QUEUE: Could not parse JSON data")
 			abort(400, 'Malformed JSON data')
 
-		id = post['id']
-		direction = post['direction']
+		id = post.get('id')
+		direction = post.get('direction')
 
 		if direction == 'up':
 			Event.up(id)
 		else:
 			Event.down(id)
+
+		abort(204) # no content

@@ -1,6 +1,18 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
+== 0.6.1 (17 Apr 2012) ==
+
+ * Use python's json module instead of simplejson
+ * Use mpd's "setvol" command instead of the deprecated "volume". Thanks to
+   Jan Hruban for reporting this and sending a patch.
+ * Skipping the current song would lead to interruptions in the audio stream
+   if it was the last entry in the playlist. Fixed this by auto-queuing before
+   skipping tracks. Thanks to Artem Savkov for noticing this and providing a
+   patch.
+ * Pulsate the time display when playback is paused.
+ * Added an example configuration file for using fookebox through fcgi/flup
+
 == 0.6.0 (30 Apr 2011) ==
 
  * Cleaned up the configuration options regarding cover art

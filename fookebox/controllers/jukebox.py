@@ -16,10 +16,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import json
 import base64
 import socket
 import logging
-import simplejson
 
 from pylons import config, cache, request, response
 from pylons.decorators import jsonify, rest
@@ -134,14 +134,15 @@ class JukeboxController(BaseController):
 			data['cover_uri'] = album.getCoverURI()
 			data['timePassed'] = position
 			data['timeTotal'] = total
+			data['playing'] = jukebox.isPlaying()
 
 		return data
 
 	@rest.restrict('POST')
 	def enqueue(self):
 		try:
-			data = simplejson.load(request.environ['wsgi.input'])
-		except simplejson.JSONDecodeError:
+			data = json.load(request.environ['wsgi.input'])
+		except ValueError:
 			log.error('ENQUEUE: Could not parse JSON data')
 			abort(400, _('Malformed JSON data'))
 
@@ -207,9 +208,9 @@ class JukeboxController(BaseController):
 	@jsonify
 	def search(self):
 		try:
-			data = simplejson.load(request.environ['wsgi.input'])
-		except simplejson.JSONDecodeError:
-			log.error("SEARCH: Failed to parse JSON data")
+			data = json.load(request.environ['wsgi.input'])
+		except ValueError:
+			log.error('SEARCH: Could not parse JSON data')
 			abort(400, _('Malformed JSON data'))
 
 		what = data.get('what')
@@ -230,10 +231,10 @@ class JukeboxController(BaseController):
 			abort(403, _('Song removal disabled'))
 
 		try:
-			data = simplejson.load(request.environ['wsgi.input'])
-		except simplejson.JSONDecodeError:
-			log.error('REMOVE: Failed to parse JSON data')
-			abort(400, 'Malformed JSON data')
+			data = json.load(request.environ['wsgi.input'])
+		except ValueError:
+			log.error('REMOVE: Could not parse JSON data')
+			abort(400, _('Malformed JSON data'))
 
 		id = data.get('id')
 
@@ -254,10 +255,10 @@ class JukeboxController(BaseController):
 			abort(403, _('Controls disabled'))
 
 		try:
-			data = simplejson.load(request.environ['wsgi.input'])
-		except simplejson.JSONDecodeError:
-			log.error('CONTROL: Failed to parse JSON data')
-			abort(400, 'Malformed JSON data')
+			data = json.load(request.environ['wsgi.input'])
+		except ValueError:
+			log.error('CONTROL: Could not parse JSON data')
+			abort(400, _('Malformed JSON data'))
 
 		action = data.get('action')
 
@@ -297,9 +298,9 @@ class JukeboxController(BaseController):
 	@jsonify
 	def findcover(self):
 		try:
-			data = simplejson.load(request.environ['wsgi.input'])
-		except simplejson.JSONDecodeError:
-			log.error("SEARCH: Failed to parse JSON data")
+			data = json.load(request.environ['wsgi.input'])
+		except ValueError:
+			log.error('FINDCOVER: Could not parse JSON data')
 			abort(400, _('Malformed JSON data'))
 
 		artist = data.get('artist')
