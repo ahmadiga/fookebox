@@ -11,6 +11,7 @@
    skipping tracks. Thanks to Artem Savkov for noticing this and providing a
    patch.
  * Pulsate the time display when playback is paused.
+ * Added an example configuration file for using fookebox through fcgi/flup
 
 == 0.6.0 (30 Apr 2011) ==
 
