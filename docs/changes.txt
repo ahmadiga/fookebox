@@ -1,7 +1,7 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
-== 0.6.1 (unreleased) ==
+== 0.6.1 (17 Apr 2012) ==
 
  * Use python's json module instead of simplejson
  * Use mpd's "setvol" command instead of the deprecated "volume". Thanks to
