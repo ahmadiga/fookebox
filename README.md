@@ -2,6 +2,8 @@
 
 fookebox is a jukebox-style web-frontend to mpd.
 
+![Screenshot](http://freecode.com/screenshots/e8/ba/e8baf6a7bff08e622a2f4e545340848f_medium.png?1292032266)
+
 ## Installation and Setup
 
 ### Packages
