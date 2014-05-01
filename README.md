@@ -4,17 +4,27 @@ fookebox is a jukebox-style web-frontend to mpd.
 
 ## Installation and Setup
 
-Install fookebox using easy_install::
+### Packages
 
-  easy_install fookebox
+fookebox can be downloaded from [PyPI](http://pypi.python.org/pypi/fookebox/) and there are packages available for [Debian GNU/Linux](http://packages.debian.org/fookebox) and [Ubuntu](http://packages.ubuntu.com/fookebox).
+
+### Using easy_install
+
+```
+easy_install fookebox
+```
 
 Make a config file as follows::
 
-  paster make-config fookebox config.ini
+```
+paster make-config fookebox config.ini
+```
 
 Tweak the config file as appropriate and then setup the application::
 
-  paster setup-app config.ini
+```
+paster setup-app config.ini
+```
 
 Then you are ready to go.
 
