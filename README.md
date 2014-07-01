@@ -29,7 +29,3 @@ paster setup-app config.ini
 ```
 
 Then you are ready to go.
-
-## Release notification
-
-To be informed about new releases, please subscribe to the project at the [freecode project page](http://freecode.com/projects/fookebox).
