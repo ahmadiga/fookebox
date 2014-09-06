@@ -78,12 +78,14 @@ class Jukebox(object):
 			return
 
 		file = []
+		retries = 4
 
-		while 'file' not in file:
+		while 'file' not in file and retries > 0:
 			# we might have to try several times in case we get
 			# a directory instead of a file
 			index = random.randrange(len(songs))
 			file = songs[index]
+			retries -= 1
 
 		self.queue(file['file'])
 
