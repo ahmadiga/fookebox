@@ -215,7 +215,7 @@ class MPDWorker(object):
 			self.mpd.password(password)
 
 		# enable consume on mpd in the first worker
-		if num == 0:
+		if config.get('consume') and num == 0:
 			self.mpd.consume(1)
 
 		self.atime = datetime.now()

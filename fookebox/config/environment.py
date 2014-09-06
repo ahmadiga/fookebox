@@ -78,6 +78,7 @@ def load_environment(global_conf, app_conf):
 		'cache_cover_art': False,
 		'hide_credits': False,
 		'show_cover_art': True,
+		'consume': True,
 	}
 
 	for key in default_strings:
