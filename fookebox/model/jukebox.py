@@ -15,15 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
-import sys
 import random
 import logging
 
-from pylons import config, app_globals as g
+from pylons import config
 
 from mpd import CommandError
-from mpdconn import *
+from mpdconn import MPD, Lock, Genre, Artist, Track
 from schedule import Event, EVENT_TYPE_JUKEBOX
 
 log = logging.getLogger(__name__)
