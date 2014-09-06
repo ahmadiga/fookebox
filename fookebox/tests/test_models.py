@@ -17,6 +17,7 @@ class FakeMPD(object):
 		self.stop()
 		self.queue = []
 		self._pos = 0
+		self._consume = False
 
 	def fillDB(self):
 
@@ -99,7 +100,9 @@ class FakeMPD(object):
 
 	def status(self):
 
-		return self._status
+		status = self._status
+		status['song'] = self._pos
+		return status
 
 	def playDummy(self, index):
 
@@ -163,7 +166,10 @@ class FakeMPD(object):
 
 	def next(self):
 
-		self._pos += 1
+		if self._consume:
+			self.queue = self.queue[1:]
+		else:
+			self._pos += 1
 
 	def search(self, field, value):
 
@@ -232,7 +238,7 @@ class TestJukebox(unittest.TestCase):
 		self.mpd.skipTime(30)
 		self.assertEqual(0, self.jukebox.timeLeft())
 
-	def test_queue(self):
+	def test_queue_starts_playback(self):
 
 		self.assertFalse(self.jukebox.isPlaying())
 
@@ -244,19 +250,39 @@ class TestJukebox(unittest.TestCase):
 		self.assertEqual(2, len(self.jukebox.getPlaylist()))
 		self.assertTrue(self.jukebox.isPlaying())
 
-		self.jukebox.queue(self.mpd.db[1]['file'])
-		self.assertEqual(3, len(self.jukebox.getPlaylist()))
-		self.assertTrue(self.jukebox.isPlaying())
+	def test_queue_length_consume(self):
 
-		self.jukebox.queue(self.mpd.db[1]['file'])
-		self.assertEqual(4, len(self.jukebox.getPlaylist()))
-		self.assertTrue(self.jukebox.isPlaying())
+		self.mpd._consume = True
+		config['max_queue_length'] = 2
+		song1 = self.mpd.db[0]
+
+		self.jukebox.queue(song1.get('file'))
+		self.jukebox.queue(song1.get('file'))
+		self.jukebox.queue(song1.get('file'))
+
+		self.assertEqual(3, len(self.jukebox.getPlaylist()))
 
 		with self.assertRaises(QueueFull):
-			self.jukebox.queue(self.mpd.db[1]['file'])
+			self.jukebox.queue(song1.get('file'))
 
-		self.assertEqual(4, len(self.jukebox.getPlaylist()))
-		self.assertTrue(self.jukebox.isPlaying())
+		self.assertEqual(3, len(self.jukebox.getPlaylist()))
+
+	def test_queue_length_no_consume(self):
+
+		self.mpd._consume = True
+		config['max_queue_length'] = 2
+		song1 = self.mpd.db[0]
+
+		self.jukebox.queue(song1.get('file'))
+		self.jukebox.queue(song1.get('file'))
+		self.jukebox.queue(song1.get('file'))
+
+		self.assertEqual(3, len(self.jukebox.getPlaylist()))
+
+		with self.assertRaises(QueueFull):
+			self.jukebox.queue(song1.get('file'))
+
+		self.assertEqual(3, len(self.jukebox.getPlaylist()))
 
 	def test_autoQueueRandom(self):
 
@@ -340,15 +366,51 @@ class TestJukebox(unittest.TestCase):
 		tracks = self.jukebox.search('artist', 'Artist 1')
 		self.assertEqual(3, len(tracks));
 
-	def test_getPlaylist(self):
+	def test_getPlaylist_consume(self):
 
-		self.jukebox.queue(self.mpd.db[0]['file'])
+		self.mpd._consume = True
+
+		song1 = self.mpd.db[0]
+		song2 = self.mpd.db[1]
+		song3 = self.mpd.db[2]
+
+		self.jukebox.queue(song1['file'])
+		self.jukebox.queue(song2['file'])
+		self.jukebox.queue(song3['file'])
 
 		playlist = self.jukebox.getPlaylist()
 		log.info(playlist)
 
-		self.assertEqual(1, len(playlist))
+		self.assertEqual(3, len(playlist))
 		self.assertEqual('Track 1', playlist[0].get('title'))
+
+		self.jukebox.next()
+
+		playlist = self.jukebox.getPlaylist()
+		self.assertEqual(2, len(playlist))
+		self.assertEqual('Track 2', playlist[0].get('title'))
+
+	def test_getPlaylist_no_consume(self):
+
+		self.mpd._consume = False
+
+		song1 = self.mpd.db[0]
+		song2 = self.mpd.db[1]
+		song3 = self.mpd.db[2]
+
+		self.jukebox.queue(song1['file'])
+		self.jukebox.queue(song2['file'])
+		self.jukebox.queue(song3['file'])
+
+		playlist = self.jukebox.getPlaylist()
+		self.assertEqual(3, len(playlist))
+		self.assertEqual('Track 1', playlist[0].get('title'))
+
+		self.jukebox.next()
+
+		playlist = self.jukebox.getPlaylist()
+		self.assertEqual(2, len(playlist))
+		self.assertEqual('Track 2', playlist[0].get('title'))
 
 	def test_getGenres(self):
 
@@ -371,12 +433,37 @@ class TestJukebox(unittest.TestCase):
 		self.jukebox.queue(self.mpd.db[0]['file'])
 		self.assertTrue(self.jukebox.isPlaying())
 
-	def test_getCurrentSong(self):
+	def test_getCurrentSong_consume(self):
 
-		self.jukebox.queue(self.mpd.db[0]['file'])
+		self.mpd._consume = True
+		song1 = self.mpd.db[0]
+		song2 = self.mpd.db[1]
+
+		self.jukebox.queue(song1['file'])
+		self.jukebox.queue(song2['file'])
+
 		song = self.jukebox.getCurrentSong()
-
 		self.assertEqual('Track 1', song.title)
+
+		self.jukebox.next()
+		song = self.jukebox.getCurrentSong()
+		self.assertEqual('Track 2', song.title)
+
+	def test_getCurrentSong_no_consume(self):
+
+		self.mpd._consume = False
+		song1 = self.mpd.db[0]
+		song2 = self.mpd.db[1]
+
+		self.jukebox.queue(song1['file'])
+		self.jukebox.queue(song2['file'])
+
+		song = self.jukebox.getCurrentSong()
+		self.assertEqual('Track 1', song.title)
+
+		self.jukebox.next()
+		song = self.jukebox.getCurrentSong()
+		self.assertEqual('Track 2', song.title)
 
 	def test_getQueueLength(self):
 
@@ -393,34 +480,162 @@ class TestJukebox(unittest.TestCase):
 
 	def test_remove(self):
 
+		config['max_queue_length'] = 5
+
 		song1 = self.mpd.db[0]
 		song2 = self.mpd.db[1]
 		song3 = self.mpd.db[2]
+		song4 = self.mpd.db[2]
+		song5 = self.mpd.db[2]
 
 		self.assertEqual(0, len(self.jukebox.getPlaylist()))
 
 		self.jukebox.queue(song1['file'])
 		self.jukebox.queue(song2['file'])
 		self.jukebox.queue(song3['file'])
+		self.jukebox.queue(song4['file'])
+		self.jukebox.queue(song5['file'])
 
-		self.assertEqual(2, self.jukebox.getQueueLength())
+		self.assertEqual(4, self.jukebox.getQueueLength())
 		playlist = self.jukebox.getPlaylist()
 		self.assertEqual(song1, playlist[0])
 		self.assertEqual(song2, playlist[1])
 		self.assertEqual(song3, playlist[2])
+		self.assertEqual(song4, playlist[3])
+		self.assertEqual(song5, playlist[4])
 
 		self.jukebox.remove(1)
 
-		self.assertEqual(1, self.jukebox.getQueueLength())
+		self.assertEqual(3, self.jukebox.getQueueLength())
 		playlist = self.jukebox.getPlaylist()
 		self.assertEqual(song1, playlist[0])
 		self.assertEqual(song3, playlist[1])
 
 		self.jukebox.remove(0)
 
-		self.assertEqual(0, self.jukebox.getQueueLength())
+		self.assertEqual(2, self.jukebox.getQueueLength())
 		playlist = self.jukebox.getPlaylist()
 		self.assertEqual(song3, playlist[0])
+
+	def test_remove_consume(self):
+
+		config['max_queue_length'] = 5
+		self.mpd._consume = True
+
+		song1 = self.mpd.db[0]
+		song2 = self.mpd.db[1]
+		song3 = self.mpd.db[2]
+		song4 = self.mpd.db[2]
+		song5 = self.mpd.db[2]
+
+		self.assertEqual(0, len(self.jukebox.getPlaylist()))
+
+		self.jukebox.queue(song1['file'])
+		self.jukebox.queue(song2['file'])
+		self.jukebox.queue(song3['file'])
+		self.jukebox.queue(song4['file'])
+		self.jukebox.queue(song5['file'])
+
+		self.assertEqual(4, self.jukebox.getQueueLength())
+		playlist = self.jukebox.getPlaylist()
+		self.assertEqual(song1, playlist[0])
+		self.assertEqual(song2, playlist[1])
+		self.assertEqual(song3, playlist[2])
+		self.assertEqual(song4, playlist[3])
+		self.assertEqual(song5, playlist[4])
+
+		self.jukebox.next()
+		self.jukebox.remove(1)
+
+		self.assertEqual(2, self.jukebox.getQueueLength())
+		playlist = self.jukebox.getPlaylist()
+		self.assertEqual(song2, playlist[0])
+		self.assertEqual(song3, playlist[1])
+		self.assertEqual(song5, playlist[2])
+
+		self.jukebox.remove(0)
+
+		self.assertEqual(1, self.jukebox.getQueueLength())
+		playlist = self.jukebox.getPlaylist()
+		self.assertEqual(song5, playlist[0])
+
+	def test_remove_no_consume(self):
+
+		config['max_queue_length'] = 5
+		self.mpd._consume = False
+
+		song1 = self.mpd.db[0]
+		song2 = self.mpd.db[1]
+		song3 = self.mpd.db[2]
+		song4 = self.mpd.db[2]
+		song5 = self.mpd.db[2]
+
+		self.assertEqual(0, len(self.jukebox.getPlaylist()))
+
+		self.jukebox.queue(song1['file'])
+		self.jukebox.queue(song2['file'])
+		self.jukebox.queue(song3['file'])
+		self.jukebox.queue(song4['file'])
+		self.jukebox.queue(song5['file'])
+
+		self.assertEqual(4, self.jukebox.getQueueLength())
+		playlist = self.jukebox.getPlaylist()
+		self.assertEqual(song1, playlist[0])
+		self.assertEqual(song2, playlist[1])
+		self.assertEqual(song3, playlist[2])
+		self.assertEqual(song4, playlist[3])
+		self.assertEqual(song5, playlist[4])
+
+		self.jukebox.next()
+		self.jukebox.remove(1)
+
+		self.assertEqual(2, self.jukebox.getQueueLength())
+		playlist = self.jukebox.getPlaylist()
+		self.assertEqual(song2, playlist[0])
+		self.assertEqual(song3, playlist[1])
+		self.assertEqual(song5, playlist[2])
+
+		self.jukebox.remove(0)
+
+		self.assertEqual(1, self.jukebox.getQueueLength())
+		playlist = self.jukebox.getPlaylist()
+		self.assertEqual(song5, playlist[0])
+
+	def test_next_consume(self):
+
+		song1 = self.mpd.db[0]
+		self.mpd._consume = True
+
+		self.assertEqual(0, len(self.jukebox.getPlaylist()))
+
+		self.jukebox.queue(song1['file'])
+		self.jukebox.queue(song1['file'])
+		self.jukebox.queue(song1['file'])
+
+		self.assertEqual(2, self.jukebox.getQueueLength())
+
+		self.jukebox.next()
+		self.jukebox.next()
+
+		self.assertEqual(0, self.jukebox.getQueueLength())
+
+	def test_next_no_consume(self):
+
+		song1 = self.mpd.db[0]
+		self.mpd._consume = False
+
+		self.assertEqual(0, len(self.jukebox.getPlaylist()))
+
+		self.jukebox.queue(song1['file'])
+		self.jukebox.queue(song1['file'])
+		self.jukebox.queue(song1['file'])
+
+		self.assertEqual(2, self.jukebox.getQueueLength())
+
+		self.jukebox.next()
+		self.jukebox.next()
+
+		self.assertEqual(0, self.jukebox.getQueueLength())
 
 class TestTrack(unittest.TestCase):
 
@@ -441,3 +656,31 @@ class TestTrack(unittest.TestCase):
 		track = Track()
 		track.load(self.mpd.db[3])
 		assert track.track == 11
+
+class TestFakeMPD(unittest.TestCase):
+
+	def setUp(self):
+
+		self.mpd = FakeMPD()
+
+	def test_consume(self):
+
+		self.mpd._consume = True
+		self.mpd.queue = [1,2,3]
+
+		qlen = len(self.mpd.queue)
+		self.mpd.next()
+
+		self.assertEqual(qlen-1, len(self.mpd.queue))
+		self.assertEqual(0, self.mpd._pos)
+
+	def test_no_consume(self):
+
+		self.mpd._consume = False
+		self.mpd.queue = [1,2,3]
+
+		qlen = len(self.mpd.queue)
+		self.mpd.next()
+
+		self.assertEqual(qlen, len(self.mpd.queue))
+		self.assertEqual(1, self.mpd._pos)

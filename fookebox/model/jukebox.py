@@ -135,8 +135,12 @@ class Jukebox(object):
 		return self.client.search(where, what)
 
 	def getPlaylist(self):
+
 		playlist = self.client.playlistinfo()
-		return playlist
+		status = self.client.status()
+		index = int(status.get('song', 0))
+
+		return playlist[index:]
 
 	def getGenres(self):
 		genres = sorted(self.client.list('genre'))
@@ -169,8 +173,12 @@ class Jukebox(object):
 		return track
 
 	def getQueueLength(self):
+
 		playlist = self.client.playlist()
-		return max(len(playlist) - 1, 0)
+		status = self.client.status()
+		index = int(status.get('song', 0))
+
+		return max(len(playlist) - 1 - index, 0)
 
 	def getCurrentEvent(self):
 		event = Event.getCurrent()
@@ -187,7 +195,11 @@ class Jukebox(object):
 
 	def remove(self, id):
 		log.info("Removing playlist item #%d" % id)
-		self.client.delete(id)
+
+		status = self.client.status()
+		index = int(status.get('song', 0))
+		log.info('index=%d' % index)
+		self.client.delete(id + index)
 
 	def play(self):
 		self.client.play()
