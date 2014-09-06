@@ -22,6 +22,7 @@ import logging
 
 from pylons import config, app_globals as g
 
+from mpd import CommandError
 from mpdconn import *
 from schedule import Event, EVENT_TYPE_JUKEBOX
 
@@ -65,13 +66,6 @@ class Jukebox(object):
 			raise QueueFull()
 
 		self.client.add(file)
-
-		# Prevent (or reduce the probability of) a race-condition where
-		# the auto-queue functionality adds a new song *after* the last
-		# one stopped playing (which would re-play the previous song)
-		if not self.isPlaying() and len(self.getPlaylist()) > 1:
-			self.client.delete(0)
-
 		self.client.play()
 
 	def _autoQueueRandom(self):
@@ -96,9 +90,11 @@ class Jukebox(object):
 		self.queue(file['file'])
 
 	def _autoQueuePlaylist(self, playlist):
-		self.client.load(playlist)
 
-		if len(playlist) < 1:
+		try:
+			self.client.load(playlist)
+		except CommandError:
+			log.error("Failed to load playlist")
 			return
 
 		if config.get('auto_queue_random'):
@@ -107,13 +103,16 @@ class Jukebox(object):
 			song = playlist[0]
 		else:
 			playlist = self.client.playlist()
+
+			if len(playlist) < 1:
+				return
+
 			index = (Jukebox.lastAutoQueued + 1) % len(playlist)
 			song = playlist[index]
 			Jukebox.lastAutoQueued += 1
 
 		self.client.clear()
 		self.queue(song)
-		log.debug(Jukebox.lastAutoQueued)
 
 	def autoQueue(self):
 		log.info("Auto-queuing")
