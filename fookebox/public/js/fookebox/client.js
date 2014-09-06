@@ -227,11 +227,16 @@ var MusicView = Class.create(AjaxView,
 			}.bind(this);
 		}.bind(this));
 
-		$('searchForm').onsubmit = function(event) {
-			var form = event.target;
-			this.search(form);
-			return false;
-		}.bind(this);
+		var searchForm = $('searchForm');
+
+		if (searchForm)
+		{
+			searchForm.onsubmit = function(event) {
+				var form = event.target;
+				this.search(form);
+				return false;
+			}.bind(this);
+		}
 	},
 	showArtist: function(artist)
 	{
