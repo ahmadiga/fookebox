@@ -13,8 +13,8 @@
 </div>
 <h1 id="h1"><a href="/">${config.get('site_name')}</a></h1>
 <div id="meta">
-	<a href="http://fookebox.googlecode.com/">fookebox</a> ${config.get('version')}<br />
-	&copy; 2007-2012 <a href="http://www.ott.net/">Stefan Ott</a>
+	<a href="https://github.com/cockroach/fookebox">fookebox</a> ${config.get('version')}<br />
+	&copy; 2007-2014 <a href="http://www.ott.net/">Stefan Ott</a>
 </div>
 <table class="schedule">
 	<thead>
