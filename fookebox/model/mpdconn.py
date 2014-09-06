@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
 import os
 import base64
 import logging
@@ -23,7 +22,7 @@ from mpd import MPDClient
 from datetime import datetime
 from threading import BoundedSemaphore
 from pkg_resources import get_distribution, DistributionNotFound
-from pylons.i18n.translation import _, ungettext
+from pylons.i18n.translation import _
 
 from pylons import config, app_globals as g
 from fookebox.model.albumart import AlbumArt

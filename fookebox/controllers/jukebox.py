@@ -21,7 +21,7 @@ import base64
 import socket
 import logging
 
-from pylons import config, cache, request, response
+from pylons import config, request, response
 from pylons.decorators import jsonify, rest
 from pylons.controllers.util import abort
 from pylons.i18n.translation import _

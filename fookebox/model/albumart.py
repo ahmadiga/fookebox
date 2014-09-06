@@ -17,10 +17,7 @@
 
 import re
 import os
-import base64
 import logging
-from datetime import datetime
-from threading import BoundedSemaphore
 
 from pylons import config, cache
 

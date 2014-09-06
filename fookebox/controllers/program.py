@@ -18,9 +18,9 @@
 import logging
 import json
 
-from datetime import time, datetime
+from datetime import datetime
 
-from pylons import request, response, config, app_globals as g
+from pylons import request, app_globals as g
 from pylons.controllers.util import abort
 from pylons.decorators import jsonify, rest
 
