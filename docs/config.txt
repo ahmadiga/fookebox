@@ -168,3 +168,8 @@ traditionally been using this and will enable consume mode by default.
 You can disable this by setting 'consume' to 'false' in the fookebox
 configuration. Be aware that this is somewhat experimental and might break
 things - if you want to be safe, leave it enabled.
+
+If the 'consume' option in fookebox is enabled, MPD's 'consume' mode will be
+enabled too. If you disable the option in fookebox, MPD's settings will not be
+touched.
+
