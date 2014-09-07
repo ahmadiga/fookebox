@@ -22,7 +22,6 @@ from pylons import config
 
 from mpd import CommandError
 from mpdconn import MPD, Lock, Genre, Artist, Track
-from schedule import Event, EVENT_TYPE_JUKEBOX
 
 log = logging.getLogger(__name__)
 
@@ -179,19 +178,6 @@ class Jukebox(object):
 		index = int(status.get('song', 0))
 
 		return max(len(playlist) - 1 - index, 0)
-
-	def getCurrentEvent(self):
-		event = Event.getCurrent()
-		event.jukebox = self
-		return event
-
-	def getNextEvent(self):
-		event = Event.getNext()
-		return event
-
-	def isEnabled(self):
-		event = self.getCurrentEvent()
-		return event.type == EVENT_TYPE_JUKEBOX
 
 	def remove(self, id):
 		log.info("Removing playlist item #%d" % id)

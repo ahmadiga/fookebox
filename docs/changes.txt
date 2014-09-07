@@ -7,6 +7,7 @@
  * MPD's 'consume' mode is now optional
  * We no longer manually remove old songs, MPD should do that for us
  * Playlist handling for auto-queuing should be a bit more robust now
+ * Removed all non-jukebox features
  * Moved to github, updated copyright notices etc. accordingly
  * Unit test cleanup
 

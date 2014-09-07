@@ -87,7 +87,6 @@ class JukeboxController(BaseController):
 
 		try:
 			queueLength = jukebox.getQueueLength()
-			enabled = jukebox.isEnabled()
 			timeLeft = jukebox.timeLeft()
 		except:
 			log.error("Could not read status")
@@ -95,8 +94,8 @@ class JukeboxController(BaseController):
 			exctype, value = sys.exc_info()[:2]
 			abort(500, value)
 
-		if (config.get('auto_queue') and queueLength == 0 and enabled
-			and timeLeft <= config.get('auto_queue_time_left')):
+		if (config.get('auto_queue') and queueLength == 0 and
+			timeLeft <= config.get('auto_queue_time_left')):
 			try:
 				jukebox.autoQueue()
 			except:
@@ -114,7 +113,6 @@ class JukeboxController(BaseController):
 
 		data = {
 			'queueLength': queueLength,
-			'jukebox': enabled
 		}
 
 		if track:

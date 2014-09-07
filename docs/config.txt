@@ -3,7 +3,7 @@
 
 fookebox is a jukebox-style web-frontend to mpd.
 
-It offers the following jukebox features:
+It offers the following features:
 
  * Browse your music library by artist or genre
  * Add songs to the play list (obviously)
@@ -12,12 +12,6 @@ It offers the following jukebox features:
  * Remove songs from the play list (optional)
  * Search for artists/albums/titles/files (optional)
  * Control mpd (optional)
-
-In addition to that, fookebox has a second frontend intended for a projector
-showing the currently playing song as well as the first queue entry. Also, in
-case you are organizing an event where you only want to use the jukebox between
-other events (live bands, DJs) fookebox can be told so and display that
-information on the secondary frontend (details: see below).
 
 
 == What you need ==
@@ -28,6 +22,7 @@ In order to run fookebox you will need:
  * MPD (at least version 0.15)
  * Some web server (eg. apache) with WSGI support
  * Pylons (http://pylonshq.com/)
+
 
 == How to set it up ==
 
@@ -71,21 +66,6 @@ You can tweak the following fookebox-specific settings:
  * cache_cover_art: Whether to cache cover art (disabled by default)
  * album_cover_path: Path that contains album cover art (see below)
 
-
-== Secondary frontend ==
-
-If you don't care about projectors and stuff, just ignore this section. It's
-purely optional.
-
-If you point your browser to yourfookeboxurl/program you will see fookebox'
-secondary front end which is intended to be projected to a wall / shown on
-a screen without user interaction. It will not only inform users about the
-currently playing and the next song but in case you're using fookebox at some
-kind of party, this front end will allow you to inform your users about any
-other events that might be coming up (eg. a live band or a DJ).
-
-To enter your event's schedule, point your web browser to
-yourfookeboxurl/schedule.
 
 == Additional notes ==
 
@@ -172,4 +152,3 @@ things - if you want to be safe, leave it enabled.
 If the 'consume' option in fookebox is enabled, MPD's 'consume' mode will be
 enabled too. If you disable the option in fookebox, MPD's settings will not be
 touched.
-

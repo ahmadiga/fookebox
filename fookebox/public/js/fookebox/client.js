@@ -526,20 +526,9 @@ var JukeboxView = Class.create(AjaxView,
 		this.trackView.attach(this);
 		this.musicView.attach();
 	},
-	disable: function()
-	{
-		window.location = 'disabled';
-	},
 	readStatus: function(transport)
 	{
 		var data = transport.responseJSON;
-		var enabled = data.jukebox;
-
-		if (!enabled)
-		{
-			this.disable();
-			return
-		}
 
 		this.trackView.update(data.artist, data.track, data.timeTotal,
 								data.playing);
