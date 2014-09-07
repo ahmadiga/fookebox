@@ -7,9 +7,9 @@
 	<head>
 		<title>fookebox</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="css/classic/style.css" type="text/css" media="screen" />
 % if mobile:
-		<link rel="stylesheet" href="css/style-mobile.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="css/classic/style-mobile.css" type="text/css" media="screen" />
 % endif
 		<script type="text/javascript" src="js/prototype/prototype.js"></script>
 		<script type="text/javascript" src="js/scriptaculous/scriptaculous.js?load=effects"></script>

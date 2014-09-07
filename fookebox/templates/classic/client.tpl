@@ -1,7 +1,7 @@
 <%inherit file="base.tpl"/>
 
 <%def name="headers()">
-	<script type="text/javascript" src="js/fookebox/client.js"></script>
+	<script type="text/javascript" src="js/fookebox/classic/client.js"></script>
 </%def>
 
 <div id="message" style="display: none">

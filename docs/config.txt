@@ -48,6 +48,7 @@ You can tweak the following fookebox-specific settings:
  * mpd_port: The port mpd is running on (6600 by default)
  * mpd_pass: The password required to access mpd
  * site_name: A name for your site (eg. 'my home')
+ * theme: Which theme to use
  * max_queue_length: The maximum queue length (see below for details)
  * consume: Whether to enable 'consume' mode on MPD (see below)
  * auto_queue: Whether to play random songs when the queue gets empty (see below)

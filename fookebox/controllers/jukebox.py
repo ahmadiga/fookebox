@@ -37,6 +37,9 @@ log = logging.getLogger(__name__)
 class JukeboxController(BaseController):
 
 	def __render(self, template, extra_vars):
+
+		template = "%s/%s" % (config.get('theme', 'classic'), template)
+
 		try:
 			return render(template, extra_vars = extra_vars)
 		except IOError:
@@ -59,12 +62,12 @@ class JukeboxController(BaseController):
 			jukebox = Jukebox()
 		except socket.error:
 			log.error("Error on /index")
-			return self.__render('/error.tpl', extra_vars={
+			return self.__render('error.tpl', extra_vars={
 				'error': 'Connection to MPD failed'})
 		except:
 			log.error("Error on /index")
 			exctype, value = sys.exc_info()[:2]
-			return self.__render('/error.tpl', extra_vars={
+			return self.__render('error.tpl', extra_vars={
 				'error': value})
 
 		artists = jukebox.getArtists()
@@ -73,7 +76,7 @@ class JukeboxController(BaseController):
 
 		user_agent = request.environ.get('HTTP_USER_AGENT')
 
-		return self.__render('/client.tpl', extra_vars={
+		return self.__render('client.tpl', extra_vars={
 			'genres': genres,
 			'artists': artists,
 			'config': config,
@@ -338,7 +341,7 @@ class JukeboxController(BaseController):
 
 	@rest.restrict('GET')
 	def disabled(self):
-		return self.__render('/disabled.tpl', extra_vars={
+		return self.__render('disabled.tpl', extra_vars={
 			'config': config,
 			'base_url': request.url.replace('disabled', ''),
 		})
