@@ -77,7 +77,7 @@ h1 {
 #artistList ul, #genreList {
 	margin-top: 0;
 	list-style-type: decimal;
-	list-style-image: url(../img/li.png);
+	list-style-image: url(../../img/classic/li.png);
 	padding: 0 1em 0 1em;
 }
 
@@ -122,15 +122,15 @@ h1 {
 }
 
 #nowPlaying #artist {
-	list-style-image: url(../img/artist.png);
+	list-style-image: url(../../img/classic/artist.png);
 }
 
 #nowPlaying #track {
-	list-style-image: url(../img/music.png);
+	list-style-image: url(../../img/classic/music.png);
 }
 
 #nowPlaying #time {
-	list-style-image: url(../img/time.png);
+	list-style-image: url(../../img/classic/time.png);
 }
 
 #nowPlaying #control {
@@ -213,25 +213,25 @@ a:focus {
 #message .tl {
 	top: 0;
 	left: 0;
-	background-image: url(../img/msg-tl.png);
+	background-image: url(../../img/classic//msg-tl.png);
 }
 
 #message .tr {
 	top: 0;
 	right: 0;
-	background-image: url(../img/msg-tr.png);
+	background-image: url(../../img/classic/msg-tr.png);
 }
 
 #message .bl {
 	bottom: 0;
 	left: 0;
-	background-image: url(../img/msg-bl.png);
+	background-image: url(../../img/classic/msg-bl.png);
 }
 
 #message .br {
 	bottom: 0;
 	right: 0;
-	background-image: url(../img/msg-br.png);
+	background-image: url(../../img/classic/msg-br.png);
 }
 
 .freeSlot {
@@ -271,7 +271,7 @@ ul.trackList {
 }
 
 #searchResult li.track {
-	list-style-image: url(../img/music.png);
+	list-style-image: url(../../img/classic/music.png);
 }
 
 #searchResult li.track a {
@@ -279,7 +279,7 @@ ul.trackList {
 }
 
 #searchResult li.album {
-	list-style-image: url(../img/folder.png);
+	list-style-image: url(../../img/classic/folder.png);
 }
 
 #searchResult img.coverArt {
@@ -305,7 +305,7 @@ ul.trackList {
 #progress #icon {
 	height: 16px;
 	width: 16px;
-	background-image: url(../img/progress.gif);
+	background-image: url(../../img/classic/progress.gif);
 	margin: 2px;
 }
 

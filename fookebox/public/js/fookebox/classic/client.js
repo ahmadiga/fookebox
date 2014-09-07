@@ -70,7 +70,7 @@ var QueueView = Class.create(AjaxView,
 
 			var img = new Element('img', {
 				'alt': 'x',
-				'src': 'img/delete.png',
+				'src': 'img/classic/delete.png',
 				'title': _('Remove from the queue'),
 			});
 			link.appendChild(img);

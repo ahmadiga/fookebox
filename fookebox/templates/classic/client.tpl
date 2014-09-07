@@ -22,7 +22,7 @@
 <div id="status">
 <%include file="status.tpl"/>
 </div>
-<img src="img/progress.gif" alt="" id="progress" style="display: none" />
+<img src="img/classic/progress.gif" alt="" id="progress" style="display: none" />
 <div id="searchResult"></div>
 
 <!-- this is a nasty hack to get our config parameters -->
