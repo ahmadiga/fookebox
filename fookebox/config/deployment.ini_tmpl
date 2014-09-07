@@ -35,6 +35,9 @@ app_instance_uuid = ${app_instance_uuid}
 # NOTE: See the README for details on this
 #max_queue_length = 4
 
+# enable 'consume' mode on MPD. see README for important information on this
+#consume = true
+
 # automatically queue a random song when the playlist gets empty
 #auto_queue = true
 
