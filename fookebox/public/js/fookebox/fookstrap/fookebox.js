@@ -354,6 +354,8 @@ Jukebox.prototype.showArtist = function(name)
 $(document).ready(function()
 {
 	var jukebox = new Jukebox();
+	jukebox.sync();
+
 	var wh = new WindowHandler(jukebox);
 
 	$('#artistSearch').keyup(function(event)
