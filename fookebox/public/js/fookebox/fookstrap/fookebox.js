@@ -29,7 +29,7 @@ QueueView.prototype.update = function()
 	req.done($.proxy(this.load, this));
 }
 
-QueueView.prototype.updateLabel = function()
+QueueView.prototype.updateLabel = function(flash)
 {
 	var len = this.currentLength;
 	var qlen = this.maxLength;
@@ -56,7 +56,9 @@ QueueView.prototype.updateLabel = function()
 		label.removeClass('label-warning');
 		label.addClass('label-info');
 	}
-	this.pulsate();
+
+	if (flash)
+		this.pulsate();
 }
 
 QueueView.prototype.pulsate = function()
@@ -72,6 +74,7 @@ QueueView.prototype.load = function(data)
 		return;
 
 	var len = data.queue.length;
+	var prevlen = this.currentLength;
 	var els = $('#queue li');
 
 	for (var i=0; i < this.maxLength; i++)
@@ -93,7 +96,7 @@ QueueView.prototype.load = function(data)
 		el.removeClass('disabled');
 	}
 
-	this.updateLabel();
+	this.updateLabel(len != prevlen);
 }
 
 function AlbumCover(artist, name)
@@ -271,8 +274,12 @@ Jukebox.prototype.sync = function()
 		else
 			$('.currentTitle').empty();
 
-		if (('queueLength' in data) && (data.queueLength != this.queue.currentLength))
-			this.queue.update();
+		if ('queueLength' in data)
+		{
+			var len = data.queueLength;
+			if ((len != this.queue.currentLength) || (len == 0))
+				this.queue.update();
+		}
 	}, this));
 }
 
