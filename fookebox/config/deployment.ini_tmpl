@@ -27,7 +27,7 @@ beaker.session.secret = ${app_instance_secret}
 app_instance_uuid = ${app_instance_uuid}
 
 #site_name = fookebox
-#theme = classic
+#theme = fookstrap
 
 #mpd_host = localhost
 #mpd_port = 6600
