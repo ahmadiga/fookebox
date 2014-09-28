@@ -338,10 +338,3 @@ class JukeboxController(BaseController):
 
 		response.headers['content-type'] = 'image/jpeg'
 		return data
-
-	@rest.restrict('GET')
-	def disabled(self):
-		return self.__render('disabled.tpl', extra_vars={
-			'config': config,
-			'base_url': request.url.replace('disabled', ''),
-		})
