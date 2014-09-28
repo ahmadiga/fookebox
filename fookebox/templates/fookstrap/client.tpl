@@ -28,8 +28,8 @@
 				</div>
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
-						<li class="active"><a data-toggle="tab" href="#artists">Artists</a></li>
-						<li><a href="#genres" data-toggle="tab">Genres</a></li>
+						<li class="active"><a data-toggle="tab" href="#artists" id="showArtists">Artists</a></li>
+						<li><a href="#genres" data-toggle="tab" id="showGenres">Genres</a></li>
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#">Queue <span class="label label-info" id="queueStatus"></span></a>
 							<ul class="dropdown-menu" role="menu" id="queue">
@@ -55,7 +55,7 @@
 							</form>
 							<ul class="nav nav-pills nav-stacked nav-sidebar">
 % for artist in artists:
-								<li class="artist"><a href="#" data-base64="${artist.base64}">${artist.name}</a></li>
+								<li class="artist"><a href="#artist=${artist.base64}" data-base64="${artist.base64}">${artist.name}</a></li>
 % endfor
 							</ul>
 						</div>
@@ -65,7 +65,7 @@
 							</form>
 							<ul class="nav nav-pills nav-stacked nav-sidebar">
 % for genre in genres:
-								<li class="genre"><a href="#" data-base64="${genre.base64}">${genre.name}</a></li>
+								<li class="genre"><a href="#genre=${genre.base64}" data-base64="${genre.base64}">${genre.name}</a></li>
 % endfor
 							</ul>
 						</div>

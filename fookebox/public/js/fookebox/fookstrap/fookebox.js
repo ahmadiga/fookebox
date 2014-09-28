@@ -1,5 +1,47 @@
 "use strict";
 
+function WindowHandler(jukebox)
+{
+	this.jukebox = jukebox;
+	this.skipval = null;
+
+	$(window).on('hashchange', $.proxy(this.loadhash, this));
+}
+
+WindowHandler.prototype.loadhash = function(e)
+{
+	var hash = window.location.hash;
+
+	if (!hash)
+		return;
+
+	if (hash == this.skipval)
+	{
+		this.skipval = null;
+		return;
+	}
+	this.skipval = null;
+
+	var m = hash.match(/([a-z]+)=(.+)$/);
+
+	if (m.length == 3)
+	{
+		var key = m[1];
+		var val = m[2];
+		this.jukebox.showItems(key, val);
+	}
+
+	if (key == 'artist')
+		$('#showArtists').tab('show');
+	else if (key == 'genre')
+		$('#showGenres').tab('show');
+}
+
+WindowHandler.prototype.skip = function(val)
+{
+	this.skipval = val;
+}
+
 function QueueView()
 {
 	var getMaxLength = function()
@@ -312,7 +354,7 @@ Jukebox.prototype.showArtist = function(name)
 $(document).ready(function()
 {
 	var jukebox = new Jukebox();
-	jukebox.sync();
+	var wh = new WindowHandler(jukebox);
 
 	$('#artistSearch').keyup(function(event)
 	{
@@ -341,13 +383,25 @@ $(document).ready(function()
 	$('li.artist a').click(function(event)
 	{
 		event.preventDefault();
+
 		var target = $(event.target);
-		jukebox.showArtist(target.data('base64'));
+		var val = target.data('base64');
+		var hash = '#artist=' + val;
+		wh.skip(hash);
+		window.location.hash = hash;
+
+		jukebox.showArtist(val);
 	});
 	$('li.genre a').click(function(event)
 	{
 		event.preventDefault();
+
 		var target = $(event.target);
-		jukebox.showGenre(target.data('base64'));
+		var val = target.data('base64');
+		var hash = '#genre=' + val;
+		wh.skip(hash);
+		window.location.hash = hash;
+
+		jukebox.showGenre(val);
 	});
 });
