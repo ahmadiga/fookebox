@@ -52,7 +52,7 @@ def load_environment(global_conf, app_conf):
 		'site_name': 'fookebox',
 		'mpd_host': 'localhost',
 		'compliations_name': 'Various Artists',
-		'theme': 'classic',
+		'theme': 'fookstrap',
 	}
 	default_ints = {
 		'mpd_port': 6600,

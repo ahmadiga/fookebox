@@ -38,7 +38,7 @@ class JukeboxController(BaseController):
 
 	def __render(self, template, extra_vars):
 
-		template = "%s/%s" % (config.get('theme', 'classic'), template)
+		template = "%s/%s" % (config.get('theme', 'fookstrap'), template)
 
 		try:
 			return render(template, extra_vars = extra_vars)
