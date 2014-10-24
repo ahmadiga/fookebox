@@ -74,7 +74,7 @@ class JukeboxController(BaseController):
 		genres = jukebox.getGenres()
 		jukebox.close()
 
-		user_agent = request.environ.get('HTTP_USER_AGENT')
+		user_agent = request.environ.get('HTTP_USER_AGENT', '')
 
 		return self.__render('client.tpl', extra_vars={
 			'genres': genres,
