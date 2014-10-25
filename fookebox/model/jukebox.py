@@ -52,7 +52,7 @@ class Jukebox(object):
 		if 'time' not in status:
 			return 0
 
-		(timePlayed, timeTotal) = status['time'].split(':')
+		(timePlayed, timeTotal) = status.get('time', '').split(':')
 		timeLeft = int(timeTotal) - int(timePlayed)
 		return timeLeft
 
@@ -151,7 +151,7 @@ class Jukebox(object):
 
 	def isPlaying(self):
 		status = self.client.status()
-		return status['state'] == 'play'
+		return status.get('state') == 'play'
 
 	def getCurrentSong(self):
 		current = self.client.currentsong()
@@ -161,7 +161,7 @@ class Jukebox(object):
 
 		status = self.client.status()
 		if 'time' in status:
-			time = status['time'].split(':')[0]
+			time = status.get('time', '').split(':')[0]
 		else:
 			time = 0
 
