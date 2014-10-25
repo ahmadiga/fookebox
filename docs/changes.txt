@@ -3,7 +3,8 @@
 
 == 0.7.0 (unreleased) ==
 
- * Added support for themes and new default theme
+ * Added support for themes and new mobile-friendly default theme
+ * Fixed communication issues with MPD
  * Fixed a potential infinite loop in the autoqueue code
  * MPD's 'consume' mode is now optional
  * We no longer manually remove old songs, MPD should do that for us
