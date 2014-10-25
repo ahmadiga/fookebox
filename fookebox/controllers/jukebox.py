@@ -51,7 +51,6 @@ class JukeboxController(BaseController):
 
 		jukebox = Jukebox()
 		tracks = jukebox.search(where, what, forceSearch)
-		jukebox.close()
 
 		log.debug("SEARCH: found %d track(s)" % len(tracks))
 		return {'meta': {'what': what }, 'tracks': tracks}
@@ -72,7 +71,6 @@ class JukeboxController(BaseController):
 
 		artists = jukebox.getArtists()
 		genres = jukebox.getGenres()
-		jukebox.close()
 
 		user_agent = request.environ.get('HTTP_USER_AGENT', '')
 
@@ -93,7 +91,6 @@ class JukeboxController(BaseController):
 			timeLeft = jukebox.timeLeft()
 		except:
 			log.error("Could not read status")
-			jukebox.close()
 			exctype, value = sys.exc_info()[:2]
 			abort(500, value)
 
@@ -103,7 +100,6 @@ class JukeboxController(BaseController):
 				jukebox.autoQueue()
 			except:
 				log.error("Auto-queue failed")
-				jukebox.close()
 				raise
 
 		try:
@@ -111,8 +107,6 @@ class JukeboxController(BaseController):
 		except:
 			log.error('Failed to get the current song')
 			abort(500, _('Failed to get the current song'))
-		finally:
-			jukebox.close()
 
 		data = {
 			'queueLength': queueLength,
@@ -163,11 +157,8 @@ class JukeboxController(BaseController):
 			try:
 				jukebox.queue(file.encode('utf8'))
 			except QueueFull:
-				jukebox.close()
 				log.error('ENQUEUE: Full, aborting')
 				abort(409, _('The queue is full'))
-
-		jukebox.close()
 
 		abort(204) # no content
 
@@ -177,7 +168,6 @@ class JukeboxController(BaseController):
 	def queue(self):
 		jukebox = Jukebox()
 		items = jukebox.getPlaylist()
-		jukebox.close()
 
 		return {'queue': items[1:]}
 
@@ -245,7 +235,6 @@ class JukeboxController(BaseController):
 
 		jukebox = Jukebox()
 		jukebox.remove(id)
-		jukebox.close()
 
 		abort(204) # no content
 
@@ -282,7 +271,6 @@ class JukeboxController(BaseController):
 
 		if action not in commands:
 			log.error('CONTROL: Invalid command')
-			jukebox.close()
 			abort(400, _('Invalid command'))
 
 		try:
@@ -290,8 +278,6 @@ class JukeboxController(BaseController):
 		except:
 			log.error('Command %s failed' % action)
 			abort(500, _('Command failed'))
-		finally:
-			jukebox.close()
 
 		abort(204) # no content
 

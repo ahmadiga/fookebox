@@ -33,21 +33,22 @@ class Jukebox(object):
 	lastAutoQueued = -1
 
 	def __init__(self, mpd=None):
+
 		self._connect(mpd)
 
 	def _connect(self, to=None):
-		if not to == None:
+
+		if to != None:
 			self.client = to
 			return
 
 		mpd = MPD.get()
-		self.client = mpd.getWorker()
-
-	def close(self):
-		self.client.release()
+		self.client = mpd
 
 	def timeLeft(self):
-		status = self.client.status()
+
+		with self.client:
+			status = self.client.status()
 
 		if 'time' not in status:
 			return 0
@@ -57,21 +58,26 @@ class Jukebox(object):
 		return timeLeft
 
 	def queue(self, file):
+
 		log.info("Queued %s" % file)
 
 		if self.getQueueLength() >= config.get('max_queue_length'):
 			raise QueueFull()
 
-		self.client.add(file)
-		self.client.play()
+		with self.client:
+			self.client.add(file)
+			self.client.play()
 
 	def _autoQueueRandom(self):
+
 		genre = config.get('auto_queue_genre')
 
 		if genre:
-			songs = self.client.search('Genre', str(genre))
+			with self.client:
+				songs = self.client.search('Genre', str(genre))
 		else:
-			songs = self.client.listall()
+			with self.client:
+				songs = self.client.listall()
 
 		if len(songs) < 1:
 			return
@@ -91,17 +97,20 @@ class Jukebox(object):
 	def _autoQueuePlaylist(self, playlist):
 
 		try:
-			self.client.load(playlist)
+			with self.client:
+				self.client.load(playlist)
 		except CommandError:
 			log.error("Failed to load playlist")
 			return
 
 		if config.get('auto_queue_random'):
-			self.client.shuffle()
-			playlist = self.client.playlist()
+			with self.client:
+				self.client.shuffle()
+				playlist = self.client.playlist()
 			song = playlist[0]
 		else:
-			playlist = self.client.playlist()
+			with self.client:
+				playlist = self.client.playlist()
 
 			if len(playlist) < 1:
 				return
@@ -110,10 +119,13 @@ class Jukebox(object):
 			song = playlist[index]
 			Jukebox.lastAutoQueued += 1
 
-		self.client.clear()
-		self.queue(song)
+		with self.client:
+			self.client.clear()
+
+		self.queue(song[6:])
 
 	def autoQueue(self):
+
 		log.info("Auto-queuing")
 		lock = Lock()
 		if not lock.acquire():
@@ -128,38 +140,58 @@ class Jukebox(object):
 		lock.release()
 
 	def search(self, where, what, forceSearch = False):
-		if config.get('find_over_search') and not forceSearch:
-			return self.client.find(where, what)
 
-		return self.client.search(where, what)
+		act = self.client.search
+
+		if config.get('find_over_search') and not forceSearch:
+			act = self.client.find
+
+		with self.client:
+			result = act(where, what)
+
+		return result
 
 	def getPlaylist(self):
 
-		playlist = self.client.playlistinfo()
-		status = self.client.status()
-		index = int(status.get('song', 0))
+		with self.client:
+			playlist = self.client.playlistinfo()
+			status = self.client.status()
 
+		index = int(status.get('song', 0))
 		return playlist[index:]
 
 	def getGenres(self):
-		genres = sorted(self.client.list('genre'))
+
+		with self.client:
+			genres = sorted(self.client.list('genre'))
+
 		return [Genre(genre.decode('utf8')) for genre in genres]
 
 	def getArtists(self):
-		artists = sorted(self.client.list('artist'))
+
+		with self.client:
+			artists = sorted(self.client.list('artist'))
+
 		return [Artist(artist.decode('utf8')) for artist in artists]
 
 	def isPlaying(self):
-		status = self.client.status()
+
+		with self.client:
+			status = self.client.status()
+
 		return status.get('state') == 'play'
 
 	def getCurrentSong(self):
-		current = self.client.currentsong()
+
+		with self.client:
+			current = self.client.currentsong()
 
 		if current == None:
 			return None
 
-		status = self.client.status()
+		with self.client:
+			status = self.client.status()
+
 		if 'time' in status:
 			time = status.get('time', '').split(':')[0]
 		else:
@@ -173,46 +205,67 @@ class Jukebox(object):
 
 	def getQueueLength(self):
 
-		playlist = self.client.playlist()
-		status = self.client.status()
+		with self.client:
+			playlist = self.client.playlist()
+			status = self.client.status()
+
 		index = int(status.get('song', 0))
 
 		return max(len(playlist) - 1 - index, 0)
 
 	def remove(self, id):
+
 		log.info("Removing playlist item #%d" % id)
 
-		status = self.client.status()
+		with self.client:
+			status = self.client.status()
+
 		index = int(status.get('song', 0))
 		log.info('index=%d' % index)
-		self.client.delete(id + index)
+
+		with self.client:
+			self.client.delete(id + index)
 
 	def play(self):
-		self.client.play()
+
+		with self.client:
+			self.client.play()
 
 	def pause(self):
-		self.client.pause()
+
+		with self.client:
+			self.client.pause()
 
 	def previous(self):
-		self.client.previous()
+
+		with self.client:
+			self.client.previous()
 
 	def next(self):
+
 		# This is to prevent interruptions in the audio stream
 		# See http://code.google.com/p/fookebox/issues/detail?id=6
 		if self.getQueueLength() < 1 and config.get('auto_queue'):
 			self.autoQueue()
 
-		self.client.next()
+		with self.client:
+			self.client.next()
 
 	def volumeDown(self):
-		status = self.client.status()
-		volume = int(status.get('volume', 0))
-		self.client.setvol(max(volume - 5, 0))
+
+		with self.client:
+			status = self.client.status()
+			volume = int(status.get('volume', 0))
+			self.client.setvol(max(volume - 5, 0))
 
 	def volumeUp(self):
-		status = self.client.status()
-		volume = int(status.get('volume', 0))
-		self.client.setvol(min(volume + 5, 100))
+
+		with self.client:
+			status = self.client.status()
+			volume = int(status.get('volume', 0))
+			self.client.setvol(min(volume + 5, 100))
 
 	def refreshDB(self):
-		self.client.update()
+
+		with self.client:
+			self.client.update()
