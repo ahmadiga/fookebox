@@ -174,6 +174,23 @@ function SearchResult(jukebox, tracks)
 	this.jukebox = jukebox;
 	this.albums = new Object();
 
+	function tracknum(input)
+	{
+		if ((input == '') || !input)
+			return '00';
+		else if (input.indexOf('/') >= 0)
+			return tracknum(input.replace(/\/.*/, ''));
+		else if (input.length < 2)
+			return '0' + input;
+		else
+			return input
+	}
+
+	$(this.tracks).each(function(i, track)
+	{
+		track.track = tracknum(track.track);
+	});
+
 	this.parseAlbums();
 }
 
@@ -191,6 +208,15 @@ SearchResult.prototype.parseAlbums = function()
 		album = this.albums[track.album];
 		album.push(track);
 	}, this));
+
+	for (var key in this.albums)
+	{
+		var album = this.albums[key];
+		album.sort(function(a, b)
+		{
+			return Number(a.track) - Number(b.track);
+		});
+	}
 }
 
 SearchResult.prototype.show = function()
@@ -236,25 +262,13 @@ SearchResult.prototype.render = function(album)
 
 SearchResult.prototype.renderTrack = function(track, list)
 {
-	function tracknum(input)
-	{
-		if (input == '')
-			return '00';
-		else if (input.indexOf('/') >= 0)
-			return tracknum(input.replace(/\/.*/, ''));
-		else if (input.length < 2)
-			return '0' + input;
-		else
-			return input
-	}
-
 	var li = $('<li></li>');
 	var link = $('<a href="#"></a>');
 	var num = $('<span class="trackNum">a</span>');
 	var artist = $('<span class="trackArtist"></span>');
 	var title = $('<span class="trackName"></span>');
 
-	num.text(tracknum(track.track));
+	num.text(track.track);
 	artist.text(track.artist);
 	title.text(track.title);
 
