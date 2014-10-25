@@ -19,6 +19,12 @@ class FakeMPD(object):
 		self._pos = 0
 		self._consume = False
 
+	def __enter__(self):
+		pass
+
+	def __exit__(self, _, __, ___):
+		pass
+
 	def fillDB(self):
 
 		self.db.append({
@@ -65,6 +71,16 @@ class FakeMPD(object):
 			'artist': 'Artist 5',
 			'date': '2005',
 		})
+		self.db.append({
+			'file': 'song6',
+			'time': '123',
+			'album': 'Album 6',
+			'title': 'Track 6',
+			'track': ['55/12', '12'],
+			'genre': 'Genre 6',
+			'artist': 'Artist 6',
+			'date': '2005',
+		})
 
 	def stop(self):
 
@@ -77,7 +93,7 @@ class FakeMPD(object):
 
 	def play(self):
 
-		if not self.queue[0] == None:
+		if len(self.queue) > 0:
 			self._status = {
 				'playlistlength': '1',
 				'playlist': '5',
@@ -94,7 +110,7 @@ class FakeMPD(object):
 	def load(self, playlist):
 
 		if playlist == 'test01':
-			self.queue = [ 'song5', 'song5' ]
+			self.queue = [ 'file: song5', 'file: song5' ]
 		else:
 			raise CommandError
 
@@ -656,6 +672,10 @@ class TestTrack(unittest.TestCase):
 		track = Track()
 		track.load(self.mpd.db[3])
 		assert track.track == 11
+
+		track = Track()
+		track.load(self.mpd.db[5])
+		assert track.track == 55
 
 class TestFakeMPD(unittest.TestCase):
 
