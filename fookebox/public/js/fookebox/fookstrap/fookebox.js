@@ -6,6 +6,7 @@ function WindowHandler(jukebox)
 	this.skipval = null;
 
 	$(window).on('hashchange', $.proxy(this.loadhash, this));
+	this.loadhash(this);
 }
 
 WindowHandler.prototype.loadhash = function(e)
