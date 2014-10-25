@@ -168,47 +168,28 @@ AlbumCover.prototype.load = function(target)
 	}, this));
 }
 
-function SearchResult(jukebox, tracks)
+function AlbumList()
 {
-	this.tracks = tracks;
-	this.jukebox = jukebox;
 	this.albums = new Object();
-
-	function tracknum(input)
-	{
-		if ((input == '') || !input)
-			return '00';
-		else if (input.indexOf('/') >= 0)
-			return tracknum(input.replace(/\/.*/, ''));
-		else if (input.length < 2)
-			return '0' + input;
-		else
-			return input
-	}
-
-	$(this.tracks).each(function(i, track)
-	{
-		track.track = tracknum(track.track);
-	});
-
-	this.parseAlbums();
 }
 
-SearchResult.prototype.parseAlbums = function()
+AlbumList.prototype.contains = function(album)
 {
-	$(this.tracks).each($.proxy(function(i, track)
-	{
-		var album;
+	return (album.hash() in this.albums);
+}
 
-		if (!(track.album in this.albums))
-		{
-			this.albums[track.album] = new Array();
-		}
+AlbumList.prototype.add = function(album)
+{
+	this.albums[album.hash()] = album;
+}
 
-		album = this.albums[track.album];
-		album.push(track);
-	}, this));
+AlbumList.prototype.get = function(album)
+{
+	return this.albums[album.hash()];
+}
 
+AlbumList.prototype.sortAll = function()
+{
 	for (var key in this.albums)
 	{
 		var album = this.albums[key];
@@ -219,27 +200,58 @@ SearchResult.prototype.parseAlbums = function()
 	}
 }
 
-SearchResult.prototype.show = function()
+AlbumList.prototype.render = function()
 {
-	$('#result').empty();
-
-	for (name in this.albums)
+	for (var hash in this.albums)
 	{
-		this.render(this.albums[name]);
+		var album = this.albums[hash];
+		album.render();
 	}
 }
 
-SearchResult.prototype.render = function(album)
+function Album(path, name)
+{
+	this.path = path;
+	this.name = name;
+	this.artist = '';
+	this.tracks = new Array();
+}
+
+Album.prototype.hash = function()
+{
+	return btoa(escape('' + this.name + this.path));
+}
+
+Album.prototype.add = function(track)
+{
+	this.tracks.push(track);
+
+	if (this.artist == '')
+		this.artist = track.artist;
+	else if ((this.artist.indexOf(track.artist) < 0) &&
+		(track.artist.indexOf(this.artist) < 0))
+	{
+		console.log('VARIOUS');
+		this.artist = 'Various Artists'; // TODO translate
+	}
+}
+
+Album.prototype.sort = function(f)
+{
+	this.tracks.sort(f);
+}
+
+Album.prototype.render = function()
 {
 	var panel = $('<div class="panel-heading album-heading"></div>');
 	var title = $('<h4 class="panel-title">');
 	var albumTitle = $('<div class="albumTitle"></div>');
 	var albumArtist = $('<div class="albumArtist"></div>');
 
-	new AlbumCover(album[0].artist, album[0].album).load(panel);
+	new AlbumCover(this.artist, this.name).load(panel);
 
-	albumTitle.text(album[0].album);
-	albumArtist.text(album[0].artist);
+	albumTitle.text(this.name);
+	albumArtist.text(this.artist);
 
 	title.append(albumTitle);
 	title.append(albumArtist);
@@ -250,9 +262,9 @@ SearchResult.prototype.render = function(album)
 	var list = $('<ul class="list-unstyled"></ul>');
 	pbody.append(list);
 
-	for (var i=0; i < album.length; i++)
+	for (var i=0; i < this.tracks.length; i++)
 	{
-		var track = album[i];
+		var track = this.tracks[i];
 		this.renderTrack(track, list);
 	}
 
@@ -260,7 +272,7 @@ SearchResult.prototype.render = function(album)
 	$('#result').append(pbody);
 }
 
-SearchResult.prototype.renderTrack = function(track, list)
+Album.prototype.renderTrack = function(track, list)
 {
 	var li = $('<li></li>');
 	var link = $('<a href="#"></a>');
@@ -307,6 +319,60 @@ SearchResult.prototype.renderTrack = function(track, list)
 			}
 		}, this));
 	}, this));
+}
+
+function SearchResult(jukebox, tracks)
+{
+	this.tracks = tracks;
+	this.jukebox = jukebox;
+	this.albums = new AlbumList();
+
+	function tracknum(input)
+	{
+		if ((input == '') || !input)
+			return '00';
+		else if (input.indexOf('/') >= 0)
+			return tracknum(input.replace(/\/.*/, ''));
+		else if (input.length < 2)
+			return '0' + input;
+		else
+			return input
+	}
+
+	$(this.tracks).each(function(i, track)
+	{
+		track.track = tracknum(track.track);
+	});
+
+	this.parseAlbums();
+}
+
+SearchResult.prototype.parseAlbums = function()
+{
+	$(this.tracks).each($.proxy(function(i, track)
+	{
+		var album;
+		var file = track.file;
+		var dir = file.substring(0, file.lastIndexOf("/") +1);
+
+		album = new Album(dir, track.album);
+
+		if (!this.albums.contains(album))
+		{
+			this.albums.add(album);
+		}
+
+		album = this.albums.get(album);
+		album.add(track);
+	}, this));
+
+	this.albums.sortAll();
+}
+
+SearchResult.prototype.show = function()
+{
+	$('#result').empty();
+	this.albums.render();
 }
 
 function Jukebox()
