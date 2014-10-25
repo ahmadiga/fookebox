@@ -24,7 +24,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<p class="navbar-text now-playing visible-xs"><span class="currentArtist"></span> &ndash; <span class="currentTitle"></span></p>
+					<p class="navbar-text now-playing visible-xs">Now playing: <span class="currentArtist"></span> &ndash; <span class="currentTitle"></span></p>
 				</div>
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
@@ -71,7 +71,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-9 col-md-10 col-xs-offset-0 col-sm-offset-3 col-md-offset-2 main">
+				<div class="col-sm-9 col-md-10 col-sm-offset-3 col-md-offset-2 main hidden-xs">
 					<div id="result" class="panel panel-default"></div>
 				</div>
 			</div>

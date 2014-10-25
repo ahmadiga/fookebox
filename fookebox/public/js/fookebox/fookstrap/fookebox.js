@@ -14,7 +14,10 @@ WindowHandler.prototype.loadhash = function(e)
 	var hash = window.location.hash;
 
 	if (!hash)
+	{
+		this.jukebox.showSearch();
 		return;
+	}
 
 	if (hash == this.skipval)
 	{
@@ -209,8 +212,9 @@ AlbumList.prototype.render = function()
 	}
 }
 
-function Album(path, name)
+function Album(jukebox, path, name)
 {
+	this.jukebox = jukebox;
 	this.path = path;
 	this.name = name;
 	this.artist = '';
@@ -231,7 +235,6 @@ Album.prototype.add = function(track)
 	else if ((this.artist.indexOf(track.artist) < 0) &&
 		(track.artist.indexOf(this.artist) < 0))
 	{
-		console.log('VARIOUS');
 		this.artist = 'Various Artists'; // TODO translate
 	}
 }
@@ -306,6 +309,7 @@ Album.prototype.renderTrack = function(track, list)
 		req.done($.proxy(function()
 		{
 			this.jukebox.queue.update();
+			this.jukebox.showSearch();
 		}, this));
 		req.error($.proxy(function(data)
 		{
@@ -355,7 +359,7 @@ SearchResult.prototype.parseAlbums = function()
 		var file = track.file;
 		var dir = file.substring(0, file.lastIndexOf("/") +1);
 
-		album = new Album(dir, track.album);
+		album = new Album(this.jukebox, dir, track.album);
 
 		if (!this.albums.contains(album))
 		{
@@ -373,12 +377,28 @@ SearchResult.prototype.show = function()
 {
 	$('#result').empty();
 	this.albums.render();
+	this.jukebox.showResult();
 }
 
 function Jukebox()
 {
 	this.queue = new QueueView();
 	this.queue.update();
+}
+
+Jukebox.prototype.showSearch = function()
+{
+	$('.navbar-toggle').removeClass('hidden-xs');
+	$('.sidebar').removeClass('hidden-xs');
+	$('.main').addClass('hidden-xs');
+}
+
+Jukebox.prototype.showResult = function()
+{
+	$('.navbar-toggle').addClass('hidden-xs');
+	$('.sidebar').addClass('hidden-xs');
+	$('.main').removeClass('hidden-xs');
+	window.scrollTo(0,0);
 }
 
 Jukebox.prototype.sync = function()
