@@ -344,9 +344,22 @@ function SearchResult(jukebox, tracks)
 			return input
 	}
 
+	function mkstring(input)
+	{
+		if (typeof input == "string")
+			return input;
+		else if (typeof input == "object")
+		{
+			if (input.length > 0)
+				return input[0];
+		}
+		return "Unknown"; // TODO translate
+	}
+
 	$(this.tracks).each(function(i, track)
 	{
 		track.track = tracknum(track.track);
+		track.album = mkstring(track.album);
 	});
 
 	this.parseAlbums();

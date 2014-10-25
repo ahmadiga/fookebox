@@ -141,19 +141,22 @@ class Track(object):
 		self.queuePosition = int(__set('pos', 0))
 		self.time = int(__set('time', 0))
 
-		if 'track' in song:
+		def parse_track_number(t):
 			# possible formats:
 			#  - '12'
 			#  - '12/21'
 			#  - ['12', '21']
-			t = song['track']
+			#  - ['12/21', '21']
 			if '/' in t:
 				tnum = t.split('/')[0]
-				self.track = int(tnum)
+				return int(tnum)
 			elif isinstance(t, list):
-				self.track = int(t[0])
+				return parse_track_number(t[0])
 			else:
-				self.track = int(t)
+				return int(t)
+
+		if 'track' in song:
+			self.track = parse_track_number(song['track'])
 
 	def __str__(self):
 		return "%s - %s" % (self.artist, self.title)
