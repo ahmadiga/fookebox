@@ -18,10 +18,10 @@
 import random
 import logging
 
-from pylons import config
+from pylons import config, app_globals as g
 
 from mpd import CommandError
-from mpdconn import MPD, Lock, Genre, Artist, Track
+from mpdconn import MPD, Genre, Artist, Track
 
 log = logging.getLogger(__name__)
 
@@ -127,8 +127,7 @@ class Jukebox(object):
 	def autoQueue(self):
 
 		log.info("Auto-queuing")
-		lock = Lock()
-		if not lock.acquire():
+		if not g.autoQueueLock.acquire(False):
 			return
 
 		playlist = config.get('auto_queue_playlist')
@@ -137,7 +136,7 @@ class Jukebox(object):
 		else:
 			self._autoQueuePlaylist(playlist)
 
-		lock.release()
+		g.autoQueueLock.release()
 
 	def search(self, where, what, forceSearch = False):
 

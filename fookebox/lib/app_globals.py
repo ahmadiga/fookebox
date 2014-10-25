@@ -2,6 +2,7 @@
 
 from beaker.cache import CacheManager
 from beaker.util import parse_cache_config_options
+from threading import Lock
 
 class Globals(object):
 
@@ -17,3 +18,4 @@ class Globals(object):
 		self.cache = CacheManager(**parse_cache_config_options(config))
 		self.eventID = None
 		self.mpd = None
+		self.autoQueueLock = Lock()
