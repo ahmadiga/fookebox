@@ -13,6 +13,10 @@
 		<script src="/js/bootstrap/bootstrap.min.js"></script>
 		<script src="/js/fookebox/fookstrap/fookebox.js"></script>
 		<script src="/js/fookebox/fookstrap/effects.js"></script>
+% if config.get('lang'):
+		<script type="text/javascript" src="js/fookebox/i18n/${config.get('lang')}.js"></script>
+% endif
+		<script type="text/javascript" src="js/fookebox/i18n/i18n.js"></script>
 	</head>
 	<body>
 		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -28,10 +32,10 @@
 				</div>
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
-						<li class="active"><a data-toggle="tab" href="#artists" id="showArtists">Artists</a></li>
-						<li><a href="#genres" data-toggle="tab" id="showGenres">Genres</a></li>
+						<li class="active"><a data-toggle="tab" href="#artists" id="showArtists">${_('Artists')}</a></li>
+						<li><a href="#genres" data-toggle="tab" id="showGenres">${_('Genres')}</a></li>
 						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#">Queue <span class="label label-info" id="queueStatus"></span></a>
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#">${('Queue')} <span class="label label-info" id="queueStatus"></span></a>
 							<ul class="dropdown-menu" role="menu" id="queue">
 % for i in range(0, int(config.get('max_queue_length'))):
 								<li class="disabled"><a role="menuitem" tabindex="-1"><span class="artist"></span> &ndash; <span class="title"></span></a></li>
@@ -40,7 +44,7 @@
 						</li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right hidden-xs">
-						<p class="navbar-text now-playing">Now playing: <span class="currentArtist"></span> &ndash; <span class="currentTitle"></span></p>
+						<p class="navbar-text now-playing">${_('Now playing')}: <span class="currentArtist"></span> &ndash; <span class="currentTitle"></span></p>
 					</ul>
 				</div>
 			</div>

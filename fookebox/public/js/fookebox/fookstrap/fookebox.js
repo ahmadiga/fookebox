@@ -84,14 +84,14 @@ QueueView.prototype.updateLabel = function(flash)
 
 	if (len == qlen)
 	{
-		label.text('full');
+		label.text(_('full'));
 		label.removeClass('label-success');
 		label.addClass('label-warning');
 		label.removeClass('label-info');
 	}
 	else if (len == 0)
 	{
-		label.text('empty');
+		label.text(_('empty'));
 		label.addClass('label-success');
 		label.removeClass('label-warning');
 		label.removeClass('label-info');
@@ -236,7 +236,7 @@ Album.prototype.add = function(track)
 	else if ((this.artist.indexOf(track.artist) < 0) &&
 		(track.artist.indexOf(this.artist) < 0))
 	{
-		this.artist = 'Various Artists'; // TODO translate
+		this.artist = _('Various artists');
 	}
 }
 
@@ -344,22 +344,25 @@ function SearchResult(jukebox, tracks)
 			return input
 	}
 
-	function mkstring(input)
+	function mkstring(input, type)
 	{
 		if (typeof input == "string")
+		{
 			return input;
+		}
 		else if (typeof input == "object")
 		{
 			if (input.length > 0)
 				return input[0];
 		}
-		return "Unknown"; // TODO translate
+
+		return _('Unnamed ' + type);
 	}
 
 	$(this.tracks).each(function(i, track)
 	{
 		track.track = tracknum(track.track);
-		track.album = mkstring(track.album);
+		track.album = mkstring(track.album, 'album');
 	});
 
 	this.parseAlbums();
@@ -375,9 +378,9 @@ SearchResult.prototype.parseAlbums = function()
 		var fn = file.substring(file.lastIndexOf("/") + 1);
 
 		if (!track.artist)
-			track.artist = 'Unknown Artist'; // TODO translate
+			track.artist = _('Unknown artist');
 		if (!track.title)
-			track.title = 'Unknown Song [' + fn + ']'; // TODO translate
+			track.title = _('Unnamed track') + ' [' + fn + ']';
 
 		album = new Album(this.jukebox, dir, track.album);
 
