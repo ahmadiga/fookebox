@@ -26,14 +26,15 @@ WindowHandler.prototype.loadhash = function(e)
 	}
 	this.skipval = null;
 
-	var m = hash.match(/([a-z]+)=(.+)$/);
+	var m = hash.match(/([a-z]+)=(.*)$/);
 
-	if (m.length == 3)
-	{
-		var key = m[1];
-		var val = m[2];
-		this.jukebox.showItems(key, val);
-	}
+	if (!m || (m.length != 3))
+		return;
+
+	var key = m[1];
+	var val = m[2];
+
+	this.jukebox.showItems(key, val);
 
 	if (key == 'artist')
 		$('#showArtists').tab('show');
@@ -357,7 +358,13 @@ SearchResult.prototype.parseAlbums = function()
 	{
 		var album;
 		var file = track.file;
-		var dir = file.substring(0, file.lastIndexOf("/") +1);
+		var dir = file.substring(0, file.lastIndexOf("/") + 1);
+		var fn = file.substring(file.lastIndexOf("/") + 1);
+
+		if (!track.artist)
+			track.artist = 'Unknown Artist'; // TODO translate
+		if (!track.title)
+			track.title = 'Unknown Song [' + fn + ']'; // TODO translate
 
 		album = new Album(this.jukebox, dir, track.album);
 

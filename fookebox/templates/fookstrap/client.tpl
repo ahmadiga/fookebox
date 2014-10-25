@@ -55,7 +55,7 @@
 							</form>
 							<ul class="nav nav-pills nav-stacked nav-sidebar">
 % for artist in artists:
-								<li class="artist"><a href="#artist=${artist.base64}" data-base64="${artist.base64}">${artist.name}</a></li>
+								<li class="artist"><a href="#artist=${artist.base64}" data-base64="${artist.base64}">${artist.name or "(no artist)"}</a></li>
 % endfor
 							</ul>
 						</div>
@@ -65,7 +65,7 @@
 							</form>
 							<ul class="nav nav-pills nav-stacked nav-sidebar">
 % for genre in genres:
-								<li class="genre"><a href="#genre=${genre.base64}" data-base64="${genre.base64}">${genre.name}</a></li>
+								<li class="genre"><a href="#genre=${genre.base64}" data-base64="${genre.base64}">${genre.name or ("(no genre)")}</a></li>
 % endfor
 							</ul>
 						</div>
