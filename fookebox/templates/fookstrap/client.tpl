@@ -61,7 +61,7 @@
 						</div>
 						<div class="tab-pane" id="genres">
 							<form class="form" id="genreSearchForm">
-								<input type="text" class="form-control" placeholder="Search genres">
+								<input type="text" class="form-control" placeholder="Search genres" id="genreSearch">
 							</form>
 							<ul class="nav nav-pills nav-stacked nav-sidebar">
 % for genre in genres:

@@ -454,57 +454,56 @@ Jukebox.prototype.showArtist = function(name)
 
 $(document).ready(function()
 {
+	function filter(list)
+	{
+		return function(event)
+		{
+			var el = $(event.currentTarget);
+			var val = el.val().toLowerCase();
+
+			list.each(function(i, item)
+			{
+				var link = $(item).find('a');
+				var text = link.text().toLowerCase();
+
+				if (text.indexOf(val) > -1)
+					link.show();
+				else
+					link.hide();
+			});
+		}
+	};
+
+	function noop(event)
+	{
+		event.preventDefault();
+	};
+
+	function show(hashPrefix, showFunc)
+	{
+		return function(event)
+		{
+			event.preventDefault();
+
+			var target = $(event.target);
+			var val = target.data('base64');
+			var hash = hashPrefix + val;
+			wh.skip(hash);
+			window.location.hash = hash;
+
+			showFunc(val);
+		};
+	};
+
 	var jukebox = new Jukebox();
 	jukebox.sync();
 
 	var wh = new WindowHandler(jukebox);
 
-	$('#artistSearch').keyup(function(event)
-	{
-		var el = $(event.currentTarget);
-		var val = el.val().toLowerCase();
-
-		$('li.artist').each(function(i, item)
-		{
-			var link = $(item).find('a');
-			var artist = link.text().toLowerCase();
-
-			if (artist.indexOf(val) > -1)
-				link.show();
-			else
-				link.hide();
-		});
-	});
-	$('#artistSearchForm').submit(function(event)
-	{
-		event.preventDefault();
-	});
-	$('#genreSearchForm').submit(function(event)
-	{
-		event.preventDefault();
-	});
-	$('li.artist a').click(function(event)
-	{
-		event.preventDefault();
-
-		var target = $(event.target);
-		var val = target.data('base64');
-		var hash = '#artist=' + val;
-		wh.skip(hash);
-		window.location.hash = hash;
-
-		jukebox.showArtist(val);
-	});
-	$('li.genre a').click(function(event)
-	{
-		event.preventDefault();
-
-		var target = $(event.target);
-		var val = target.data('base64');
-		var hash = '#genre=' + val;
-		wh.skip(hash);
-		window.location.hash = hash;
-
-		jukebox.showGenre(val);
-	});
+	$('#artistSearch').keyup(filter($('li.artist')));
+	$('#genreSearch').keyup(filter($('li.genre')));
+	$('#artistSearchForm').submit(noop);
+	$('#genreSearchForm').submit(noop);
+	$('li.artist a').click(show('#artist=', $.proxy(jukebox.showArtist, jukebox)));
+	$('li.genre a').click(show('#genre=', $.proxy(jukebox.showGenre, jukebox)));
 });
