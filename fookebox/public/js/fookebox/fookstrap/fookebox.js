@@ -298,6 +298,7 @@ SearchResult.prototype.renderTrack = function(track, list)
 function Jukebox()
 {
 	this.queue = new QueueView();
+	this.queue.update();
 }
 
 Jukebox.prototype.sync = function()
@@ -319,8 +320,7 @@ Jukebox.prototype.sync = function()
 
 		if ('queueLength' in data)
 		{
-			var len = data.queueLength;
-			if ((len != this.queue.currentLength) || (len == 0))
+			if (data.queueLength != this.queue.currentLength)
 				this.queue.update();
 		}
 	}, this));
