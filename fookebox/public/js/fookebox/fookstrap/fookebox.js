@@ -433,6 +433,7 @@ Jukebox.prototype.showResult = function()
 	$('.sidebar').addClass('hidden-xs');
 	$('.main').removeClass('hidden-xs');
 	window.scrollTo(0,0);
+	$('.main').scrollTop(0);
 }
 
 Jukebox.prototype.sync = function()
