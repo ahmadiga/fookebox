@@ -206,11 +206,22 @@ AlbumList.prototype.sortAll = function()
 
 AlbumList.prototype.render = function()
 {
-	for (var hash in this.albums)
+	var albums = new Array();
+
+	for (var key in this.albums)
 	{
-		var album = this.albums[hash];
-		album.render();
+		albums.push(this.albums[key]);
 	}
+
+	albums.sort(function(a, b)
+	{
+		return a.name > b.name;
+	});
+
+	$(albums).each(function(i, album)
+	{
+		album.render();
+	});
 }
 
 function Album(jukebox, path, name)
