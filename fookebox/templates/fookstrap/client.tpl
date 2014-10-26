@@ -28,7 +28,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<p class="navbar-text now-playing visible-xs">Now playing: <span class="currentArtist"></span> &ndash; <span class="currentTitle"></span></p>
+					<p class="navbar-text now-playing visible-xs">${_('Now playing')}: <span class="currentArtist"></span> &ndash; <span class="currentTitle"></span></p>
 				</div>
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
