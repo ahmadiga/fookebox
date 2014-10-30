@@ -1,6 +1,6 @@
-# fookebox, http://fookebox.googlecode.com/
+# fookebox, https://github.com/cockroach/fookebox
 #
-# Copyright (C) 2007-2011 Stefan Ott. All rights reserved.
+# Copyright (C) 2007-2014 Stefan Ott. All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,10 +17,7 @@
 
 import re
 import os
-import base64
 import logging
-from datetime import datetime
-from threading import BoundedSemaphore
 
 from pylons import config, cache
 

@@ -1,6 +1,18 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
+== 0.7.0 (unreleased) ==
+
+ * Added support for themes and new mobile-friendly default theme
+ * Fixed communication issues with MPD
+ * Fixed a potential infinite loop in the autoqueue code
+ * MPD's 'consume' mode is now optional
+ * We no longer manually remove old songs, MPD should do that for us
+ * Playlist handling for auto-queuing should be a bit more robust now
+ * Removed all non-jukebox features
+ * Moved to github, updated copyright notices etc. accordingly
+ * Unit test cleanup
+
 == 0.6.1 (17 Apr 2012) ==
 
  * Use python's json module instead of simplejson

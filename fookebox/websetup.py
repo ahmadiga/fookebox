@@ -13,7 +13,4 @@ def setup_app(command, conf, vars):
 	if not pylons.test.pylonsapp:
 		load_environment(conf.global_conf, conf.local_conf)
 
-	from fookebox.model import meta
-	log.info("Creating tables")
-	meta.metadata.create_all(bind=meta.engine)
 	log.info("Successfully setup")

@@ -1,7 +1,7 @@
 <%inherit file="base.tpl"/>
 
 <%def name="headers()">
-	<script type="text/javascript" src="js/fookebox/client.js"></script>
+	<script type="text/javascript" src="js/fookebox/classic/client.js"></script>
 </%def>
 
 <div id="message" style="display: none">
@@ -14,15 +14,15 @@
 <h1 id="h1"><a href="/">${config.get('site_name')}</a></h1>
 % if not config.get('hide_credits'):
 <div id="meta">
-	<a href="http://fookebox.googlecode.com/">fookebox</a> ${config.get('version')}<br />
-	&copy; 2007-2012 <a href="http://www.ott.net/">Stefan Ott</a>
+	<a href="https://github.com/cockroach/fookebox">fookebox</a> ${config.get('version')}<br />
+	&copy; 2007-2014 <a href="http://www.ott.net/">Stefan Ott</a>
 </div>
 % endif
 <%include file="browse-menu.tpl"/>
 <div id="status">
 <%include file="status.tpl"/>
 </div>
-<img src="img/progress.gif" alt="" id="progress" style="display: none" />
+<img src="img/classic/progress.gif" alt="" id="progress" style="display: none" />
 <div id="searchResult"></div>
 
 <!-- this is a nasty hack to get our config parameters -->

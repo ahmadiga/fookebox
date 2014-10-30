@@ -6,11 +6,6 @@ from pylons.configuration import PylonsConfig
 from pylons.error import handle_mako_error
 from paste.deploy.converters import asbool
 
-from sqlalchemy import engine_from_config
-from sqlalchemy.pool import NullPool
-
-from fookebox.model import init_model
-
 import fookebox.lib.app_globals as app_globals
 import fookebox.lib.helpers
 from fookebox.config.routing import make_map
@@ -39,10 +34,6 @@ def load_environment(global_conf, app_conf):
 	import pylons
 	pylons.cache._push_object(config['pylons.app_globals'].cache)
 
-	# Create the database engine
-	engine = engine_from_config(config, 'sqlalchemy.', poolclass=NullPool)
-	init_model(engine)
-
 	# Create the Mako TemplateLookup, with the default auto-escaping
 	config['pylons.app_globals'].mako_lookup = TemplateLookup(
 		directories=paths['templates'],
@@ -61,6 +52,7 @@ def load_environment(global_conf, app_conf):
 		'site_name': 'fookebox',
 		'mpd_host': 'localhost',
 		'compliations_name': 'Various Artists',
+		'theme': 'fookstrap',
 	}
 	default_ints = {
 		'mpd_port': 6600,
@@ -78,6 +70,7 @@ def load_environment(global_conf, app_conf):
 		'cache_cover_art': False,
 		'hide_credits': False,
 		'show_cover_art': True,
+		'consume': True,
 	}
 
 	for key in default_strings:

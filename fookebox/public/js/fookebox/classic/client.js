@@ -1,7 +1,7 @@
 /*
- * fookebox, http://fookebox.googlecode.com/
+ * fookebox, https://github.com/cockroach/fookebox
  *
- * Copyright (C) 2007-2011 Stefan Ott. All rights reserved.
+ * Copyright (C) 2007-2014 Stefan Ott. All rights reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ var QueueView = Class.create(AjaxView,
 
 			var img = new Element('img', {
 				'alt': 'x',
-				'src': 'img/delete.png',
+				'src': 'img/classic/delete.png',
 				'title': _('Remove from the queue'),
 			});
 			link.appendChild(img);
@@ -227,11 +227,16 @@ var MusicView = Class.create(AjaxView,
 			}.bind(this);
 		}.bind(this));
 
-		$('searchForm').onsubmit = function(event) {
-			var form = event.target;
-			this.search(form);
-			return false;
-		}.bind(this);
+		var searchForm = $('searchForm');
+
+		if (searchForm)
+		{
+			searchForm.onsubmit = function(event) {
+				var form = event.target;
+				this.search(form);
+				return false;
+			}.bind(this);
+		}
 	},
 	showArtist: function(artist)
 	{
@@ -521,20 +526,9 @@ var JukeboxView = Class.create(AjaxView,
 		this.trackView.attach(this);
 		this.musicView.attach();
 	},
-	disable: function()
-	{
-		window.location = 'disabled';
-	},
 	readStatus: function(transport)
 	{
 		var data = transport.responseJSON;
-		var enabled = data.jukebox;
-
-		if (!enabled)
-		{
-			this.disable();
-			return
-		}
 
 		this.trackView.update(data.artist, data.track, data.timeTotal,
 								data.playing);

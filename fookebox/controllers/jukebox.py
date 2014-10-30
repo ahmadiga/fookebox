@@ -1,6 +1,6 @@
-# fookebox, http://fookebox.googlecode.com/
+# fookebox, https://github.com/cockroach/fookebox
 #
-# Copyright (C) 2007-2011 Stefan Ott. All rights reserved.
+# Copyright (C) 2007-2014 Stefan Ott. All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,9 @@ import base64
 import socket
 import logging
 
-from pylons import config, cache, request, response
+from mpd import ConnectionError
+
+from pylons import config, request, response
 from pylons.decorators import jsonify, rest
 from pylons.controllers.util import abort
 from pylons.i18n.translation import _
@@ -37,6 +39,9 @@ log = logging.getLogger(__name__)
 class JukeboxController(BaseController):
 
 	def __render(self, template, extra_vars):
+
+		template = "%s/%s" % (config.get('theme', 'fookstrap'), template)
+
 		try:
 			return render(template, extra_vars = extra_vars)
 		except IOError:
@@ -48,7 +53,6 @@ class JukeboxController(BaseController):
 
 		jukebox = Jukebox()
 		tracks = jukebox.search(where, what, forceSearch)
-		jukebox.close()
 
 		log.debug("SEARCH: found %d track(s)" % len(tracks))
 		return {'meta': {'what': what }, 'tracks': tracks}
@@ -59,21 +63,24 @@ class JukeboxController(BaseController):
 			jukebox = Jukebox()
 		except socket.error:
 			log.error("Error on /index")
-			return self.__render('/error.tpl', extra_vars={
+			return self.__render('error.tpl', extra_vars={
 				'error': 'Connection to MPD failed'})
 		except:
 			log.error("Error on /index")
 			exctype, value = sys.exc_info()[:2]
-			return self.__render('/error.tpl', extra_vars={
+			return self.__render('error.tpl', extra_vars={
 				'error': value})
 
-		artists = jukebox.getArtists()
-		genres = jukebox.getGenres()
-		jukebox.close()
+		try:
+			artists = jukebox.getArtists()
+			genres = jukebox.getGenres()
+		except ConnectionError:
+			jukebox.reconnect()
+			raise
 
-		user_agent = request.environ.get('HTTP_USER_AGENT')
+		user_agent = request.environ.get('HTTP_USER_AGENT', '')
 
-		return self.__render('/client.tpl', extra_vars={
+		return self.__render('client.tpl', extra_vars={
 			'genres': genres,
 			'artists': artists,
 			'config': config,
@@ -87,21 +94,19 @@ class JukeboxController(BaseController):
 
 		try:
 			queueLength = jukebox.getQueueLength()
-			enabled = jukebox.isEnabled()
 			timeLeft = jukebox.timeLeft()
 		except:
 			log.error("Could not read status")
-			jukebox.close()
 			exctype, value = sys.exc_info()[:2]
+			jukebox.reconnect()
 			abort(500, value)
 
-		if (config.get('auto_queue') and queueLength == 0 and enabled
-			and timeLeft <= config.get('auto_queue_time_left')):
+		if (config.get('auto_queue') and queueLength == 0 and
+			timeLeft <= config.get('auto_queue_time_left')):
 			try:
 				jukebox.autoQueue()
 			except:
 				log.error("Auto-queue failed")
-				jukebox.close()
 				raise
 
 		try:
@@ -109,12 +114,9 @@ class JukeboxController(BaseController):
 		except:
 			log.error('Failed to get the current song')
 			abort(500, _('Failed to get the current song'))
-		finally:
-			jukebox.close()
 
 		data = {
 			'queueLength': queueLength,
-			'jukebox': enabled
 		}
 
 		if track:
@@ -162,11 +164,8 @@ class JukeboxController(BaseController):
 			try:
 				jukebox.queue(file.encode('utf8'))
 			except QueueFull:
-				jukebox.close()
 				log.error('ENQUEUE: Full, aborting')
 				abort(409, _('The queue is full'))
-
-		jukebox.close()
 
 		abort(204) # no content
 
@@ -176,7 +175,6 @@ class JukeboxController(BaseController):
 	def queue(self):
 		jukebox = Jukebox()
 		items = jukebox.getPlaylist()
-		jukebox.close()
 
 		return {'queue': items[1:]}
 
@@ -244,7 +242,6 @@ class JukeboxController(BaseController):
 
 		jukebox = Jukebox()
 		jukebox.remove(id)
-		jukebox.close()
 
 		abort(204) # no content
 
@@ -281,7 +278,6 @@ class JukeboxController(BaseController):
 
 		if action not in commands:
 			log.error('CONTROL: Invalid command')
-			jukebox.close()
 			abort(400, _('Invalid command'))
 
 		try:
@@ -289,8 +285,6 @@ class JukeboxController(BaseController):
 		except:
 			log.error('Command %s failed' % action)
 			abort(500, _('Command failed'))
-		finally:
-			jukebox.close()
 
 		abort(204) # no content
 
@@ -337,10 +331,3 @@ class JukeboxController(BaseController):
 
 		response.headers['content-type'] = 'image/jpeg'
 		return data
-
-	@rest.restrict('GET')
-	def disabled(self):
-		return self.__render('/disabled.tpl', extra_vars={
-			'config': config,
-			'base_url': request.url.replace('disabled', ''),
-		})
