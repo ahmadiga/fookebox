@@ -1,7 +1,7 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
-== 0.7.0 (unreleased) ==
+== 0.7.0 (30 Oct 2014) ==
 
  * Added support for themes and new mobile-friendly default theme
  * Fixed communication issues with MPD
