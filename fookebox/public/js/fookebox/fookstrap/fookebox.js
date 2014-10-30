@@ -464,7 +464,8 @@ Jukebox.prototype.showItems = function(type, name)
 {
 	var req = $.getJSON(type + '/' + name);
 
-	var well = $('<div class="well">Loading, please wait...</div>');
+	var well = $('<div class="well"></div>');
+	well.text(_('Loading, please wait...'));
 	var panel = $('<div class="panel panel-default"><div class="panel-body"></div></div>');
 	panel.append(well);
 
