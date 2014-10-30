@@ -163,9 +163,12 @@ class Track(object):
 
 class LockableMPDClient(MPDClient):
 
-	def __init__(self, use_unicode=False):
+	def __init__(self, host, port, password, use_unicode=False):
 		super(LockableMPDClient, self).__init__()
 		self.use_unicode = use_unicode
+		self.host = host
+		self.port = port
+		self.password = password
 		self._lock = Lock()
 	def acquire(self):
 		self._lock.acquire()
@@ -175,6 +178,10 @@ class LockableMPDClient(MPDClient):
 		self.acquire()
 	def __exit__(self, type, value, traceback):
 		self.release()
+	def connect(self):
+		super(LockableMPDClient, self).connect(self.host, self.port)
+		if self.password:
+			super(LockableMPDClient, self).password(self.password)
 
 class MPD(object):
 
@@ -187,14 +194,11 @@ class MPD(object):
 		port = config.get('mpd_port')
 		password = config.get('mpd_pass')
 
-		client = LockableMPDClient()
-		client.connect(host, port)
+		client = LockableMPDClient(host, port, password)
+		client.connect()
 
 		if config.get('consume'):
 			client.consume(1)
-
-		if password:
-			client.password(password)
 
 		g.mpd = client
 		return g.mpd

@@ -21,6 +21,8 @@ import base64
 import socket
 import logging
 
+from mpd import ConnectionError
+
 from pylons import config, request, response
 from pylons.decorators import jsonify, rest
 from pylons.controllers.util import abort
@@ -69,8 +71,12 @@ class JukeboxController(BaseController):
 			return self.__render('error.tpl', extra_vars={
 				'error': value})
 
-		artists = jukebox.getArtists()
-		genres = jukebox.getGenres()
+		try:
+			artists = jukebox.getArtists()
+			genres = jukebox.getGenres()
+		except ConnectionError:
+			jukebox.reconnect()
+			raise
 
 		user_agent = request.environ.get('HTTP_USER_AGENT', '')
 
@@ -92,6 +98,7 @@ class JukeboxController(BaseController):
 		except:
 			log.error("Could not read status")
 			exctype, value = sys.exc_info()[:2]
+			jukebox.reconnect()
 			abort(500, value)
 
 		if (config.get('auto_queue') and queueLength == 0 and

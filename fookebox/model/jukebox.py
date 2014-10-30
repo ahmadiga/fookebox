@@ -45,6 +45,12 @@ class Jukebox(object):
 		mpd = MPD.get()
 		self.client = mpd
 
+	def reconnect(self):
+
+		self.client.disconnect()
+		log.info("Reconnecting...")
+		self.client.connect()
+
 	def timeLeft(self):
 
 		with self.client:
