@@ -411,7 +411,6 @@ SearchResult.prototype.show = function()
 {
 	$('#result').empty();
 	this.albums.render();
-	this.jukebox.showResult();
 }
 
 function Jukebox()
@@ -464,6 +463,16 @@ Jukebox.prototype.sync = function()
 Jukebox.prototype.showItems = function(type, name)
 {
 	var req = $.getJSON(type + '/' + name);
+
+	var well = $('<div class="well">Loading, please wait...</div>');
+	var panel = $('<div class="panel panel-default"><div class="panel-body"></div></div>');
+	panel.append(well);
+
+	panel.fadeIn(400);
+	$('#result').empty();
+	$('#result').append(panel);
+
+	this.showResult();
 
 	req.done($.proxy(function(data)
 	{
