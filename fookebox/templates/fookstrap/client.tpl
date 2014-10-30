@@ -35,7 +35,7 @@
 						<li class="active"><a data-toggle="tab" href="#artists" id="showArtists">${_('Artists')}</a></li>
 						<li><a href="#genres" data-toggle="tab" id="showGenres">${_('Genres')}</a></li>
 						<li class="dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" href="#">${('Queue')} <span class="label label-info" id="queueStatus"></span></a>
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#">${_('Queue')} <span class="label label-info" id="queueStatus"></span></a>
 							<ul class="dropdown-menu" role="menu" id="queue">
 % for i in range(0, int(config.get('max_queue_length'))):
 								<li class="disabled"><a role="menuitem" tabindex="-1"><span class="artist"></span> &ndash; <span class="title"></span></a></li>
