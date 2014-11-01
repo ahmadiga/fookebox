@@ -1,6 +1,10 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
+== 0.7.1 (unreleased) ==
+
+ * Upgraded the prototype library to version 1.7.2
+
 == 0.7.0 (30 Oct 2014) ==
 
  * Added support for themes and new mobile-friendly default theme
