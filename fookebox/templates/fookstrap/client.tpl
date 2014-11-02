@@ -6,11 +6,11 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-		<link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css" />
+		<link rel="stylesheet" href="/css/bootstrap/bootstrap.css" />
 		<link rel="stylesheet" href="/css/fookstrap/fookebox.css" />
 
-		<script src="/js/jquery/jquery-1.11.1.min.js"></script>
-		<script src="/js/bootstrap/bootstrap.min.js"></script>
+		<script src="/js/jquery/jquery-1.11.1.js"></script>
+		<script src="/js/bootstrap/bootstrap.js"></script>
 		<script src="/js/fookebox/fookstrap/fookebox.js"></script>
 		<script src="/js/jquery-ui/jquery-ui.js"></script>
 % if config.get('lang'):

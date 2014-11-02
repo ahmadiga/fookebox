@@ -5,6 +5,7 @@
 
  * Upgraded the prototype library to version 1.7.2
  * Include full jquery-ui library rather than just one effect
+ * Removed minimized versions of Javascript/CSS files
 
 == 0.7.0 (30 Oct 2014) ==
 
