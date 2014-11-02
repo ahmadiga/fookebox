@@ -12,7 +12,7 @@
 		<script src="/js/jquery/jquery-1.11.1.min.js"></script>
 		<script src="/js/bootstrap/bootstrap.min.js"></script>
 		<script src="/js/fookebox/fookstrap/fookebox.js"></script>
-		<script src="/js/fookebox/fookstrap/effects.js"></script>
+		<script src="/js/jquery-ui/jquery-ui.js"></script>
 % if config.get('lang'):
 		<script type="text/javascript" src="js/fookebox/i18n/${config.get('lang')}.js"></script>
 % endif
