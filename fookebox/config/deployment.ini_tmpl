@@ -22,8 +22,8 @@ static_files = true
 
 cache_dir = %(here)s/data
 
-beaker.session.key = fookebox
-beaker.session.secret = ${app_instance_secret}
+#beaker.session.key = fookebox
+#beaker.session.secret = ${app_instance_secret}
 app_instance_uuid = ${app_instance_uuid}
 
 #site_name = fookebox
