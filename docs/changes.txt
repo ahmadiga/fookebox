@@ -1,7 +1,18 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
-== 0.7.0 (unreleased) ==
+== 0.7.1 (03 Nov 2014) ==
+
+ * Ported classic theme to jquery
+ * Make sure to include i18n directory in release tarball
+ * Upgraded the prototype library to version 1.7.2
+ * Include full jquery-ui library rather than just one effect
+ * Removed minimized versions of Javascript/CSS files
+ * Removed prototype and scriptaculous
+ * Never show credits
+ * Added example config files for apache 2.4
+
+== 0.7.0 (30 Oct 2014) ==
 
  * Added support for themes and new mobile-friendly default theme
  * Fixed communication issues with MPD

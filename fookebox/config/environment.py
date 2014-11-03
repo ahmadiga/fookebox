@@ -68,7 +68,6 @@ def load_environment(global_conf, app_conf):
 		'enable_queue_album': True,
 		'find_over_search': False,
 		'cache_cover_art': False,
-		'hide_credits': False,
 		'show_cover_art': True,
 		'consume': True,
 	}
