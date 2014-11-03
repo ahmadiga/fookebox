@@ -1,7 +1,7 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
-== 0.7.1 (02 Nov 2014) ==
+== 0.7.1 (03 Nov 2014) ==
 
  * Ported classic theme to jquery
  * Make sure to include i18n directory in release tarball
