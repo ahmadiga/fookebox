@@ -9,6 +9,7 @@
  * Include full jquery-ui library rather than just one effect
  * Removed minimized versions of Javascript/CSS files
  * Removed prototype and scriptaculous
+ * Never show credits
  * Added example config files for apache 2.4
 
 == 0.7.0 (30 Oct 2014) ==

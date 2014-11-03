@@ -61,7 +61,6 @@ You can tweak the following fookebox-specific settings:
  * enable_queue_album: Enables/disables the ability to queue whole albums
  * find_over_search: Whether to use mpd's 'find' or 'search' (see below)
  * music_base_path: Path that contains your music (see below)
- * hide_credits: Set to true if you want to hide the credits in the client view
  
  * show_cover_art: Whether to show cover art (enabled by default)
  * cache_cover_art: Whether to cache cover art (disabled by default)
