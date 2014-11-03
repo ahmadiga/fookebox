@@ -52,14 +52,14 @@
 % if config.get('show_search_tab'):
 	<ul id="searchList" style="display: none">
 		<form id="searchForm" name="searchform" action="">
-			<select name="searchType">
+			<select name="searchType" id="searchType">
 				<option selected value="artist">${_('Artist')}</option>
 				<option value="album">${_('Album')}</option>
 				<option value="title">${_('Title')}</option>
 				<option value="filename">${_('Filename')}</option>
 				<option value="any">${_('Any')}</option>
 			</select>
-			<input type="text" name="searchTerm" />
+			<input type="text" name="searchTerm" id="searchTerm" />
 			<input type="submit" value="Search!">
 		</form>
 	</ul>

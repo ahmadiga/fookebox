@@ -165,7 +165,9 @@ class JukeboxController(BaseController):
 				jukebox.queue(file.encode('utf8'))
 			except QueueFull:
 				log.error('ENQUEUE: Full, aborting')
-				abort(409, _('The queue is full'))
+
+				response.status = "409 %s" % _('The queue is full')
+				return
 
 		abort(204) # no content
 

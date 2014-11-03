@@ -11,16 +11,14 @@
 % if mobile:
 		<link rel="stylesheet" href="css/classic/style-mobile.css" type="text/css" media="screen" />
 % endif
-		<script type="text/javascript" src="js/prototype/prototype.js"></script>
-		<script type="text/javascript" src="js/scriptaculous/scriptaculous.js?load=effects"></script>
+		<script type="text/javascript" src="/js/jquery/jquery-1.11.1.js"></script>
 % if config.get('lang'):
 		<script type="text/javascript" src="js/fookebox/i18n/${config.get('lang')}.js"></script>
 % endif
 		<script type="text/javascript" src="js/fookebox/i18n/i18n.js"></script>
-		<script type="text/javascript" src="js/fookebox/core.js"></script>
 		${self.headers()}
 	</head>
-	<body id="body">
+	<body id="body" data-enablequeuealbum="${config.get('enable_queue_album')}" data-showcoverart="${config.get('show_cover_art')}" data-enablesongremoval="${config.get('enable_song_removal')}">
 		${next.body()}
 	</body>
 </html>

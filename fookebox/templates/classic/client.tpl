@@ -24,19 +24,3 @@
 </div>
 <img src="img/classic/progress.gif" alt="" id="progress" style="display: none" />
 <div id="searchResult"></div>
-
-<!-- this is a nasty hack to get our config parameters -->
-<form id="config">
-	<input 	type="hidden"
-		name="enable_queue_album"
-		value="${config.get('enable_queue_album')}"
-	/>
-	<input 	type="hidden"
-		name="show_cover_art"
-		value="${config.get('show_cover_art')}"
-	/>
-	<input 	type="hidden"
-		name="enable_song_removal"
-		value="${config.get('enable_song_removal')}"
-	/>
-</form>
