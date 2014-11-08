@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
 	name='fookebox',
-	version='0.7.1',
+	version='0.7.2',
 	description='A jukebox-style web-frontend to mpd',
 	long_description="""fookebox is a jukebox-style web-frontend to mpd.
 
@@ -15,7 +15,7 @@ It can be used as a keyboard-less jukebox, as a powerful
 mpd control frontend or as anything in between.""",
 	author='Stefan Ott',
 	author_email='stefan@ott.net',
-	url='http://fookebox.googlecode.com/',
+	url='https://github.com/cockroach/fookebox/',
 	install_requires=[
 		"Pylons>=0.10",
 		'python-mpd',

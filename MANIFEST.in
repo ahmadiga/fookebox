@@ -1,6 +1,8 @@
 include fookebox/config/deployment.ini_tmpl
 include docs/config.txt
 include docs/changes.txt
+include COPYING
+include CREDITS.txt
 exclude docs/index.txt
 recursive-include fookebox/i18n *
 recursive-include fookebox/public *

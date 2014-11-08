@@ -1,6 +1,10 @@
 #summary ChangeLog for fookebox
 #labels Featured,Phase-Deploy
 
+== 0.7.2 (08 Nov 2014) ==
+
+ * Include full license text in the release tarball
+
 == 0.7.1 (03 Nov 2014) ==
 
  * Ported classic theme to jquery
